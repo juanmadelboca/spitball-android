@@ -2,4 +2,6 @@
     <string name="app_name">SpitBall V0.0.1</string>
     <string name="play">Play</string>
     <string name="highScores">High Scores</string>
+    <string name="winnerPink">Gano Rosa</string>
+    <string name="winnerGreen">Gano Verde</string>
 </resources>

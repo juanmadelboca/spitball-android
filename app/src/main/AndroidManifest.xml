@@ -20,7 +20,8 @@
         <activity
             android:name=".GameActivity"
             android:screenOrientation="landscape"></activity>
-        <activity android:name=".finishGameActivity"></activity>
+        <activity android:name=".finishGameActivity"
+            android:screenOrientation="landscape"></activity>
     </application>
 
 </manifest>

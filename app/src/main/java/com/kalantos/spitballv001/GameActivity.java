@@ -1,6 +1,7 @@
 package com.kalantos.spitballv001;
 
 import android.content.Intent;
+import android.graphics.Matrix;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.provider.Settings;
@@ -44,6 +45,7 @@ public class GameActivity extends AppCompatActivity {
 
     public void pintar(){
         green=0; 	pink=0;
+
         Drawable drawablegreen=getResources().getDrawable(R.drawable.ballgreen);
         Drawable drawablegreen2=getResources().getDrawable(R.drawable.ballgreen);
         Drawable drawablepink=getResources().getDrawable(R.drawable.ballpink);
@@ -53,11 +55,15 @@ public class GameActivity extends AppCompatActivity {
 
             for(int j=0; j<width; j++){
                 if(tiles[i][j].getBall() instanceof BallGreen)
-                {  tiles[i][j].b.setImageDrawable(drawablegreen);
+                {
+                    tiles[i][j].b.setImageDrawable(drawablegreen);
                    // tiles[i][j].b.setRolloverIcon(BG2);
-                   green++;
+                    tiles[i][j].b.setScaleType(ImageView.ScaleType.FIT_XY);
+                    green++;
                 }else if(tiles[i][j].getBall() instanceof BallPink)
                 {  tiles[i][j].b.setImageDrawable(drawablepink);
+                    tiles[i][j].b.setScaleType(ImageView.ScaleType.FIT_XY);
+
                     pink++;
                 }else{
                     tiles[i][j].b.setImageDrawable(null);
@@ -122,7 +128,6 @@ public class GameActivity extends AppCompatActivity {
 
                     }
                 });
-                tiles[i][j].b.setScaleType(ImageView.ScaleType.FIT_XY);
                 tiles[i][j].b.setId(j + (i * 10));
                 row.addView(tiles[i][j].b);
             }
