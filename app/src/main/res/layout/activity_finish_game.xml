@@ -12,6 +12,7 @@
         android:layout_centerHorizontal="true"
         android:background="@drawable/backgreen"
         android:layout_alignParentTop="true"/>
+
     <ImageView
         android:layout_width="400dp"
         android:layout_height="300dp"
