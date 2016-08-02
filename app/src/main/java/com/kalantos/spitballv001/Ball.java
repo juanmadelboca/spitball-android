@@ -1,14 +1,14 @@
 package com.kalantos.spitballv001;
 public class Ball {
-	private int tamaño;
+	private int size;
 public Ball(int tamaño){
-	this.tamaño=tamaño;
+	this.size=size;
 }
-public void setTamaño(int tamaño){
-	this.tamaño=tamaño;
+public void setSize(int tamaño){
+	this.size=size;
 }
-public int getTamaño(){
-	return tamaño;
+public int getSize(){
+	return size;
 }
 
 

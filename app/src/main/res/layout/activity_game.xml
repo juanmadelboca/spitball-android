@@ -8,6 +8,7 @@
 
     <LinearLayout
         android:id="@+id/layaout"
+        android:background="@drawable/map10x6"
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
