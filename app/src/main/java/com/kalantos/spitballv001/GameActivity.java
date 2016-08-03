@@ -49,10 +49,6 @@ public class GameActivity extends AppCompatActivity {
     public void paint() {
         green = 0;
         pink = 0;
-        ImageView imageView;
-
-
-        int ballSize=50;
 
         Drawable drawablegreen = getResources().getDrawable(R.drawable.ballgreen);
         Drawable drawablegreen2 = getResources().getDrawable(R.drawable.ballgreen);
@@ -61,8 +57,23 @@ public class GameActivity extends AppCompatActivity {
         for (int i = 0; i < height; i++) {
 
             for (int j = 0; j < width; j++) {
+            int ballSize=getRescaleSize(i,j);
 
-                setTileImage(i,j);
+                if (tiles[i][j].getBall() instanceof BallGreen) {
+                    Bitmap bitmapImage = BitmapFactory.decodeResource(getResources(), R.drawable.ballgreen);
+                    Bitmap scaled = Bitmap.createScaledBitmap(bitmapImage, ballSize, ballSize, false);
+                    tiles[i][j].getImageView().setImageBitmap(scaled);
+                    tiles[i][j].getImageView().setScaleType(ImageView.ScaleType.CENTER);
+                    green++;
+                } else if (tiles[i][j].getBall() instanceof BallPink) {
+                    Bitmap bitmapImage = BitmapFactory.decodeResource(getResources(), R.drawable.ballpink);
+                    Bitmap scaled = Bitmap.createScaledBitmap(bitmapImage, ballSize, ballSize, false);
+                    tiles[i][j].getImageView().setImageBitmap(scaled);
+                    tiles[i][j].getImageView().setScaleType(ImageView.ScaleType.CENTER);
+                    pink++;
+                } else {
+                    tiles[i][j].getImageView().setImageDrawable(null);
+                }
 
 
             }
@@ -78,30 +89,34 @@ public class GameActivity extends AppCompatActivity {
         }
     }
 
-    public void setTileImage(int i,int j){
-        int ballSize=tiles[i][j].getBall().getSize()*2;
-        System.out.println(ballSize);
+    private int getRescaleSize(int i, int j) {
+        int conditional = tiles[i][j].getBall().getSize();
 
-
-
-        if (tiles[i][j].getBall() instanceof BallGreen) {
-            Bitmap bitmapImage =BitmapFactory.decodeResource(getResources(), R.drawable.ballgreen);
-            Bitmap scaled = Bitmap.createScaledBitmap(bitmapImage,ballSize ,ballSize , false);
-            tiles[i][j].getImageView().setImageBitmap(scaled);
-            tiles[i][j].getImageView().setScaleType(ImageView.ScaleType.CENTER);
-            green++;
-        } else if (tiles[i][j].getBall() instanceof BallPink) {
-            Bitmap bitmapImage =BitmapFactory.decodeResource(getResources(), R.drawable.ballpink);
-            Bitmap scaled = Bitmap.createScaledBitmap(bitmapImage, ballSize,ballSize , false);
-            tiles[i][j].getImageView().setImageBitmap(scaled);
-            tiles[i][j].getImageView().setScaleType(ImageView.ScaleType.CENTER);
-            pink++;
-        } else {
-            tiles[i][j].getImageView().setImageDrawable(null);
+        if (conditional < 20) {
+            int a=(30+(conditional * 4));
+            System.out.println("A");
+            return a;
         }
-    }
 
-    public void finishGame() {
+        if(conditional<40&&conditional>=20) {
+            int a=(conditional*4)+20;
+            System.out.println("B");
+            return a;
+        }
+
+        if(conditional<80&&conditional>=40) {
+            int a=(conditional*3);
+            System.out.println("C");
+            return a;
+        }
+        else{
+            int a=(conditional*2+10);
+            System.out.println("D");
+            return a;
+        }
+
+        }
+    private void finishGame() {
 
         Intent intent = new Intent(GameActivity.this, finishGameActivity.class);
         intent.putExtra("green", green);
