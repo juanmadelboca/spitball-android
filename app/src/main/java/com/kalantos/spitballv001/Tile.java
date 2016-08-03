@@ -40,7 +40,9 @@ protected Ball getBall(){
 		return imageView;
 	}
 
-	protected void batalla(Ball immigrantBall){
+	//el metodo battle sirve para definir que bola quedara cuando se intersectan 2
+	//y tambien redefine el tamaño
+	protected void battle(Ball immigrantBall){
 
 	if(immigrantBall.getSize()>= ball.getSize()){
 						int newSize=ball.getSize()+immigrantBall.getSize();

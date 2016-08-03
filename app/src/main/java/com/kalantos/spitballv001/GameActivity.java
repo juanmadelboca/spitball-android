@@ -38,6 +38,7 @@ public class GameActivity extends AppCompatActivity {
     }
 
     public void inicialize() {
+        //inicializa los valores de las bolas iniciales
         tiles[1][3].setBall(20, BallType.BALLGREEN);
         tiles[2][2].setBall(20, BallType.BALLGREEN);
         tiles[3][3].setBall(20, BallType.BALLGREEN);
@@ -47,24 +48,26 @@ public class GameActivity extends AppCompatActivity {
     }
 
     public void paint() {
+        //las imagenes no pueden exeder los 5kB porque sino el tiempo de dibujo exede los 200ms y no se ve fluido
+        //pinta el tablero y las bolas
+
+        long time_start, time_end;
+        time_start = System.currentTimeMillis();
         green = 0;
         pink = 0;
-
-        Drawable drawablegreen = getResources().getDrawable(R.drawable.ballgreen);
-        Drawable drawablepink = getResources().getDrawable(R.drawable.ballpink);
         for (int i = 0; i < height; i++) {
 
             for (int j = 0; j < width; j++) {
             int ballSize=getRescaleSize(i,j);
 
                 if (tiles[i][j].getBall() instanceof BallGreen) {
-                    Bitmap bitmapImage = BitmapFactory.decodeResource(getResources(), R.drawable.ballgreen);
+                    Bitmap bitmapImage = BitmapFactory.decodeResource(getResources(), R.drawable.ballgreen_small);
                     Bitmap scaled = Bitmap.createScaledBitmap(bitmapImage, ballSize, ballSize, false);
                     tiles[i][j].getImageView().setImageBitmap(scaled);
                     tiles[i][j].getImageView().setScaleType(ImageView.ScaleType.CENTER);
                     green++;
                 } else if (tiles[i][j].getBall() instanceof BallPink) {
-                    Bitmap bitmapImage = BitmapFactory.decodeResource(getResources(), R.drawable.ballpink);
+                    Bitmap bitmapImage = BitmapFactory.decodeResource(getResources(), R.drawable.ballpink_small);
                     Bitmap scaled = Bitmap.createScaledBitmap(bitmapImage, ballSize, ballSize, false);
                     tiles[i][j].getImageView().setImageBitmap(scaled);
                     tiles[i][j].getImageView().setScaleType(ImageView.ScaleType.CENTER);
@@ -83,10 +86,13 @@ public class GameActivity extends AppCompatActivity {
             finishGame();
 
         }
+        time_end = System.currentTimeMillis();
+        System.out.println("the task has taken "+ ( time_end - time_start ) +" milliseconds");
     }
 
 
     private int getRescaleSize(int i, int j) {
+        //obtiene y devuelve el valor que tomara la imagen, es decir la reescala de forma que dependa del tamaño de BALL
 
         int conditional = tiles[i][j].getBall().getSize();
 
@@ -111,7 +117,7 @@ public class GameActivity extends AppCompatActivity {
 
         }
     private void finishGame() {
-
+        //se ejecuta cuando termina el juego, finaliza la activad y procede a la acitvidad que muestra al ganador
         Intent intent = new Intent(GameActivity.this, finishGameActivity.class);
         intent.putExtra("green", green);
         intent.putExtra("pink", pink);
@@ -120,7 +126,7 @@ public class GameActivity extends AppCompatActivity {
     }
 
     private void armarTablero() {
-
+        //arma el tablero  usando las medidas de la pantalla
         tiles = new Tile[height][width];
         LinearLayout layout = (LinearLayout) findViewById(R.id.layaout); //Can also be done in xml by android:orientation="vertical"
         Display display = getWindowManager().getDefaultDisplay();
@@ -137,7 +143,7 @@ public class GameActivity extends AppCompatActivity {
                 tiles[i][j].getImageView().setLayoutParams(new LinearLayout.LayoutParams(widthScreen / 10, heightScreen / 6));
                 tiles[i][j].getImageView().setOnClickListener(new View.OnClickListener(){
                     public void onClick(View v) {
-
+                        //devuelve el tile que fue presionado
                         for (int i = 0; i < height; i++) {
 
                             for (int j = 0; j < width; j++) {
@@ -158,7 +164,7 @@ public class GameActivity extends AppCompatActivity {
 
 
     public void ClickGestion(int i, int j) {
-        //ya anda bien un click puedo aprovechar y con el isntanceof hacer los turnos
+        //recibe dos enteros que le indican el Tile presionado y por medio de eso gestiona las acciones a realizar
 
         if ((tiles[i][j].getBall() instanceof BallGreen) && clicks == 0 && (turno % 2 == 0)) {
             ax = i;
@@ -217,8 +223,8 @@ public class GameActivity extends AppCompatActivity {
 
 
     public void move(int x1, int y1, int x2, int y2) {
-
-        tiles[x2][y2].batalla(tiles[x1][y1].getBall());
+        //mueve la bola
+        tiles[x2][y2].battle(tiles[x1][y1].getBall());
         tiles[x1][y1].removeBall();
         paint();
         clicks = 0;
@@ -227,7 +233,7 @@ public class GameActivity extends AppCompatActivity {
 
 
     public void split(int i, int j, int x, int y) {
-
+        //escupe una bola 33% del tamaño de ella misma
         int splittedBallSize=tiles[i][j].getBall().getSize()/3;
 
         if (tiles[i][j].getBall() instanceof BallGreen) {
@@ -235,7 +241,7 @@ public class GameActivity extends AppCompatActivity {
             if (tiles[i][j].getBall().getSize() >= 10) {
                 try {
                     tiles[i][j].getBall().setSize(tiles[i][j].getBall().getSize() - splittedBallSize);
-                    tiles[i + y][j+x].batalla(splittedBall);
+                    tiles[i + y][j+x].battle(splittedBall);
                 } catch (Exception e) {
                     System.out.println("un poco de tu masa se cayo del tablero");
                 }
@@ -246,7 +252,7 @@ public class GameActivity extends AppCompatActivity {
             if (tiles[i][j].getBall().getSize() >= 10) {
                 try {
                     tiles[i][j].getBall().setSize(tiles[i][j].getBall().getSize() - splittedBallSize);
-                    tiles[i + y][j+x].batalla(splitttedBall);
+                    tiles[i + y][j+x].battle(splitttedBall);
                 } catch (Exception e) {
                     System.out.println("un poco de tu masa se cayo del tablero");
                 }
@@ -260,6 +266,8 @@ public class GameActivity extends AppCompatActivity {
     }
 
     private void debug() {
+        //metodo para crear una matriz con los valores size de las bolas
+        //util para debugear fallas graficas
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
                 System.out.print(tiles[i][j].getBall().getSize() + "    ");
