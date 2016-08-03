@@ -2,9 +2,6 @@ package com.kalantos.spitballv001;
 
 import android.app.Activity;
 import android.content.Context;
-import android.media.Image;
-import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 
 
@@ -17,13 +14,13 @@ public Tile(Context context){
 	imageView= new ImageView(context);
 	}
 
-protected void setBall(int tamaño, BallType tipo){
+protected void setBall(int size, BallType tipo){
 	switch(tipo){
-	case BALLGREEN:	
-		this.ball=new BallGreen(tamaño);
+	case BALLGREEN:
+		this.ball=new BallGreen(size);
 		break;
 	case BALLPINK:
-		this.ball=new BallPink(tamaño);
+		this.ball=new BallPink(size);
 		break;
 		default: break;
 	}
@@ -43,36 +40,20 @@ protected Ball getBall(){
 		return imageView;
 	}
 
-public void batalla(Ball ballentrante){
-	while(true){
-if((ballentrante instanceof BallGreen	&&	ball instanceof BallGreen)){
-		int nuevoTamaño=ballentrante.getSize()+ball.getSize();
-		ball.setSize(nuevoTamaño);
-		break;
-	//	System.out.println("arreglar aca1");
-		}
-if((ballentrante instanceof BallPink	&&	ball instanceof BallPink)){
-		int nuevoTamaño=ballentrante.getSize()+ball.getSize();
-		ball.setSize(nuevoTamaño);
-		break;
-		//System.out.println("arreglar aca2");
-			}
-if(ballentrante.getSize()>= ball.getSize()){
-						int cte=ball.getSize()+ballentrante.getSize();
-						if(ballentrante instanceof BallGreen){
-							ball= new BallGreen(cte);
-							break;
-								}
-						if (ballentrante instanceof BallPink){
-									ball=new BallPink(cte);
-									break;
-								}	
-}else{
-	//System.out.println("arreglar aca");
-	ball.setSize(ball.getSize()+ballentrante.getSize());
-	break;
-		}
-	}
+	protected void batalla(Ball immigrantBall){
 
-}
+	if(immigrantBall.getSize()>= ball.getSize()){
+						int newSize=ball.getSize()+immigrantBall.getSize();
+						if(immigrantBall instanceof BallGreen){
+							ball= new BallGreen(newSize);
+								}
+						if (immigrantBall instanceof BallPink){
+									ball=new BallPink(newSize);
+								}	
+	}else{
+		ball.setSize(ball.getSize()+immigrantBall.getSize());
+			}
+
+
+	}
 }

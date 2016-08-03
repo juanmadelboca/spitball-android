@@ -23,7 +23,7 @@ public class finishGameActivity extends AppCompatActivity {
 
 
         imageView=(ImageView)findViewById(R.id.imageView);
-        EditText editText=(EditText) findViewById(R.id.editText);
+        TextView editText=(TextView) findViewById(R.id.textView);
         Bundle extras = getIntent().getExtras();
         int green=extras.getInt("green");
         int pink=extras.getInt("pink");
@@ -41,7 +41,6 @@ public class finishGameActivity extends AppCompatActivity {
         }
         new Handler().postDelayed(new Runnable(){
             public void run(){
-                // Cuando pasen los 3 segundos, pasamos a la actividad principal de la aplicación
                 Intent intent = new Intent(finishGameActivity.this, MenuActivity.class);
                 startActivity(intent);
                 finish();
