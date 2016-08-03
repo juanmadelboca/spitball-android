@@ -89,7 +89,9 @@ public class GameActivity extends AppCompatActivity {
         }
     }
 
+
     private int getRescaleSize(int i, int j) {
+
         int conditional = tiles[i][j].getBall().getSize();
 
         if (conditional < 20) {
