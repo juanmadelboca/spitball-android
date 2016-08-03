@@ -58,7 +58,8 @@ public class GameActivity extends AppCompatActivity {
         for (int i = 0; i < height; i++) {
 
             for (int j = 0; j < width; j++) {
-            int ballSize=getRescaleSize(i,j);
+            double temp= (tiles[i][j].getBall().getSize() * 1.3) + 110;
+                int ballSize=(int)temp;
 
                 if (tiles[i][j].getBall() instanceof BallGreen) {
                     Bitmap bitmapImage = BitmapFactory.decodeResource(getResources(), R.drawable.ballgreen_small);
@@ -90,32 +91,6 @@ public class GameActivity extends AppCompatActivity {
         System.out.println("the task has taken "+ ( time_end - time_start ) +" milliseconds");
     }
 
-
-    private int getRescaleSize(int i, int j) {
-        //obtiene y devuelve el valor que tomara la imagen, es decir la reescala de forma que dependa del tamaño de BALL
-
-        int conditional = tiles[i][j].getBall().getSize();
-
-        if (conditional < 20) {
-            int a=(30+(conditional * 4));
-            return a;
-        }
-
-        if(conditional<40&&conditional>=20) {
-            int a=(conditional*4)+20;
-            return a;
-        }
-
-        if(conditional<80&&conditional>=40) {
-            int a=(conditional*3);
-            return a;
-        }
-        else{
-            int a=(conditional*2+10);
-            return a;
-        }
-
-        }
     private void finishGame() {
         //se ejecuta cuando termina el juego, finaliza la activad y procede a la acitvidad que muestra al ganador
         Intent intent = new Intent(GameActivity.this, finishGameActivity.class);
@@ -228,7 +203,7 @@ public class GameActivity extends AppCompatActivity {
         tiles[x1][y1].removeBall();
         paint();
         clicks = 0;
-       // debug();
+        debug();
     }
 
 
@@ -261,7 +236,7 @@ public class GameActivity extends AppCompatActivity {
 
         paint();
         clicks=0;
-        //debug();
+        debug();
 
     }
 
