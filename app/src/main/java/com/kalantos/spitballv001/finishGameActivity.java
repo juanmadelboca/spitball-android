@@ -3,6 +3,7 @@ package com.kalantos.spitballv001;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.media.Image;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.EditText;
@@ -38,8 +39,15 @@ public class finishGameActivity extends AppCompatActivity {
 
              imageView.setImageDrawable(pic);
         }
-
-
-
+        new Handler().postDelayed(new Runnable(){
+            public void run(){
+                // Cuando pasen los 3 segundos, pasamos a la actividad principal de la aplicación
+                Intent intent = new Intent(finishGameActivity.this, MenuActivity.class);
+                startActivity(intent);
+                finish();
+            };
+        }, 2000);
     }
+
+
 }

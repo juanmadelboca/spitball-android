@@ -124,6 +124,7 @@ public class GameActivity extends AppCompatActivity {
         intent.putExtra("green", green);
         intent.putExtra("pink", pink);
         startActivity(intent);
+        finish();
     }
 
     private void armarTablero() {
