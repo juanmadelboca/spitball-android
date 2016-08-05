@@ -14,6 +14,14 @@ public class MenuActivity extends AppCompatActivity {
     }
     public void intentGame(View view){
         Intent intent=new Intent(MenuActivity.this,GameActivity.class);
+        //intent.putExtra("AI",false);
+        startActivity(intent);
+        //better finish activity? or let it background so you can go back to menu?
+        finish();
+    }
+
+    public void intentChooseDifficulty(View view){
+        Intent intent=new Intent(MenuActivity.this,ChooseDifficultyActivity.class);
         startActivity(intent);
         //better finish activity? or let it background so you can go back to menu?
         finish();

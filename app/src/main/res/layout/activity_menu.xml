@@ -12,7 +12,7 @@
     <Button
         android:layout_width="100dp"
         android:layout_height="50dp"
-        android:text="@string/play"
+        android:text="2 Players"
         android:id="@+id/button2"
         android:layout_above="@+id/button3"
         android:layout_alignStart="@+id/button3"
@@ -21,11 +21,11 @@
     <Button
         android:layout_width="100dp"
         android:layout_height="50dp"
-        android:text="@string/highScores"
+        android:text="1 Player"
         android:id="@+id/button3"
         android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true" />
-
+        android:layout_centerHorizontal="true"
+        android:onClick="intentChooseDifficulty"/>
     <Button
         android:layout_width="100dp"
         android:layout_height="50dp"

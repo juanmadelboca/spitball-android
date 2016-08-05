@@ -25,12 +25,17 @@ public class GameActivity extends AppCompatActivity {
     final int height = 6;
     private int clicks = 0;
     private int turno = 0;
-    private int ax, ay, green, pink;
+    private int ax, ay, green, pink,difficulty;
+    private boolean ArtificialInteligence;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
+        Intent intent   =getIntent();
+        ArtificialInteligence=intent.getBooleanExtra("AI",true);
+        difficulty=0;
+        //difficulty=intent.getIntExtra("difficulty",0);
         armarTablero();
         inicialize();
         paint();
@@ -149,8 +154,7 @@ public class GameActivity extends AppCompatActivity {
             turno++;
             return;
 
-        } else {
-            if ((tiles[i][j].getBall() instanceof BallPink) && clicks == 0 && (turno % 2 == 1)) {
+        }  if ((tiles[i][j].getBall() instanceof BallPink) && clicks == 0 && (turno % 2 == 1)) {
                 ax = i;
                 ay = j;
                 clicks++;
@@ -158,52 +162,80 @@ public class GameActivity extends AppCompatActivity {
                 turno++;
                 return;
 
-            }
+                }
 
-        }
+
 
 
         if (clicks == 1) {
-            //CANCEL SELECTION
-            if (ax == i && ay == j) {
-                clicks = 0;
-                turno--;
-            }
-            //MOVE
-            if ((Math.abs(ax - i) == 1 && Math.abs(ay - j) == 1) || (Math.abs(ax - i) == 0 && Math.abs(ay - j) == 1) || (Math.abs(ax - i) == 1 && Math.abs(ay - j) == 0)) {
-                move(ax, ay, i, j);
-            }
-            //SPLIT DOWN
-            if (ax - i == -2 && ay == j) {
+                //CANCEL SELECTION
+                if (ax == i && ay == j) {
+                    clicks = 0;
+                    turno--;
+                }
+                //MOVE
+                if ((Math.abs(ax - i) == 1 && Math.abs(ay - j) == 1) || (Math.abs(ax - i) == 0 && Math.abs(ay - j) == 1) || (Math.abs(ax - i) == 1 && Math.abs(ay - j) == 0)) {
+                    move(ax, ay, i, j);
+                }
+                //SPLIT DOWN
+                if (ax - i == -2 && ay == j) {
 
-                split(ax, ay,0,2);
+                    split(ax, ay,0,2);
+                }
+                //SPLIT UP
+                if (ax - i == 2 && ay == j) {
+                    split(ax, ay,0,-2);
+                }
+                //SPLIT RIGHT
+                if (ay - j == -2 && i == ax) {
+                    split(ax, ay,2,0);
+                }
+                //SPLIT LEFT
+                if (ay - j == 2 && i == ax) {
+                    split(ax, ay,-2,0);
+                }
+
+                //revisar
+            if(ArtificialInteligence) {
+               ArtificialMove();
             }
-            //SPLIT UP
-            if (ax - i == 2 && ay == j) {
-                split(ax, ay,0,-2);
-            }
-            //SPLIT RIGHT
-            if (ay - j == -2 && i == ax) {
-                split(ax, ay,2,0);
-            }
-            //SPLIT LEFT
-            if (ay - j == 2 && i == ax) {
-                split(ax, ay,-2,0);
-            }
-            //revisar
 
 
         }
     }
 
 
-    public void move(int x1, int y1, int x2, int y2) {
+    public void move(int x1, int y1, int x2, int y2) {// primeros 2 los originales 2 dos a donde van
         //mueve la bola
         tiles[x2][y2].battle(tiles[x1][y1].getBall());
         tiles[x1][y1].removeBall();
         paint();
         clicks = 0;
-        debug();
+      //  debug();
+    }
+    public void ArtificialMove() {
+        //va en bloque try catch porque cuando termina el juego la AI intenta mover y genera excepcion de esta forma cuando esta
+        //excepcion ocurre no tenogo problemas
+        try {
+            int[] AIMoves;
+            switch (difficulty) {
+                case 1:
+                    AIMoves = ArtificialInteligenceAlgorithm.RandomMove(tiles);
+                    break;
+                case 2:
+                    AIMoves = ArtificialInteligenceAlgorithm.RandomMove(tiles);
+                    break;
+                default:
+                    AIMoves = ArtificialInteligenceAlgorithm.RandomMove(tiles);
+                    break;
+            }
+            move(AIMoves[0], AIMoves[1], AIMoves[2], AIMoves[3]);
+            System.out.println("1: " + AIMoves[0] + " 2: " + AIMoves[1] + " 3: " + AIMoves[2] + " 4: " + AIMoves[3]);
+            turno++;
+
+        } catch (Exception e) {
+            finishGame();
+        }
     }
 
 
@@ -236,7 +268,7 @@ public class GameActivity extends AppCompatActivity {
 
         paint();
         clicks=0;
-        debug();
+        //debug();
 
     }
 
