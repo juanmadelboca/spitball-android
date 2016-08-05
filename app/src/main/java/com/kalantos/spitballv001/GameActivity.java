@@ -25,7 +25,7 @@ public class GameActivity extends AppCompatActivity {
     final int height = 6;
     private int clicks = 0;
     private int turno = 0;
-    private int ax, ay, green, pink,difficulty;
+    private int ax, ay, green, pink,difficulty,flag;
     private boolean ArtificialInteligence;
 
     @Override
@@ -35,6 +35,7 @@ public class GameActivity extends AppCompatActivity {
         Intent intent   =getIntent();
         ArtificialInteligence=intent.getBooleanExtra("AI",true);
         difficulty=0;
+        System.out.println("La inteligencia es: "+ArtificialInteligence);
         //difficulty=intent.getIntExtra("difficulty",0);
         armarTablero();
         inicialize();
@@ -172,6 +173,7 @@ public class GameActivity extends AppCompatActivity {
                 if (ax == i && ay == j) {
                     clicks = 0;
                     turno--;
+                    flag=1;
                 }
                 //MOVE
                 if ((Math.abs(ax - i) == 1 && Math.abs(ay - j) == 1) || (Math.abs(ax - i) == 0 && Math.abs(ay - j) == 1) || (Math.abs(ax - i) == 1 && Math.abs(ay - j) == 0)) {
@@ -196,9 +198,10 @@ public class GameActivity extends AppCompatActivity {
                 }
 
                 //revisar
-            if(ArtificialInteligence) {
+            if(ArtificialInteligence&&flag!=1) {
                ArtificialMove();
             }
+            flag=0;
 
 
         }

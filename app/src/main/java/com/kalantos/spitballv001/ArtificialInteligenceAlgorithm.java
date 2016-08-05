@@ -44,6 +44,7 @@ public class ArtificialInteligenceAlgorithm {
             y= 1;
         }
         int newY=AIvector[0]+y;
+
         int newX=AIvector[1]+x;
         if ((newY<HEIGHT && newY>=0)&& (newX<WIDTH&& newX>=0)){
             coordinates  =new int[]{AIvector[0],AIvector[1],newY,newX};
