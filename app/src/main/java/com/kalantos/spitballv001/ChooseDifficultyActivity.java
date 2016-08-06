@@ -13,14 +13,14 @@ public class ChooseDifficultyActivity extends AppCompatActivity {
         setContentView(R.layout.activity_choose_difficulty);
     }
 
+    public void hardDifficult(View view){
+        intentGameVsAI(2);
+    }
     public void forDummiesDifficult(View view){
         intentGameVsAI(0);
     }
     public void easyDifficult(View view){
         intentGameVsAI(1);
-    }
-    public void hardDifficult(View view){
-        intentGameVsAI(2);
     }
 
     public void intentGameVsAI( int difficulty){

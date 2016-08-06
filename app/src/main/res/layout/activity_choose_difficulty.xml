@@ -13,7 +13,7 @@
 
     <Button
         android:layout_width="100dp"
-        android:layout_height="50dp"
+        android:layout_height="60dp"
         android:text="for dummies"
         android:id="@+id/button"
         android:layout_alignParentTop="true"
@@ -23,7 +23,7 @@
 
     <Button
         android:layout_width="100dp"
-        android:layout_height="50dp"
+        android:layout_height="60dp"
         android:text="Easy"
         android:id="@+id/button5"
         android:layout_centerVertical="true"
@@ -33,11 +33,11 @@
 
     <Button
         android:layout_width="100dp"
-        android:layout_height="50dp"
+        android:layout_height="60dp"
         android:text="Hard"
         android:id="@+id/button6"
         android:layout_alignParentBottom="true"
         android:layout_alignStart="@+id/button5"
         android:layout_marginBottom="44dp"
-        android:onClick="hardDifficult "/>
+        android:onClick="hardDifficult"/>
 </RelativeLayout>

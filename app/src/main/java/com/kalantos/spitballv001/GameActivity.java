@@ -33,10 +33,9 @@ public class GameActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
         Intent intent   =getIntent();
+        difficulty=intent.getIntExtra("difficulty",0);
         ArtificialInteligence=intent.getBooleanExtra("AI",true);
-        difficulty=0;
-        System.out.println("La inteligencia es: "+ArtificialInteligence);
-        //difficulty=intent.getIntExtra("difficulty",0);
+        System.out.println("la dificultad es"+difficulty);
         armarTablero();
         inicialize();
         paint();
@@ -94,7 +93,8 @@ public class GameActivity extends AppCompatActivity {
 
         }
         time_end = System.currentTimeMillis();
-        System.out.println("the task has taken "+ ( time_end - time_start ) +" milliseconds");
+     //   System.out.println("the task has taken "+ ( time_end - time_start ) +" milliseconds");
+        //debug();
     }
 
     private void finishGame() {
@@ -151,7 +151,6 @@ public class GameActivity extends AppCompatActivity {
             ax = i;
             ay = j;
             clicks++;
-            System.out.println("soy instancia de alguna bola verde");
             turno++;
             return;
 
@@ -159,7 +158,6 @@ public class GameActivity extends AppCompatActivity {
                 ax = i;
                 ay = j;
                 clicks++;
-                System.out.println("soy instancia de alguna bola rosa");
                 turno++;
                 return;
 
@@ -182,19 +180,19 @@ public class GameActivity extends AppCompatActivity {
                 //SPLIT DOWN
                 if (ax - i == -2 && ay == j) {
 
-                    split(ax, ay,0,2);
+                    split(ax, ay,2,0);
                 }
                 //SPLIT UP
                 if (ax - i == 2 && ay == j) {
-                    split(ax, ay,0,-2);
+                    split(ax, ay,-2,0);
                 }
                 //SPLIT RIGHT
                 if (ay - j == -2 && i == ax) {
-                    split(ax, ay,2,0);
+                    split(ax, ay,0,2);
                 }
                 //SPLIT LEFT
                 if (ay - j == 2 && i == ax) {
-                    split(ax, ay,-2,0);
+                    split(ax, ay,0,-2);
                 }
 
                 //revisar
@@ -208,10 +206,10 @@ public class GameActivity extends AppCompatActivity {
     }
 
 
-    public void move(int x1, int y1, int x2, int y2) {// primeros 2 los originales 2 dos a donde van
+    public void move(int i, int j, int y, int x) {// primeros 2 los originales 2 dos a donde van
         //mueve la bola
-        tiles[x2][y2].battle(tiles[x1][y1].getBall());
-        tiles[x1][y1].removeBall();
+        tiles[y][x].battle(tiles[i][j].getBall());
+        tiles[i][j].removeBall();
         paint();
         clicks = 0;
       //  debug();
@@ -222,18 +220,25 @@ public class GameActivity extends AppCompatActivity {
         try {
             int[] AIMoves;
             switch (difficulty) {
-                case 1:
+                case 0:
                     AIMoves = ArtificialInteligenceAlgorithm.RandomMove(tiles);
                     break;
+                case 1:
+                    AIMoves = ArtificialInteligenceAlgorithm.easyMove(tiles);
+                    break;
                 case 2:
-                    AIMoves = ArtificialInteligenceAlgorithm.RandomMove(tiles);
+                    AIMoves = ArtificialInteligenceAlgorithm.hardMove(tiles);
                     break;
                 default:
                     AIMoves = ArtificialInteligenceAlgorithm.RandomMove(tiles);
                     break;
             }
-            move(AIMoves[0], AIMoves[1], AIMoves[2], AIMoves[3]);
-            System.out.println("1: " + AIMoves[0] + " 2: " + AIMoves[1] + " 3: " + AIMoves[2] + " 4: " + AIMoves[3]);
+            System.out.println(""+AIMoves[0]+AIMoves[1]+AIMoves[2]+AIMoves[3]);
+            if (AIMoves[4]!=-1) {
+                move(AIMoves[0], AIMoves[1], AIMoves[2], AIMoves[3]);
+            }else  {
+                split(AIMoves[0], AIMoves[1], AIMoves[2], AIMoves[3]);
+            }
             turno++;
 
         } catch (Exception e) {
@@ -242,7 +247,7 @@ public class GameActivity extends AppCompatActivity {
     }
 
 
-    public void split(int i, int j, int x, int y) {
+    public void split(int i, int j, int y, int x) {
         //escupe una bola 33% del tamaño de ella misma
         int splittedBallSize=tiles[i][j].getBall().getSize()/3;
 
@@ -271,7 +276,7 @@ public class GameActivity extends AppCompatActivity {
 
         paint();
         clicks=0;
-        //debug();
+        debug();
 
     }
 
