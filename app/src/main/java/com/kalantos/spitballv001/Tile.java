@@ -6,12 +6,15 @@ import android.widget.ImageView;
 
 
 public class Tile extends Activity{
-private Ball ball;
-public ImageView imageView;
+	private Ball ball;
+	private ImageView imageView;
+	private final int boundsX,boundsY;
 
-public Tile(Context context){
+public Tile(Context context,int boundsY,int boundsX){
 	ball= new Ball(0);
 	imageView= new ImageView(context);
+	this.boundsX=boundsX;
+	this.boundsY=boundsY;
 	}
 
 protected void setBall(int size, BallType tipo){
@@ -25,6 +28,12 @@ protected void setBall(int size, BallType tipo){
 		default: break;
 	}
 }
+	protected int getBoundsX(){
+		return	boundsX;
+	}
+	protected int getBoundsY(){
+		return boundsY;
+	}
 
 
 protected void removeBall(){
