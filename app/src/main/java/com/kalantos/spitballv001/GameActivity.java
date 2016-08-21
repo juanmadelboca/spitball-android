@@ -23,7 +23,7 @@ public class GameActivity extends AppCompatActivity {
 
     private int clicks = 0;
     private int playerTurn = 0;
-    private int ax, ay, green, pink,difficulty,flag;
+    private int ax, ay, green, pink,difficulty;
     private boolean ArtificialInteligence;
     private int widthScreen,heightScreen;
 
@@ -134,7 +134,7 @@ public class GameActivity extends AppCompatActivity {
         if(layout!=null){
         for (int i = 0; i < height; i++) {
             LinearLayout row = new LinearLayout(this);
-            row.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+            row.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
             for (int j = 0; j < width; j++) {
                 tiles[i][j] = new Tile(this,(heightScreen/6)*(i+1),(widthScreen/10)*(j+1));
                 tiles[i][j].getImageView().setLayoutParams(new LinearLayout.LayoutParams(widthScreen / 10, heightScreen / 6));
@@ -167,7 +167,7 @@ public class GameActivity extends AppCompatActivity {
         if (layout != null) {
             for (int i = 0; i < height; i++) {
                 LinearLayout row = new LinearLayout(this);
-                row.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+                row.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
                 for (int j = 0; j < width; j++) {
                     //la suma al ancho y alto son un factor de correccion por las barras de navegacion y la de la hora
                     tiles[i][j] = new Tile(this, (heightScreen / 6) * (i + 1), (widthScreen / 10) * (j + 1));
@@ -267,39 +267,44 @@ public class GameActivity extends AppCompatActivity {
                 //CANCEL SELECTION
                 if (ax == i && ay == j) {
                     clicks = 0;
-                    flag=1;
+                    return;
                 }
                 //OUTBOUND MOVEMENT
                 if(Math.abs(ax - i) > 2 || Math.abs(ay - j) > 2){
                     clicks=0;
-                    flag=1;
+                    return;
                 }
                 //MOVE
                 if ((Math.abs(ax - i) == 1 && Math.abs(ay - j) == 1) || (Math.abs(ax - i) == 0 && Math.abs(ay - j) == 1) || (Math.abs(ax - i) == 1 && Math.abs(ay - j) == 0)) {
                     move(ax, ay, i, j);
+                    ArtificialMove();
+                    return;
                 }
                 //SPLIT DOWN
                 if (ax - i == -2 && ay == j) {
-
                     split(ax, ay,2,0);
+                    ArtificialMove();
+                    return;
                 }
                 //SPLIT UP
                 if (ax - i == 2 && ay == j) {
                     split(ax, ay,-2,0);
+                    ArtificialMove();
+                    return;
                 }
                 //SPLIT RIGHT
                 if (ay - j == -2 && i == ax) {
                     split(ax, ay,0,2);
+                    ArtificialMove();
+                    return;
                 }
                 //SPLIT LEFT
                 if (ay - j == 2 && i == ax) {
                     split(ax, ay,0,-2);
+                    ArtificialMove();
                 }
 
-            if(ArtificialInteligence&&flag!=1) {
-               ArtificialMove();
-            }
-            flag=0;
+
 
 
         }
@@ -317,31 +322,33 @@ public class GameActivity extends AppCompatActivity {
     public void ArtificialMove() {
         //va en bloque try catch porque cuando termina el juego la AI intenta mover y genera excepcion de esta forma cuando esta
         //excepcion ocurre no tenogo problemas
-        try {
-            int[] AIMoves;
-            switch (difficulty) {
-                case 0:
-                    AIMoves = ArtificialInteligenceAlgorithm.RandomMove(tiles);
-                    break;
-                case 1:
-                    AIMoves = ArtificialInteligenceAlgorithm.easyMove(tiles);
-                    break;
-                case 2:
-                    AIMoves = ArtificialInteligenceAlgorithm.hardMove(tiles);
-                    break;
-                default:
-                    AIMoves = ArtificialInteligenceAlgorithm.RandomMove(tiles);
-                    break;
-            }
-            if (AIMoves[4]!=-1) {
-                move(AIMoves[0], AIMoves[1], AIMoves[2], AIMoves[3]);
-            }else  {
-                split(AIMoves[0], AIMoves[1], AIMoves[2], AIMoves[3]);
-            }
+        if (ArtificialInteligence) {
+            try {
+                int[] AIMoves;
+                switch (difficulty) {
+                    case 0:
+                        AIMoves = ArtificialInteligenceAlgorithm.RandomMove(tiles);
+                        break;
+                    case 1:
+                        AIMoves = ArtificialInteligenceAlgorithm.easyMove(tiles);
+                        break;
+                    case 2:
+                        AIMoves = ArtificialInteligenceAlgorithm.hardMove(tiles);
+                        break;
+                    default:
+                        AIMoves = ArtificialInteligenceAlgorithm.RandomMove(tiles);
+                        break;
+                }
+                if (AIMoves[4] != -1) {
+                    move(AIMoves[0], AIMoves[1], AIMoves[2], AIMoves[3]);
+                } else {
+                    split(AIMoves[0], AIMoves[1], AIMoves[2], AIMoves[3]);
+                }
 
 
-        } catch (Exception e) {
-            finishGame();
+            } catch (Exception e) {
+                finishGame();
+            }
         }
     }
 
@@ -351,7 +358,7 @@ public class GameActivity extends AppCompatActivity {
         int splittedBallSize=tiles[i][j].getBall().getSize()/3;
 
         if (tiles[i][j].getBall() instanceof BallGreen) {
-            BallGreen splittedBall = new BallGreen(splittedBallSize);
+            BallGreen splittedBall = new BallGreen((int)(splittedBallSize*1.2));
             if (tiles[i][j].getBall().getSize() >= 10) {
                 try {
                     tiles[i][j].getBall().setSize(tiles[i][j].getBall().getSize() - splittedBallSize);
@@ -362,7 +369,7 @@ public class GameActivity extends AppCompatActivity {
             }
         }
         if (tiles[i][j].getBall() instanceof BallPink) {
-            BallPink splitttedBall = new BallPink(splittedBallSize);
+            BallPink splitttedBall = new BallPink((int)(splittedBallSize*1.2));
             if (tiles[i][j].getBall().getSize() >= 10) {
                 try {
                     tiles[i][j].getBall().setSize(tiles[i][j].getBall().getSize() - splittedBallSize);
@@ -379,18 +386,17 @@ public class GameActivity extends AppCompatActivity {
 
     }
 
-    private void debug() {
+   /* private void debug() {
         //metodo para crear una matriz con los valores size de las bolas
         //util para debugear fallas graficas
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
-                //System.out.print(tiles[i][j].getBall().getSize() + "    ");
-                System.out.print(tiles[i][j].getBoundsY()+"/"+tiles[i][j].getBoundsX() + "    ");
+                System.out.print(tiles[i][j].getBall().getSize() + "    ");
             }
             System.out.println("\n");
         }
 
-    }
+    }*/
 
 
 }

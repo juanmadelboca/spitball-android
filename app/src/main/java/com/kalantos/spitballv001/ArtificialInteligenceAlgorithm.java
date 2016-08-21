@@ -5,6 +5,7 @@ import java.util.Random;
 
 /**
  * Created by kalantos on 03/08/16.
+ * Little AI for the game
  */
 public class ArtificialInteligenceAlgorithm {
     public static final int HEIGHT = 6;

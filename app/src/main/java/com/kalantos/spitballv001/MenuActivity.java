@@ -5,7 +5,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.CheckBox;
-import android.widget.Switch;
 
 public class MenuActivity extends AppCompatActivity {
     boolean clicker;
