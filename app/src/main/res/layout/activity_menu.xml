@@ -12,7 +12,7 @@
     <Button
         android:layout_width="100dp"
         android:layout_height="50dp"
-        android:text="2 Players"
+        android:text="@string/players2"
         android:id="@+id/button2"
         android:layout_above="@+id/button3"
         android:layout_alignStart="@+id/button3"
@@ -21,7 +21,7 @@
     <Button
         android:layout_width="100dp"
         android:layout_height="50dp"
-        android:text="1 Player"
+        android:text="@string/player1"
         android:id="@+id/button3"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
@@ -29,7 +29,7 @@
     <Button
         android:layout_width="100dp"
         android:layout_height="50dp"
-        android:text="acerca de.."
+        android:text="@string/acercaDe"
         android:id="@+id/button4"
         android:layout_below="@+id/button3"
         android:layout_alignStart="@+id/button3" />
@@ -84,7 +84,7 @@
     <CheckBox
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Modo Click"
+        android:text="@string/clickMode"
         android:id="@+id/checkBox"
         android:layout_below="@+id/imageView3"
         android:layout_alignParentStart="true" />

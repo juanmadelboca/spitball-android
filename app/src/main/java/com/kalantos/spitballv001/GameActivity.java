@@ -3,22 +3,17 @@ package com.kalantos.spitballv001;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
 import android.graphics.Point;
 import android.graphics.PointF;
-import android.graphics.drawable.Drawable;
-import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Button;
-import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-import android.widget.Toast;
+
+import java.util.Calendar;
 
 public class GameActivity extends AppCompatActivity {
 
@@ -27,14 +22,10 @@ public class GameActivity extends AppCompatActivity {
     final int height = 6;
 
     private int clicks = 0;
-    private int turno = 0;
+    private int playerTurn = 0;
     private int ax, ay, green, pink,difficulty,flag;
     private boolean ArtificialInteligence;
     private int widthScreen,heightScreen;
-    /////////////////////////////////////////
-    //variables que pueden ser reemplazadas
-    PointF startPoint=new PointF();
-    PointF endPoint=new PointF();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,9 +83,9 @@ public class GameActivity extends AppCompatActivity {
         for (int i = 0; i < height; i++) {
 
             for (int j = 0; j < width; j++) {
-            double temp= (tiles[i][j].getBall().getSize() ) + 110;
+            double temp= (tiles[i][j].getBall().getSize() ) + 110-((tiles[i][j].getBall().getSize() )*0.25);
                 int ballSize=(int)temp;
-
+                //probar velocidad declarando un bitmap afuera
                 if (tiles[i][j].getBall() instanceof BallGreen) {
                     Bitmap bitmapImage = BitmapFactory.decodeResource(getResources(), R.drawable.ballgreen_small);
                     Bitmap scaled = Bitmap.createScaledBitmap(bitmapImage, ballSize, ballSize, false);
@@ -122,8 +113,8 @@ public class GameActivity extends AppCompatActivity {
 
         }
         time_end = System.currentTimeMillis();
-     //   System.out.println("the task has taken "+ ( time_end - time_start ) +" milliseconds");
-        debug();
+        System.out.println("the task has taken "+ ( time_end - time_start ) +" milliseconds");
+        //debug();
     }
 
     private void finishGame() {
@@ -140,7 +131,7 @@ public class GameActivity extends AppCompatActivity {
         tiles = new Tile[height][width];
         LinearLayout layout = (LinearLayout) findViewById(R.id.layaout); //Can also be done in xml by android:orientation="vertical"
 
-
+        if(layout!=null){
         for (int i = 0; i < height; i++) {
             LinearLayout row = new LinearLayout(this);
             row.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
@@ -166,72 +157,72 @@ public class GameActivity extends AppCompatActivity {
 
             layout.addView(row);
         }
+        }
     }
     private void swipeBoard() {
         //arma el tablero  usando las medidas de la pantalla
         tiles = new Tile[height][width];
         LinearLayout layout = (LinearLayout) findViewById(R.id.layaout); //Can also be done in xml by android:orientation="vertical"
 
-           for (int i = 0; i < height; i++) {
-            LinearLayout row = new LinearLayout(this);
-            row.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-            for (int j = 0; j < width; j++) {
-                //la suma al ancho y alto son un factor de correccion por las barras de navegacion y la de la hora
-                tiles[i][j] = new Tile(this,(heightScreen/6)*(i+1),(widthScreen/10)*(j+1));
-                tiles[i][j].getImageView().setLayoutParams(new LinearLayout.LayoutParams(widthScreen / 10, heightScreen / 6));
-                tiles[i][j].getImageView().setOnTouchListener(new View.OnTouchListener(){
-                    public boolean onTouch(View v,MotionEvent event) {
-                        //devuelve el tile que fue presionado
-                       // int modification=100;
+        if (layout != null) {
+            for (int i = 0; i < height; i++) {
+                LinearLayout row = new LinearLayout(this);
+                row.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+                for (int j = 0; j < width; j++) {
+                    //la suma al ancho y alto son un factor de correccion por las barras de navegacion y la de la hora
+                    tiles[i][j] = new Tile(this, (heightScreen / 6) * (i + 1), (widthScreen / 10) * (j + 1));
+                    tiles[i][j].getImageView().setLayoutParams(new LinearLayout.LayoutParams(widthScreen / 10, heightScreen / 6));
+                    tiles[i][j].getImageView().setOnTouchListener(new View.OnTouchListener() {
+                        final int MAX_CLICK_DURATION = 200;
+                        long startClickTime;
+                        PointF startPoint = new PointF();
+                        PointF endPoint = new PointF();
 
-                        int eventId=event.getAction();
-                        //System.out.println("CLICK NUEVO");
-                        switch (eventId){
-                            case MotionEvent.ACTION_DOWN:
-                                System.out.println("ACTION DOWN");
-                                startPoint=new PointF();
-                                endPoint= new PointF();
-                                //roto x por y porqe la pantalla esta en landscape
-                                startPoint.y=event.getRawY();
-                                startPoint.x=event.getRawX();
-                                int[] temporal= detectMove(startPoint.y,startPoint.x);
-                                if(temporal!=null) {
-                                    ClickGestion(temporal[0], temporal[1]);
-                                }
-                               break;
-                            case MotionEvent.ACTION_MOVE:
-                                //System.out.println("ACTION MOVE");
-                                // ver si esta bien con las coordenadas cruzadas
-                                endPoint.y=event.getRawY();
-                                endPoint.x=event.getRawX();
-                                break;
-                            case MotionEvent.ACTION_UP:
-                                System.out.println("ACTION UP");
-                                temporal=detectMove(endPoint.y,endPoint.x);
-                                if(temporal!=null) {
-                                    System.out.println("!null");
-                                    ClickGestion(temporal[0], temporal[1]);
-                                }else{
-                                    System.out.println("ELSE");
-                                    temporal= detectMove(startPoint.y,startPoint.x);
-                                    if(temporal!=null) {
-                                        ClickGestion(temporal[0], temporal[1]);
+                        public boolean onTouch(View v, MotionEvent event) {
+
+                            int eventId = event.getAction();
+                            switch (eventId) {
+                                case MotionEvent.ACTION_DOWN:
+                                    startClickTime = Calendar.getInstance().getTimeInMillis();
+                                    startPoint.y = event.getRawY();
+                                    startPoint.x = event.getRawX();
+                                    break;
+                                case MotionEvent.ACTION_MOVE:
+                                    endPoint.y = event.getRawY();
+                                    endPoint.x = event.getRawX();
+                                    break;
+                                case MotionEvent.ACTION_UP:
+                                    if ((Calendar.getInstance().getTimeInMillis() - startClickTime) >= MAX_CLICK_DURATION) {
+                                        clicks=0;
+                                        int[] temporalStart = detectMove(startPoint.y, startPoint.x);
+                                        int[] temporalEnd = detectMove(endPoint.y, endPoint.x);
+
+                                        if (temporalStart != null&&temporalEnd != null) {
+                                                ClickGestion(temporalStart[0], temporalStart[1]);
+                                                ClickGestion(temporalEnd[0], temporalEnd[1]);
+                                            }
+                                    }else{
+                                        int[] temporal = detectMove(startPoint.y, startPoint.x);
+                                        if (temporal != null) {
+                                            ClickGestion(temporal[0], temporal[1]);
+                                        }
                                     }
-                                    }
+
 
                                     break;
-                            default:
-                                break;
+                                default:
+                                    break;
 
+                            }
+                            return true;
                         }
-                        return true;
-                    }
-                });
-                tiles[i][j].getImageView().setId(j + (i * 10));
-                row.addView(tiles[i][j].getImageView());
-            }
+                    });
+                    tiles[i][j].getImageView().setId(j + (i * 10));
+                    row.addView(tiles[i][j].getImageView());
+                }
 
-            layout.addView(row);
+                layout.addView(row);
+            }
         }
     }
 
@@ -244,7 +235,6 @@ public class GameActivity extends AppCompatActivity {
                 if ((tiles[i][j].getBoundsY() - (heightScreen / 6)) <(int) y && (int) y < tiles[i][j].getBoundsY()) {
 
                     if ((tiles[i][j].getBoundsX() - (widthScreen / 10)) <(int) x &&(int) x < tiles[i][j].getBoundsX()) {
-                        System.out.println(" TILE :" +i+" - "+j);
                         return new int[]{i,j};
 
                     }
@@ -256,22 +246,16 @@ public class GameActivity extends AppCompatActivity {
 
     public void ClickGestion(int i, int j) {
         //recibe dos enteros que le indican el Tile presionado y por medio de eso gestiona las acciones a realizar
-
-        //System.out.println(""+i+"-"+j );
-        if ((tiles[i][j].getBall() instanceof BallGreen) && clicks == 0 && (turno % 2 == 0)) {
+        if ((tiles[i][j].getBall() instanceof BallGreen) && clicks == 0 && (playerTurn % 2 == 0)) {
             ax = i;
             ay = j;
             clicks++;
-            turno++;
-            System.out.println("SOY CLICK 1 DE BALL GREEN");
             return;
 
-        }  if ((tiles[i][j].getBall() instanceof BallPink) && clicks == 0 && (turno % 2 == 1)) {
+        }  if ((tiles[i][j].getBall() instanceof BallPink) && clicks == 0 && (playerTurn % 2 == 1)) {
                 ax = i;
                 ay = j;
                 clicks++;
-                turno++;
-                System.out.println("SOY CLICK 1 DE BALL PINK");
                 return;
 
                 }
@@ -280,11 +264,14 @@ public class GameActivity extends AppCompatActivity {
 
 
         if (clicks == 1) {
-            System.out.println("SOY CLICK 2 DE CUALQUIER BOLA");
                 //CANCEL SELECTION
                 if (ax == i && ay == j) {
                     clicks = 0;
-                    turno--;
+                    flag=1;
+                }
+                //OUTBOUND MOVEMENT
+                if(Math.abs(ax - i) > 2 || Math.abs(ay - j) > 2){
+                    clicks=0;
                     flag=1;
                 }
                 //MOVE
@@ -309,7 +296,6 @@ public class GameActivity extends AppCompatActivity {
                     split(ax, ay,0,-2);
                 }
 
-                //revisar
             if(ArtificialInteligence&&flag!=1) {
                ArtificialMove();
             }
@@ -326,7 +312,7 @@ public class GameActivity extends AppCompatActivity {
         tiles[i][j].removeBall();
         paint();
         clicks = 0;
-      //  debug();
+        playerTurn++;
     }
     public void ArtificialMove() {
         //va en bloque try catch porque cuando termina el juego la AI intenta mover y genera excepcion de esta forma cuando esta
@@ -347,13 +333,12 @@ public class GameActivity extends AppCompatActivity {
                     AIMoves = ArtificialInteligenceAlgorithm.RandomMove(tiles);
                     break;
             }
-            System.out.println(""+AIMoves[0]+AIMoves[1]+AIMoves[2]+AIMoves[3]);
             if (AIMoves[4]!=-1) {
                 move(AIMoves[0], AIMoves[1], AIMoves[2], AIMoves[3]);
             }else  {
                 split(AIMoves[0], AIMoves[1], AIMoves[2], AIMoves[3]);
             }
-            turno++;
+
 
         } catch (Exception e) {
             finishGame();
@@ -390,7 +375,7 @@ public class GameActivity extends AppCompatActivity {
 
         paint();
         clicks=0;
-        debug();
+        playerTurn++;
 
     }
 

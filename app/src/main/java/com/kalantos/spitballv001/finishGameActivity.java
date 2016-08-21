@@ -37,13 +37,17 @@ public class finishGameActivity extends AppCompatActivity {
         int green=extras.getInt("green");
         int pink=extras.getInt("pink");
         if(green>pink){
-            editText.setText("GANA VERDE");
-             Drawable pic=getResources().getDrawable(R.drawable.ballgreen);
+            if(editText!=null){
+            editText.setText(R.string.winnerGreen);
+            }
+            Drawable pic=getResources().getDrawable(R.drawable.ballgreen);
 
                 imageView.setImageDrawable(pic);
         }
         else{
-            editText.setText("GANA ROSA");
+            if(editText!=null) {
+                editText.setText(R.string.winnerPink);
+            }
             Drawable pic=getResources().getDrawable(R.drawable.ballpink);
 
              imageView.setImageDrawable(pic);

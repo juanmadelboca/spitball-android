@@ -14,7 +14,7 @@
     <Button
         android:layout_width="100dp"
         android:layout_height="60dp"
-        android:text="for dummies"
+        android:text="@string/forDummies"
         android:id="@+id/button"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
@@ -24,7 +24,7 @@
     <Button
         android:layout_width="100dp"
         android:layout_height="60dp"
-        android:text="Easy"
+        android:text="@string/easy"
         android:id="@+id/button5"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
@@ -34,7 +34,7 @@
     <Button
         android:layout_width="100dp"
         android:layout_height="60dp"
-        android:text="Hard"
+        android:text="@string/hard"
         android:id="@+id/button6"
         android:layout_alignParentBottom="true"
         android:layout_alignStart="@+id/button5"
