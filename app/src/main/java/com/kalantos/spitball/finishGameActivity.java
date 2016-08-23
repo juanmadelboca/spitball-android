@@ -1,4 +1,4 @@
-package com.kalantos.spitballv001;
+package com.kalantos.spitball;
 
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
@@ -53,8 +53,9 @@ public class finishGameActivity extends AppCompatActivity {
         new Handler().postDelayed(new Runnable(){
             public void run(){
                 Intent intent = new Intent(finishGameActivity.this, MenuActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
-                finish();
             }
         }, 2000);
     }

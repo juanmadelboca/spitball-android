@@ -1,4 +1,4 @@
-package com.kalantos.spitballv001;
+package com.kalantos.spitball;
 
 import android.content.Intent;
 import android.graphics.Bitmap;

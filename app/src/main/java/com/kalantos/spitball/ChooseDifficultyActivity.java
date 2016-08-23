@@ -1,4 +1,4 @@
-package com.kalantos.spitballv001;
+package com.kalantos.spitball;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
@@ -40,6 +40,6 @@ public class ChooseDifficultyActivity extends AppCompatActivity {
         intent.putExtra("clicker",click);
         startActivity(intent);
         //better finish activity? or let it background so you can go back to menu?
-        finish();
+        //finish();
     }
 }

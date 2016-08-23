@@ -1,4 +1,4 @@
-package com.kalantos.spitballv001;
+package com.kalantos.spitball;
 
 import java.util.ArrayList;
 import java.util.Random;

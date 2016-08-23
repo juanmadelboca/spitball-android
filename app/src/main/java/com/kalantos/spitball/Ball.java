@@ -1,4 +1,4 @@
-package com.kalantos.spitballv001;
+package com.kalantos.spitball;
 public class Ball {
 	private int size;
 public Ball(int size){

@@ -1,4 +1,4 @@
-package com.kalantos.spitballv001;
+package com.kalantos.spitball;
 public enum BallType {
 BALLGREEN,BALLPINK;
 	public String toString(){
