@@ -198,8 +198,8 @@ public class GameActivity extends AppCompatActivity {
                                         int[] temporalEnd = detectMove(endPoint.y, endPoint.x);
 
                                         if (temporalStart != null&&temporalEnd != null) {
-                                                ClickGestion(temporalStart[0], temporalStart[1]);
-                                                ClickGestion(temporalEnd[0], temporalEnd[1]);
+                                                swipeGestion(temporalStart[0], temporalStart[1]);
+                                                swipeGestion(temporalEnd[0], temporalEnd[1]);
                                             }
                                     }else{
                                         int[] temporal = detectMove(startPoint.y, startPoint.x);
@@ -303,6 +303,88 @@ public class GameActivity extends AppCompatActivity {
                     split(ax, ay,0,-2);
                     ArtificialMove();
                 }
+
+
+
+
+        }
+    }
+    public void swipeGestion(int i, int j) {
+        //recibe dos enteros que le indican el Tile presionado y por medio de eso gestiona las acciones a realizar
+        if ((tiles[i][j].getBall() instanceof BallGreen) && clicks == 0 && (playerTurn % 2 == 0)) {
+            ax = i;
+            ay = j;
+            clicks++;
+            return;
+
+        }  if ((tiles[i][j].getBall() instanceof BallPink) && clicks == 0 && (playerTurn % 2 == 1)) {
+            ax = i;
+            ay = j;
+            clicks++;
+            return;
+
+        }
+
+        if (clicks == 1) {
+            //CANCEL SELECTION
+            if (ax == i && ay == j) {
+                clicks = 0;
+                return;
+            }
+
+            //MOVE
+            if ((Math.abs(ax - i) == 1 && Math.abs(ay - j) == 1) || (Math.abs(ax - i) == 0 && Math.abs(ay - j) == 1) || (Math.abs(ax - i) == 1 && Math.abs(ay - j) == 0)) {
+                move(ax, ay, i, j);
+                ArtificialMove();
+                return;
+            }
+            //SWIPE DOWN
+            if (ax-i <0 && ay == j) {
+                move(ax, ay, ax+1, ay);
+                ArtificialMove();
+                return;
+            }
+            //SWIPE UP
+            if (ax - i >0 && ay == j) {
+                move(ax, ay, ax-1, ay);
+                ArtificialMove();
+                return;
+            }
+            //SWIPE RIGHT
+            if (ay - j <0 && i == ax) {
+                move(ax, ay, ax, ay+1);
+                ArtificialMove();
+                return;
+            }
+            //SWIPE LEFT
+            if (ay - j >0 && i == ax) {
+                move(ax, ay, ax, ay-1);
+                ArtificialMove();
+            }
+            //SWIPE CORNERS
+            //esq superior izq
+            if (ay - j >0 && ax-i>0 && ay-j==(ax-i)) {
+                move(ax, ay, ax-1, ay-1);
+                ArtificialMove();
+            }
+
+            //esq superior derecha
+            if (ay - j <0 && ax-i>0 && ay-j==-(ax-i)) {
+                move(ax, ay, ax-1, ay+1);
+                ArtificialMove();
+            }
+
+            //esq inferior izq
+            if (ay - j >0 && ax-i<0 && ay-j==-(ax-i)) {
+                move(ax, ay, ax+1, ay-1);
+                ArtificialMove();
+            }
+
+            //esq inferior derecha
+            if (ay - j <0 && ax-i<0 && ay-j==(ax-i)) {
+                move(ax, ay, ax+1, ay+1);
+                ArtificialMove();
+            }
 
 
 

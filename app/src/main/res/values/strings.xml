@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">SpitBall V0.0.1</string>
+    <string name="app_name">SpitBall</string>
     <string name="winnerPink">Gano Rosa</string>
     <string name="winnerGreen">Gano Verde</string>
     <string name="players2">2 Players</string>
