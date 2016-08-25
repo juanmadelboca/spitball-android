@@ -26,6 +26,10 @@
         <activity android:name="com.kalantos.spitball.ChooseDifficultyActivity"
             android:screenOrientation="landscape" > >
         </activity>
+        <activity android:name="com.kalantos.spitball.settings"
+        android:screenOrientation="landscape" > >
+    </activity>
+
     </application>
 
 </manifest>

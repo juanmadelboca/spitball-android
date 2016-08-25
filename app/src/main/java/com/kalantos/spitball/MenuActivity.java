@@ -4,12 +4,9 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.CheckBox;
 
 public class MenuActivity extends AppCompatActivity {
     boolean clicker;
-    CheckBox checkBox;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -23,14 +20,11 @@ public class MenuActivity extends AppCompatActivity {
                         | View.SYSTEM_UI_FLAG_FULLSCREEN // hide status bar
                         | View.SYSTEM_UI_FLAG_IMMERSIVE);
 
-        checkBox=(CheckBox) findViewById(R.id.checkBox);
 
     }
     public void intentGame(View view){
         Intent intent=new Intent(MenuActivity.this,GameActivity.class);
         intent.putExtra("AI",false);
-        clicker=checkBox.isChecked();
-        intent.putExtra("clicker",clicker);
         startActivity(intent);
         //better finish activity? or let it background so you can go back to menu?
         finish();
@@ -38,10 +32,12 @@ public class MenuActivity extends AppCompatActivity {
 
     public void intentChooseDifficulty(View view){
         Intent intent=new Intent(MenuActivity.this,ChooseDifficultyActivity.class);
-        clicker=checkBox.isChecked();
-        intent.putExtra("clicker",clicker);
         startActivity(intent);
         //better finish activity? or let it background so you can go back to menu?
         //finish();
+    }
+    public void intentSettings(View view){
+        Intent intent=new Intent(MenuActivity.this,settings.class);
+        startActivity(intent);
     }
 }

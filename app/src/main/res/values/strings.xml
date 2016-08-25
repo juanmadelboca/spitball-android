@@ -9,4 +9,13 @@
     <string name="acercaDe">acerca de..</string>
     <string name="hard">Hard</string>
     <string name="clickMode">Modo click</string>
+
+    <string-array name="ballColors">
+        <item>Color Rosa</item>
+        <item>Color Verde</item>
+    </string-array>
+    <string-array name="ballColorsNumbers">
+        <item>0</item>
+        <item>1</item>
+    </string-array>
 </resources>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <CheckBoxPreference
+        android:key="clickMode"
+        android:title="Modo Click"
+        android:summary="Deshabilita el modo swipe"/>
+    <ListPreference
+        android:key="ballColor"
+        android:title="Color de bola"
+        android:summary="Elije el color de la bola"
+        android:entries="@array/ballColors"
+        android:entryValues="@array/ballColorsNumbers"
+        android:defaultValue="1"/>
+    <CheckBoxPreference
+        android:key="howTo"
+        android:title="How to Play"
+        android:summary="Activa Guia de entrenamiento"/>
+
+</PreferenceScreen>

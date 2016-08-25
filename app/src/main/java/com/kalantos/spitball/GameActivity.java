@@ -1,10 +1,12 @@
 package com.kalantos.spitball;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.graphics.PointF;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Display;
@@ -46,12 +48,13 @@ public class GameActivity extends AppCompatActivity {
         widthScreen = size.x+size.x/14;
         heightScreen = size.y;
 
+        SharedPreferences settings =PreferenceManager.getDefaultSharedPreferences(this);
+        boolean click=settings.getBoolean("clickMode",false);
+
         Intent intent   =getIntent();
         difficulty=intent.getIntExtra("difficulty",0);
         ArtificialInteligence=intent.getBooleanExtra("AI",true);
         System.out.println("la dificultad es"+difficulty);
-        boolean click=intent.getBooleanExtra("clicker",false);
-        System.out.println("el booleano es: "+click);
         if(click) {
             clickBoard();
         }else {
