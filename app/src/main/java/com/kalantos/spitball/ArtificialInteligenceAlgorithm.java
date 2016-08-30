@@ -72,11 +72,24 @@ public class ArtificialInteligenceAlgorithm {
         }
     }
     public static int[] getBall(Tile[][] tiles){
-        
+
         ArrayList<int[]> posibleVectors = ArtificialInteligenceAlgorithm.getAIBalls(tiles);
         Random random = new Random();
         int index = random.nextInt(posibleVectors.size());
         return posibleVectors.get(index);
+    }
+    public static int[] getBiggestBall(Tile[][] tiles){
+
+        ArrayList<int[]> posibleVectors = ArtificialInteligenceAlgorithm.getAIBalls(tiles);
+        int[]biggestBall= new int[2];
+        for(int i=0;i<posibleVectors.size()-1;i++) {
+            if (tiles[posibleVectors.get(i)[0]][posibleVectors.get(i)[1]].getBall().getSize() > tiles[posibleVectors.get(i + 1)[0]][posibleVectors.get(i + 1)[1]].getBall().getSize()) {
+                biggestBall=posibleVectors.get(i);
+            } else {
+                biggestBall=posibleVectors.get(i+1);
+            }
+        }
+        return biggestBall;
     }
 
     public static ArrayList<int[]> getAIBalls(Tile[][] tiles) {
@@ -94,8 +107,23 @@ public class ArtificialInteligenceAlgorithm {
         }
         return posibleVectors;
     }
+    public static ArrayList<int[]> getPlayerBalls(Tile[][] tiles) {
+        ArrayList<int[]> posibleVectors = new ArrayList<>();
 
-    public static int[] hardMove(Tile[][] tiles) {
+
+        for (int i = 0; i < 6; i++) {
+            for (int j = 0; j < 10; j++) {
+
+                if (tiles[i][j].getBall() instanceof BallGreen) {
+                    int[] temp = {i, j};
+                    posibleVectors.add(temp);
+                }
+            }
+        }
+        return posibleVectors;
+    }
+
+    public static int[] hardMove(Tile[][] tiles,boolean chaser) {
         //come a las bolas en rango que tengan menor tamaño, si no hay ninguna o esta tiene mayor tamaño
         //hace un movimiento aleatorio
 
@@ -129,25 +157,45 @@ public class ArtificialInteligenceAlgorithm {
                 }
 
         }
-
-                return ArtificialInteligenceAlgorithm.RandomMove(tiles);
-
-
-
-
+                if(chaser){
+                return ArtificialInteligenceAlgorithm.chaserMove(tiles);
+                }else{
+                   return ArtificialInteligenceAlgorithm.RandomMove(tiles);
+                }
     }
-  /*  public static int[] chaserMove(Tile[][] tiles) {
+
+    public static int[] chaserMove(Tile[][] tiles) {
+
         //hace un movimiento hacia la bola mas cercana de menor tamaño
 
-        int[] ball = ArtificialInteligenceAlgorithm.getBall(tiles);
-        
-        ArrayList<int[]> posibleMove = new ArrayList<>();
+        int[] ball = ArtificialInteligenceAlgorithm.getBiggestBall(tiles);
 
-        for (int k=0;k<posibleMove.size() ;k++ ) {
-            posibleMove
+        ArrayList<int[]> playerBalls = ArtificialInteligenceAlgorithm.getPlayerBalls(tiles);
+        //elige la bola mas cercana siempre y cuando sea de menor tamaño que la de AI
+        int distance = 1000;
+        int index=0;
+        int[] AI;
+        for (int k = 0; k < playerBalls.size(); k++) {
+            AI = playerBalls.get(k);
+            int newDistance = Math.abs(ball[0] - AI[0]) + Math.abs(ball[1] - AI[1]);
+            if (newDistance < distance&&tiles[ball[0]][ball[1]].getBall().getSize()>tiles[playerBalls.get(index)[0]][playerBalls.get(index)[1]].getBall().getSize()) {
+                distance = newDistance;
+                index = k;
             }
-            
+        }
+        AI = playerBalls.get(index);
+        if((ball[0]-AI[0])>0){
+            return new int[]{ball[0], ball[1], ball[0]-1, ball[1],1};
+        }else if((ball[0]-AI[0])<0){
+            return new int[]{ball[0], ball[1], ball[0]+1, ball[1],1};
+        }else{
+            if((ball[1]-AI[1])>0){
+                return new int[]{ball[0], ball[1], ball[0], ball[1]-1,1};
+            }
+            else{
+                return new int[]{ball[0], ball[1], ball[0], ball[1]+1,1};
+            }
+        }
 
-        return posibleVectors;
-        */
+    }
 }
