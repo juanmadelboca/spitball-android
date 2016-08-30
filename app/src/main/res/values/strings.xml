@@ -6,9 +6,10 @@
     <string name="forDummies">for dummies</string>
     <string name="player1">1 Player</string>
     <string name="easy">Easy</string>
-    <string name="acercaDe">acerca de..</string>
+    <string name="howToPlay">como jugar</string>
     <string name="hard">Hard</string>
     <string name="clickMode">Modo click</string>
+    <string name="howToPlayInfo">El juego consiste en comer todas las bolas del tablero para poder lograr esto cuentas con unos interesantes movimientos que te mostraremos a continuacion..</string>
 
     <string-array name="ballColors">
         <item>Color Rosa</item>
@@ -18,4 +19,7 @@
         <item>0</item>
         <item>1</item>
     </string-array>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

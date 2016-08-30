@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.kalantos.spitball" >
+    package="com.kalantos.spitball">
 
     <application
         android:allowBackup="true"
@@ -9,8 +9,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.NoActionBar">
         <activity
-            android:name="com.kalantos.spitball.MenuActivity"
-            android:screenOrientation="landscape" >
+            android:name=".MenuActivity"
+            android:screenOrientation="landscape">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -18,18 +18,22 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.kalantos.spitball.GameActivity"
+            android:name=".GameActivity"
             android:screenOrientation="landscape" />
         <activity
-            android:name="com.kalantos.spitball.finishGameActivity"
+            android:name=".finishGameActivity"
             android:screenOrientation="landscape" />
-        <activity android:name="com.kalantos.spitball.ChooseDifficultyActivity"
-            android:screenOrientation="landscape" > >
+        <activity
+            android:name=".ChooseDifficultyActivity"
+            android:screenOrientation="landscape">
+            >
         </activity>
-        <activity android:name="com.kalantos.spitball.settings"
-        android:screenOrientation="landscape" > >
-    </activity>
-
+        <activity
+            android:name=".settings"
+            android:screenOrientation="landscape">
+            >
+        </activity>
+        <activity android:name=".howToPlayActivity"></activity>
     </application>
 
 </manifest>

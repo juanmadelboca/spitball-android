@@ -1,9 +1,13 @@
 package com.kalantos.spitball;
 
 import android.content.Intent;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+
 
 public class MenuActivity extends AppCompatActivity {
     boolean clicker;
@@ -40,4 +44,9 @@ public class MenuActivity extends AppCompatActivity {
         Intent intent=new Intent(MenuActivity.this,settings.class);
         startActivity(intent);
     }
+    public void intentHowToPlay(View view){
+        Intent intent= new Intent(MenuActivity.this,howToPlayActivity.class);
+        startActivity(intent);
+    }
+
 }
