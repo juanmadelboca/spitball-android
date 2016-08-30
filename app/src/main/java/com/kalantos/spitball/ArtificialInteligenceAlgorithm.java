@@ -185,7 +185,6 @@ public class ArtificialInteligenceAlgorithm {
             }
         }
         AI = playerBalls.get(index);
-        System.out.println("["+AI[0]+"]["+AI[1]+"]");
         if((ball[0]-AI[0])>0){
             return new int[]{ball[0], ball[1], ball[0]-1, ball[1],1};
         }else if((ball[0]-AI[0])<0){
