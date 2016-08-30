@@ -273,63 +273,42 @@ public class GameActivity extends AppCompatActivity {
             clicks++;
             return;
 
-        }  if ((tiles[i][j].getBall() instanceof BallPink) && clicks == 0 && (playerTurn % 2 == 1)) {
-                ax = i;
-                ay = j;
-                clicks++;
+        }else if ((tiles[i][j].getBall() instanceof BallPink) && clicks == 0 && (playerTurn % 2 == 1)) {
+            ax = i;
+            ay = j;
+            clicks++;
+            return;
+
+        }else if(clicks ==1){
+            //CANCEL SELECTION
+            if (ax == i && ay == j) {
+                clicks = 0;
                 return;
-
-                }
-
-
-
-
-        if (clicks == 1) {
-                //CANCEL SELECTION
-                if (ax == i && ay == j) {
-                    clicks = 0;
-                    return;
-                }
+            }else if(Math.abs(ax - i) > 2 || Math.abs(ay - j) > 2){
                 //OUTBOUND MOVEMENT
-                if(Math.abs(ax - i) > 2 || Math.abs(ay - j) > 2){
-                    clicks=0;
-                    return;
-                }
+                clicks=0;
+                return;
+            }else if ((Math.abs(ax - i) == 1 && Math.abs(ay - j) == 1) || (Math.abs(ax - i) == 0 && Math.abs(ay - j) == 1) || (Math.abs(ax - i) == 1 && Math.abs(ay - j) == 0)) {
                 //MOVE
-                if ((Math.abs(ax - i) == 1 && Math.abs(ay - j) == 1) || (Math.abs(ax - i) == 0 && Math.abs(ay - j) == 1) || (Math.abs(ax - i) == 1 && Math.abs(ay - j) == 0)) {
-                    move(ax, ay, i, j);
-                    ArtificialMove();
-                    return;
-                }
+                move(ax, ay, i, j);
+            }else if (ax - i == -2 && ay == j) {
                 //SPLIT DOWN
-                if (ax - i == -2 && ay == j) {
-                    split(ax, ay,2,0);
-                    ArtificialMove();
-                    return;
-                }
+                split(ax, ay,2,0);
+            }else if (ax - i == 2 && ay == j) {
                 //SPLIT UP
-                if (ax - i == 2 && ay == j) {
-                    split(ax, ay,-2,0);
-                    ArtificialMove();
-                    return;
-                }
+                split(ax, ay,-2,0);
+            }else if (ay - j == -2 && i == ax) {
                 //SPLIT RIGHT
-                if (ay - j == -2 && i == ax) {
-                    split(ax, ay,0,2);
-                    ArtificialMove();
-                    return;
-                }
+                split(ax, ay,0,2);
+            }else{
                 //SPLIT LEFT
-                if (ay - j == 2 && i == ax) {
-                    split(ax, ay,0,-2);
-                    ArtificialMove();
-                }
+                split(ax, ay,0,-2);
+            }
 
-
-
-
+            ArtificialMove();
         }
     }
+
     public void swipeGestion(int i, int j) {
         //recibe dos enteros que le indican el Tile presionado y por medio de eso gestiona las acciones a realizar
         if ((tiles[i][j].getBall() instanceof BallGreen) && clicks == 0 && (playerTurn % 2 == 0)) {
@@ -338,76 +317,47 @@ public class GameActivity extends AppCompatActivity {
             clicks++;
             return;
 
-        }  if ((tiles[i][j].getBall() instanceof BallPink) && clicks == 0 && (playerTurn % 2 == 1)) {
+        }else if ((tiles[i][j].getBall() instanceof BallPink) && clicks == 0 && (playerTurn % 2 == 1)) {
             ax = i;
             ay = j;
             clicks++;
             return;
 
-        }
-
-        if (clicks == 1) {
+        }else if (clicks == 1){
             //CANCEL SELECTION
             if (ax == i && ay == j) {
                 clicks = 0;
                 return;
-            }
-
-            //MOVE
-            if ((Math.abs(ax - i) == 1 && Math.abs(ay - j) == 1) || (Math.abs(ax - i) == 0 && Math.abs(ay - j) == 1) || (Math.abs(ax - i) == 1 && Math.abs(ay - j) == 0)) {
+            }else if ((Math.abs(ax - i) == 1 && Math.abs(ay - j) == 1) || (Math.abs(ax - i) == 0 && Math.abs(ay - j) == 1) || (Math.abs(ax - i) == 1 && Math.abs(ay - j) == 0)) {
+                //MOVE
                 move(ax, ay, i, j);
-                ArtificialMove();
-                return;
-            }
-            //SWIPE DOWN
-            if (ax-i <0 && ay == j) {
+            }else if (ax-i <0 && ay == j) {
+                //SWIPE DOWN
                 move(ax, ay, ax+1, ay);
-                ArtificialMove();
-                return;
-            }
-            //SWIPE UP
-            if (ax - i >0 && ay == j) {
+            }else if (ax - i >0 && ay == j) {
+                //SWIPE UP
                 move(ax, ay, ax-1, ay);
-                ArtificialMove();
-                return;
-            }
-            //SWIPE RIGHT
-            if (ay - j <0 && i == ax) {
+            }else if (ay - j <0 && i == ax) {
+                //SWIPE RIGHT
                 move(ax, ay, ax, ay+1);
-                ArtificialMove();
-                return;
-            }
-            //SWIPE LEFT
-            if (ay - j >0 && i == ax) {
+            }else if (ay - j >0 && i == ax) {
+                //SWIPE LEFT
                 move(ax, ay, ax, ay-1);
-                ArtificialMove();
-            }
-            //SWIPE CORNERS
-            //esq superior izq
-            if (ay - j >0 && ax-i>0 && ay-j==(ax-i)) {
+            }else if (ay - j >0 && ax-i>0 && ay-j==(ax-i)) {
+                //SWIPE CORNERS
+                //esq superior izq
                 move(ax, ay, ax-1, ay-1);
-                ArtificialMove();
-            }
-
-            //esq superior derecha
-            if (ay - j <0 && ax-i>0 && ay-j==-(ax-i)) {
+            }else if (ay - j <0 && ax-i>0 && ay-j==-(ax-i)) {
+                //esq superior derecha
                 move(ax, ay, ax-1, ay+1);
-                ArtificialMove();
-            }
-
-            //esq inferior izq
-            if (ay - j >0 && ax-i<0 && ay-j==-(ax-i)) {
+            }else if (ay - j >0 && ax-i<0 && ay-j==-(ax-i)) {
+                //esq inferior izq
                 move(ax, ay, ax+1, ay-1);
-                ArtificialMove();
-            }
-
-            //esq inferior derecha
-            if (ay - j <0 && ax-i<0 && ay-j==(ax-i)) {
+            }else{
+                //esq inferior derecha
                 move(ax, ay, ax+1, ay+1);
-                ArtificialMove();
             }
-
-
+            ArtificialMove();
 
 
         }
