@@ -34,13 +34,31 @@ public class GameActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
 
-        getWindow().getDecorView().setSystemUiVisibility(
-                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+        final View decorView = getWindow().getDecorView();
+        final int flags = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                         | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                         | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                         | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION // hide nav bar
                         | View.SYSTEM_UI_FLAG_FULLSCREEN // hide status bar
-                        | View.SYSTEM_UI_FLAG_IMMERSIVE);
+                        | View.SYSTEM_UI_FLAG_IMMERSIVE;
+
+        getWindow().getDecorView().setSystemUiVisibility(flags);
+        decorView.setOnSystemUiVisibilityChangeListener(new View.OnSystemUiVisibilityChangeListener()
+                {
+                    @Override
+                    public void onSystemUiVisibilityChange(int visibility)
+                    {
+                        if((visibility & View.SYSTEM_UI_FLAG_FULLSCREEN) == 0)
+                        {
+                            try {
+                                Thread.sleep(1000);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                            decorView.setSystemUiVisibility(flags);
+                        }
+                    }
+                });
 
         Display display = getWindowManager().getDefaultDisplay();
         Point size = new Point();
@@ -412,16 +430,16 @@ public class GameActivity extends AppCompatActivity {
                 int[] AIMoves;
                 switch (difficulty) {
                     case 0:
-                        AIMoves = ArtificialInteligenceAlgorithm.RandomMove(tiles);
-                        break;
-                    case 1:
                         AIMoves = ArtificialInteligenceAlgorithm.easyMove(tiles);
                         break;
+                    case 1:
+                        AIMoves = ArtificialInteligenceAlgorithm.hardMove(tiles,false);
+                        break;
                     case 2:
-                        AIMoves = ArtificialInteligenceAlgorithm.hardMove(tiles);
+                        AIMoves = ArtificialInteligenceAlgorithm.hardMove(tiles,true);
                         break;
                     default:
-                        AIMoves = ArtificialInteligenceAlgorithm.RandomMove(tiles);
+                        AIMoves = ArtificialInteligenceAlgorithm.easyMove(tiles);
                         break;
                 }
                 if (AIMoves[4] != -1) {
