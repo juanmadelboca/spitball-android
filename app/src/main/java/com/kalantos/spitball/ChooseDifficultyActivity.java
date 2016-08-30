@@ -31,11 +31,14 @@ public class ChooseDifficultyActivity extends AppCompatActivity {
                     {
                         if((visibility & View.SYSTEM_UI_FLAG_FULLSCREEN) == 0)
                         {
+                            Thread thread=new Thread(new Timer());
+                            thread.start();
                             try {
-                                Thread.sleep(1000);
+                                thread.join();
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
                             }
+
                             decorView.setSystemUiVisibility(flags);
                         }
                     }

@@ -7,8 +7,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 
-import com.kalantos.spitball.R;
-
 public class howToPlayActivity extends AppCompatActivity {
 
     int state;
@@ -33,11 +31,14 @@ public class howToPlayActivity extends AppCompatActivity {
                     {
                         if((visibility & View.SYSTEM_UI_FLAG_FULLSCREEN) == 0)
                         {
+                            Thread thread=new Thread(new Timer());
+                            thread.start();
                             try {
-                                Thread.sleep(1000);
+                                thread.join();
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
                             }
+
                             decorView.setSystemUiVisibility(flags);
                         }
                     }
