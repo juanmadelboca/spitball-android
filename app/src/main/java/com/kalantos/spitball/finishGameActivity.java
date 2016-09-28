@@ -5,16 +5,38 @@ import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.InterstitialAd;
+
 public class finishGameActivity extends AppCompatActivity {
     ImageView imageView;
+    InterstitialAd mInterstitialAd;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_finish_game);
+        //ADS////////////////
+        mInterstitialAd = new InterstitialAd(this);
+        //ADS unitId=ca-app-pub-4117912268761040/6016063611
+        mInterstitialAd.setAdUnitId("ca-app-pub-3940256099942544/1033173712");
+
+        mInterstitialAd.setAdListener(new AdListener() {
+            @Override
+            public void onAdClosed() {
+                requestNewInterstitial();
+                restartGame();
+            }
+        });
+
+        requestNewInterstitial();
+        ////////////////
         chooseWinner();
 
 
@@ -74,13 +96,29 @@ public class finishGameActivity extends AppCompatActivity {
         }
         new Handler().postDelayed(new Runnable(){
             public void run(){
-                Intent intent = new Intent(finishGameActivity.this, MenuActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
+                if (mInterstitialAd.isLoaded()) {
+                mInterstitialAd.show();
+            } else {
+                    Log.d("FINISHGAME","Fallo la carga");
+                    restartGame();
+            }
             }
         }, 2000);
     }
+    private void requestNewInterstitial() {
+        AdRequest adRequest = new AdRequest.Builder()
+                .addTestDevice("SEE_YOUR_LOGCAT_TO_GET_YOUR_DEVICE_ID")
+                .build();
 
+        mInterstitialAd.loadAd(adRequest);
+    }
+
+    private void restartGame(){
+
+        Intent intent = new Intent(finishGameActivity.this, MenuActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+    }
 
 }
