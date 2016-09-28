@@ -33,7 +33,8 @@
             android:screenOrientation="landscape">
             >
         </activity>
-        <activity android:name=".howToPlayActivity"></activity>
+        <activity android:name=".howToPlayActivity"
+            android:screenOrientation="landscape"></activity>
     </application>
 
 </manifest>
