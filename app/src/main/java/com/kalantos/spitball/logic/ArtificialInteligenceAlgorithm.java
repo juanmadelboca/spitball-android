@@ -105,7 +105,7 @@ public class ArtificialInteligenceAlgorithm {
         return posibleVectors;
     }
     public static ArrayList<int[]> getPlayerBalls(Tile[][] tiles) {
-        //obtiene las coordenadas de las balls propias del jugador humano
+        //obtiene las coordenadas de las bolas propias del jugador humano
         ArrayList<int[]> posibleVectors = new ArrayList<>();
 
 
