@@ -11,33 +11,27 @@
     tools:context="com.kalantos.spitball.GUI.howToPlayActivity">
 
     <Button
+        android:text="Button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Anterior"
-        android:id="@+id/btnHowToPlay1"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginEnd="175dp"
-        android:onClick="previousFragment"/>
+        android:layout_marginEnd="37dp"
+        android:layout_marginBottom="38dp"
+        android:id="@+id/button7"
+        android:onClick="intentMenu"/>
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Siguiente"
-        android:id="@+id/btnHowToPlay2"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginEnd="60dp"
-        android:onClick="nextFragment" />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/textView4"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true" />
 
-    <LinearLayout
-        android:id="@+id/fragmentHolder"
-        android:orientation="vertical"
+    <ListView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true"
-        android:layout_above="@+id/btnHowToPlay1">
-
-    </LinearLayout>
+        android:id="@+id/listView"/>
 </RelativeLayout>

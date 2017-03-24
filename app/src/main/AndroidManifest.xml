@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.kalantos.spitball">
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
         android:allowBackup="true"
@@ -10,12 +11,12 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.NoActionBar">
-
-        <meta-data android:name="com.google.android.gms.version"
+        <meta-data
+            android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
 
         <activity
-            android:name=".MenuActivity"
+            android:name=".GUI.MenuActivity"
             android:screenOrientation="landscape">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -24,23 +25,29 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".GameActivity"
+            android:name=".logic.GameActivity"
             android:screenOrientation="landscape" />
         <activity
-            android:name=".finishGameActivity"
+            android:name=".GUI.finishGameActivity"
             android:screenOrientation="landscape" />
         <activity
-            android:name=".ChooseDifficultyActivity"
+            android:name=".GUI.ChooseDifficultyActivity"
             android:screenOrientation="landscape">
             >
         </activity>
         <activity
-            android:name=".settings"
+            android:name=".GUI.settings"
             android:screenOrientation="landscape">
             >
         </activity>
-        <activity android:name=".howToPlayActivity"
-            android:screenOrientation="landscape"></activity>
+        <activity
+            android:name=".GUI.howToPlayActivity"
+            android:screenOrientation="landscape" />
+        <activity
+            android:name=".GUI.HighScores"
+            android:label="@string/title_activity_high_scores"
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
+        <activity android:name=".GUI.ChooseTypeOfGame"></activity>
     </application>
 
 </manifest>

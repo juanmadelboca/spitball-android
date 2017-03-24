@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:screenOrientation="landscape"
-    tools:context="com.kalantos.spitball.MenuActivity"
+    tools:context="com.kalantos.spitball.GUI.MenuActivity"
     android:background="@drawable/backgreen">
 
 
@@ -16,7 +16,7 @@
         android:id="@+id/button2"
         android:layout_above="@+id/button3"
         android:layout_alignStart="@+id/button3"
-        android:onClick="intentGame"/>
+        android:onClick="intentChooseTypeOfGame"/>
 
     <Button
         android:layout_width="100dp"
@@ -29,11 +29,11 @@
     <Button
         android:layout_width="100dp"
         android:layout_height="50dp"
-        android:text="@string/howToPlay"
+        android:text="@string/highScores"
         android:id="@+id/button4"
         android:layout_below="@+id/button3"
         android:layout_alignStart="@+id/button3"
-        android:onClick="intentHowToPlay"/>
+        android:onClick="intentHighScores"/>
 
     <ImageView
         android:layout_width="100dp"
@@ -90,6 +90,14 @@
         android:onClick="intentSettings"
         android:layout_above="@+id/imageView0"
         android:layout_toEndOf="@+id/imageView3" />
+
+    <TextView
+        android:text="TextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/imageView0"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/textView3" />
 
 
 </RelativeLayout>
