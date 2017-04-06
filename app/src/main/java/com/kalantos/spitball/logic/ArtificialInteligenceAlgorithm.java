@@ -2,7 +2,9 @@ package com.kalantos.spitball.logic;
 
 import java.util.ArrayList;
 import java.util.Random;
-
+/*
+* La Inteligencia artificial esta hecha para jugar siempre con el jugador de la derecha (rosa)
+* */
 public class ArtificialInteligenceAlgorithm {
     public static final int HEIGHT = 6;
     public static final int WIDTH = 10;

@@ -2,9 +2,7 @@ package com.kalantos.spitball.connectivity;
 
 import android.os.AsyncTask;
 import android.util.Log;
-
 import org.json.JSONObject;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;

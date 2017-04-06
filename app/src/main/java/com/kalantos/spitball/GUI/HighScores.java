@@ -31,7 +31,7 @@ public class HighScores extends AppCompatActivity {
 
         //obtiene en un JSON la lista de scores de la tabla albergada en el servidor
         try{
-            String st=new ConnectionTask().execute("http://kalantos.dhs.org/highScores.php","NO METHOD").get();
+            String st=new ConnectionTask().execute("http://192.168.1.32/highScores.php","NO METHOD").get();
 
            parseJSON(new JSONArray(st));
             ScoreAdapter adapter= new ScoreAdapter(scores,this);

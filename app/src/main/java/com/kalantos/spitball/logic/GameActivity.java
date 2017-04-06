@@ -9,17 +9,23 @@ import android.graphics.PointF;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
-
 import com.kalantos.spitball.R;
 import com.kalantos.spitball.GUI.finishGameActivity;
-
+import com.kalantos.spitball.connectivity.SendMoveTask;
+import org.json.JSONException;
+import org.json.JSONObject;
 import java.util.Calendar;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 public class GameActivity extends AppCompatActivity {
 
@@ -29,9 +35,9 @@ public class GameActivity extends AppCompatActivity {
 
     private int clicks = 0;
     private int playerTurn = 0;
-    private int GameId;
+    private int GameId,onlineTurn;
     private int ax, ay, green, pink,difficulty;
-    private boolean ArtificialInteligence;
+    private boolean ArtificialInteligence,onlineMove,isMyTurn;
     private int widthScreen,heightScreen;
 
     @Override
@@ -68,6 +74,7 @@ public class GameActivity extends AppCompatActivity {
                     }
                 });
 
+
         Display display = getWindowManager().getDefaultDisplay();
         Point size = new Point();
         display.getSize(size);
@@ -79,6 +86,7 @@ public class GameActivity extends AppCompatActivity {
 
         Intent intent   =getIntent();
         difficulty=intent.getIntExtra("difficulty",0);
+        onlineTurn=intent.getIntExtra("TURN",0);
         GameId=intent.getIntExtra("GAMEID",0);
         ArtificialInteligence=intent.getBooleanExtra("AI",true);
         System.out.println("la dificultad es"+difficulty);
@@ -88,8 +96,23 @@ public class GameActivity extends AppCompatActivity {
             swipeBoard();
         }
         inicialize();
+        //DEBUG : TOAST PARA VER GAMEID
+        Toast.makeText(this,"EL ID DEL JUEGO ES: "+GameId+"Y EL TURNO ES"+onlineTurn,Toast.LENGTH_LONG).show();
+
+        if(GameId!=0 && onlineTurn==1){
+            playerTurn++;
+            isMyTurn=false;
+        }else{
+            isMyTurn=true;
+            try {
+                new SendMoveTask().execute("http://kalantos.dhs.org/gameMove.php", "MOVE","0", "0", "0","0", "0", Integer.toString(GameId),Integer.toString(1)).get();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
+        }
         paint();
-        Toast.makeText(this,"EL ID DEL JUEGO ES: "+GameId,Toast.LENGTH_LONG).show();
 
     }
 
@@ -190,6 +213,7 @@ public class GameActivity extends AppCompatActivity {
         }
         }
     }
+
     private void swipeBoard() {
         //arma el tablero  usando las medidas de la pantalla
         tiles = new Tile[height][width];
@@ -263,8 +287,6 @@ public class GameActivity extends AppCompatActivity {
             }
         }
     }
-
-
 
     public int[] detectMove(float y,float x) {
         //certifica que sean coordenadas validas dentro del tablero
@@ -377,19 +399,97 @@ public class GameActivity extends AppCompatActivity {
             }
             ArtificialMove();
 
-
         }
     }
 
-
-    public void move(int i, int j, int y, int x) {// primeros 2 los originales 2 dos a donde van
+    public void move(int i, int j, int y, int x) {
+        // primeros 2 los originales 2 dos a donde van
         //mueve la bola
+        if(!onlineMove) {
+            final BlockingQueue<Void> pause = new ArrayBlockingQueue<Void>(1);
+            while(!isMyTurn){
+                getOnlineMove();
+                debug();
+                try {
+                    pause.poll(1000, TimeUnit.MILLISECONDS);
+                } catch (InterruptedException e) {
+                e.printStackTrace();
+                }
+            }
+        if(GameId==0){
+        playerTurn++;
+        }
+        //debug();
+        isMyTurn=false;
+            try {
+                new SendMoveTask().execute("http://kalantos.dhs.org/gameMove.php", "MOVE", Integer.toString(j), Integer.toString(i), Integer.toString(x), Integer.toString(y), Integer.toString(0), Integer.toString(GameId),Integer.toString(onlineTurn)).get();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
+        }
         tiles[y][x].battle(tiles[i][j].getBall());
         tiles[i][j].removeBall();
         paint();
-        clicks = 0;
-        playerTurn++;
+        clicks=0;
     }
+
+    public void getOnlineMove() {
+        //obtiene las coordenadas del ultimo movimiento y lo ejecuta de forma local
+        if (GameId!=0) {
+            int[] onlineMoves=recieveJSON();
+            onlineMove=true;
+            if(onlineMoves[5]!=onlineTurn){
+                isMyTurn=true;
+                playerTurn+=2;
+
+                if (onlineMoves[4] ==0) {
+                    move(onlineMoves[1], onlineMoves[0], onlineMoves[3], onlineMoves[2]);
+                }else{
+                    split(onlineMoves[1], onlineMoves[0], onlineMoves[3], onlineMoves[2]);
+                }
+            }
+            onlineMove=false;
+
+
+        }
+
+    }
+
+    private int[] recieveJSON(){
+        try {
+            String st= new  SendMoveTask().execute("http://kalantos.dhs.org/gameMove.php","GETMOVE","5","1","5","1","1",String.valueOf(GameId),"1").get();
+            Log.d("RECIBO PARSE",st);
+            //parsea un JSON para obtener un array con los movimientos
+            int []moves= new int[6];
+            JSONObject json= null;
+            try {
+                json = new JSONObject(st);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            try {
+                moves[0]=json.getInt("XINIT");
+                moves[1]=json.getInt("YINIT");
+                moves[2]=json.getInt("XLAST");
+                moves[3]=json.getInt("YLAST");
+                moves[4]=json.getInt("SPLIT");
+                moves[5]=json.getInt("TURN");
+            } catch (JSONException e1) {
+                e1.printStackTrace();
+            }
+            return moves;
+
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
     public void ArtificialMove() {
         //va en bloque try catch porque cuando termina el juego la AI intenta mover y genera excepcion de esta forma cuando esta
         //excepcion ocurre no tenogo problemas
@@ -423,7 +523,6 @@ public class GameActivity extends AppCompatActivity {
         }
     }
 
-
     public void split(int i, int j, int y, int x) {
         //escupe una bola 33% del tamaño de ella misma
         int splittedBallSize=tiles[i][j].getBall().getSize()/3;
@@ -450,14 +549,22 @@ public class GameActivity extends AppCompatActivity {
                 }
             }
         }
-
+        if(!onlineMove){
+        try {
+            new SendMoveTask().execute("http://kalantos.dhs.org/getMove.php","MOVE",Integer.toString(j),Integer.toString(i),Integer.toString(x),Integer.toString(y),Integer.toString(999),Integer.toString(GameId),Integer.toString(onlineTurn)).get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        }
         paint();
         clicks=0;
         playerTurn++;
 
     }
 
-   /* private void debug() {
+    private void debug() {
         //metodo para crear una matriz con los valores size de las bolas
         //util para debugear fallas graficas
         for (int i = 0; i < height; i++) {
@@ -467,7 +574,7 @@ public class GameActivity extends AppCompatActivity {
             System.out.println("\n");
         }
 
-    }*/
+    }
 
 
 }
