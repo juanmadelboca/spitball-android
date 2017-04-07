@@ -114,6 +114,21 @@ public class GameActivity extends AppCompatActivity {
         }
         paint();
 
+        Thread refreshOnlineThread= new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (true) {
+                    getOnlineMove();
+                    Log.d("THREAD", "IS MY TURN: " + isMyTurn);
+                    try {
+                        Thread.sleep(2000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+        refreshOnlineThread.start();
     }
 
     public void inicialize() {
@@ -405,22 +420,21 @@ public class GameActivity extends AppCompatActivity {
     public void move(int i, int j, int y, int x) {
         // primeros 2 los originales 2 dos a donde van
         //mueve la bola
-        if(!onlineMove) {
-            final BlockingQueue<Void> pause = new ArrayBlockingQueue<Void>(1);
-            while(!isMyTurn){
-                getOnlineMove();
-                debug();
-                try {
-                    pause.poll(1000, TimeUnit.MILLISECONDS);
-                } catch (InterruptedException e) {
-                e.printStackTrace();
+        if((!onlineMove &&isMyTurn) ||onlineMove || GameId==0) {
+
+            tiles[y][x].battle(tiles[i][j].getBall());
+            tiles[i][j].removeBall();
+            clicks = 0;
+            debug();
+            this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    paint();
                 }
-            }
-        if(GameId==0){
-        playerTurn++;
+            });
         }
         //debug();
-        isMyTurn=false;
+        if(!onlineMove && GameId!=0){
             try {
                 new SendMoveTask().execute("http://kalantos.dhs.org/gameMove.php", "MOVE", Integer.toString(j), Integer.toString(i), Integer.toString(x), Integer.toString(y), Integer.toString(0), Integer.toString(GameId),Integer.toString(onlineTurn)).get();
             } catch (InterruptedException e) {
@@ -428,39 +442,41 @@ public class GameActivity extends AppCompatActivity {
             } catch (ExecutionException e) {
                 e.printStackTrace();
             }
+            paint();
         }
-        tiles[y][x].battle(tiles[i][j].getBall());
-        tiles[i][j].removeBall();
-        paint();
-        clicks=0;
+        if(GameId==0){
+            playerTurn++;
+        }
     }
 
     public void getOnlineMove() {
         //obtiene las coordenadas del ultimo movimiento y lo ejecuta de forma local
-        if (GameId!=0) {
+
             int[] onlineMoves=recieveJSON();
             onlineMove=true;
             if(onlineMoves[5]!=onlineTurn){
                 isMyTurn=true;
-                playerTurn+=2;
-
                 if (onlineMoves[4] ==0) {
                     move(onlineMoves[1], onlineMoves[0], onlineMoves[3], onlineMoves[2]);
                 }else{
                     split(onlineMoves[1], onlineMoves[0], onlineMoves[3], onlineMoves[2]);
                 }
+            }else{
+                isMyTurn=false;
+
             }
             onlineMove=false;
 
 
-        }
+
 
     }
+
 
     private int[] recieveJSON(){
         try {
             String st= new  SendMoveTask().execute("http://kalantos.dhs.org/gameMove.php","GETMOVE","5","1","5","1","1",String.valueOf(GameId),"1").get();
-            Log.d("RECIBO PARSE",st);
+            //Log.d("RECIBO PARSE",st);
             //parsea un JSON para obtener un array con los movimientos
             int []moves= new int[6];
             JSONObject json= null;
