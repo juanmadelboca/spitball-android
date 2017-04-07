@@ -16,11 +16,14 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
+
 import com.kalantos.spitball.R;
 import com.kalantos.spitball.GUI.finishGameActivity;
 import com.kalantos.spitball.connectivity.SendMoveTask;
+
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import java.util.Calendar;
 import java.util.concurrent.ExecutionException;
 
@@ -29,13 +32,13 @@ public class GameActivity extends AppCompatActivity {
     Tile[][] tiles;
     final int width = 10;
     final int height = 6;
-    boolean gameOver=false;
+    boolean gameOver = false;
     private int clicks = 0;
     private int playerTurn = 0;
-    private int GameId,onlineTurn;
-    private int ax, ay, green, pink,difficulty;
-    private boolean ArtificialInteligence,onlineMove,isMyTurn;
-    private int widthScreen,heightScreen;
+    private int GameId, onlineTurn;
+    private int ax, ay, green, pink, difficulty;
+    private boolean ArtificialInteligence, onlineMove, isMyTurn,movelock;
+    private int widthScreen, heightScreen;
 
 
     @Override
@@ -45,88 +48,85 @@ public class GameActivity extends AppCompatActivity {
 
         final View decorView = getWindow().getDecorView();
         final int flags = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION // hide nav bar
-                        | View.SYSTEM_UI_FLAG_FULLSCREEN // hide status bar
-                        | View.SYSTEM_UI_FLAG_IMMERSIVE;
+                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION // hide nav bar
+                | View.SYSTEM_UI_FLAG_FULLSCREEN // hide status bar
+                | View.SYSTEM_UI_FLAG_IMMERSIVE;
 
         getWindow().getDecorView().setSystemUiVisibility(flags);
-        decorView.setOnSystemUiVisibilityChangeListener(new View.OnSystemUiVisibilityChangeListener()
-                {
-                    @Override
-                    public void onSystemUiVisibilityChange(int visibility)
-                    {
-                        if((visibility & View.SYSTEM_UI_FLAG_FULLSCREEN) == 0)
-                        {
-                            Thread thread=new Thread(new Timer());
-                            thread.start();
-                            try {
-                                thread.join();
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-
-                            decorView.setSystemUiVisibility(flags);
-                        }
+        decorView.setOnSystemUiVisibilityChangeListener(new View.OnSystemUiVisibilityChangeListener() {
+            @Override
+            public void onSystemUiVisibilityChange(int visibility) {
+                if ((visibility & View.SYSTEM_UI_FLAG_FULLSCREEN) == 0) {
+                    Thread thread = new Thread(new Timer());
+                    thread.start();
+                    try {
+                        thread.join();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
                     }
-                });
+
+                    decorView.setSystemUiVisibility(flags);
+                }
+            }
+        });
 
 
         Display display = getWindowManager().getDefaultDisplay();
         Point size = new Point();
         display.getSize(size);
-        widthScreen = size.x+size.x/14;
+        widthScreen = size.x + size.x / 14;
         heightScreen = size.y;
 
-        SharedPreferences settings =PreferenceManager.getDefaultSharedPreferences(this);
-        boolean click=settings.getBoolean("clickMode",false);
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean click = settings.getBoolean("clickMode", false);
 
-        Intent intent   =getIntent();
-        difficulty=intent.getIntExtra("difficulty",0);
-        onlineTurn=intent.getIntExtra("TURN",0);
-        GameId=intent.getIntExtra("GAMEID",0);
-        ArtificialInteligence=intent.getBooleanExtra("AI",true);
-        System.out.println("la dificultad es"+difficulty);
-        if(click) {
+        Intent intent = getIntent();
+        difficulty = intent.getIntExtra("difficulty", 0);
+        onlineTurn = intent.getIntExtra("TURN", 0);
+        GameId = intent.getIntExtra("GAMEID", 0);
+        ArtificialInteligence = intent.getBooleanExtra("AI", true);
+        System.out.println("la dificultad es" + difficulty);
+        if (click) {
             clickBoard();
-        }else {
+        } else {
             swipeBoard();
         }
         inicialize();
         //DEBUG : TOAST PARA VER GAMEID
-        Toast.makeText(this,"EL ID DEL JUEGO ES: "+GameId+"Y EL TURNO ES"+onlineTurn,Toast.LENGTH_LONG).show();
-        if(GameId!=0){
-        if(onlineTurn==1){
-            playerTurn++;
-            isMyTurn=false;
-        }else {
-            isMyTurn=true;
-            try {
-                new SendMoveTask().execute("http://kalantos.dhs.org/gameMove.php", "MOVE","0", "0", "0","0", "0", Integer.toString(GameId),Integer.toString(1)).get();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } catch (ExecutionException e) {
-                e.printStackTrace();
-            }
-        }
-
-        Thread refreshOnlineThread= new Thread(new Runnable() {
-            @Override
-            public void run() {
-                while (!gameOver) {
-                    getOnlineMove();
-                    Log.d("THREAD", "IS MY TURN: " + isMyTurn);
-                    try {
-                        Thread.sleep(2000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+        Toast.makeText(this, "EL ID DEL JUEGO ES: " + GameId + "Y EL TURNO ES" + onlineTurn, Toast.LENGTH_LONG).show();
+        if (GameId != 0) {
+            if (onlineTurn == 1) {
+                playerTurn++;
+                isMyTurn = false;
+            } else {
+                isMyTurn = true;
+                try {
+                    new SendMoveTask().execute("http://kalantos.dhs.org/gameMove.php", "MOVE", "0", "0", "0", "0", "0", Integer.toString(GameId), Integer.toString(1)).get();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
                 }
             }
-        });
-        refreshOnlineThread.start();
-    }
+
+            Thread refreshOnlineThread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    while (!gameOver) {
+                        getOnlineMove();
+                        Log.d("THREAD", "IS MY TURN: " + isMyTurn);
+                        try {
+                            Thread.sleep(2000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            });
+            refreshOnlineThread.start();
+        }
         paint();
 
     }
@@ -152,8 +152,8 @@ public class GameActivity extends AppCompatActivity {
         for (int i = 0; i < height; i++) {
 
             for (int j = 0; j < width; j++) {
-            double temp= (tiles[i][j].getBall().getSize() ) + 110-((tiles[i][j].getBall().getSize() )*0.25);
-                int ballSize=(int)temp;
+                double temp = (tiles[i][j].getBall().getSize()) + 110 - ((tiles[i][j].getBall().getSize()) * 0.25);
+                int ballSize = (int) temp;
                 //probar velocidad declarando un bitmap afuera
                 if (tiles[i][j].getBall() instanceof BallGreen) {
                     Bitmap bitmapImage = BitmapFactory.decodeResource(getResources(), R.drawable.ballgreen_small);
@@ -176,14 +176,14 @@ public class GameActivity extends AppCompatActivity {
         }
         if (green == 0) {
             finishGame();
-            gameOver=true;
+            gameOver = true;
         }
         if (pink == 0) {
             finishGame();
-            gameOver=true;
+            gameOver = true;
         }
         time_end = System.currentTimeMillis();
-        System.out.println("the task has taken "+ ( time_end - time_start ) +" milliseconds");
+        System.out.println("the task has taken " + (time_end - time_start) + " milliseconds");
         //debug();
     }
 
@@ -201,32 +201,32 @@ public class GameActivity extends AppCompatActivity {
         tiles = new Tile[height][width];
         LinearLayout layout = (LinearLayout) findViewById(R.id.layaout); //Can also be done in xml by android:orientation="vertical"
 
-        if(layout!=null){
-        for (int i = 0; i < height; i++) {
-            LinearLayout row = new LinearLayout(this);
-            row.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-            for (int j = 0; j < width; j++) {
-                tiles[i][j] = new Tile(this,(heightScreen/6)*(i+1),(widthScreen/10)*(j+1));
-                tiles[i][j].getImageView().setLayoutParams(new LinearLayout.LayoutParams(widthScreen / 10, heightScreen / 6));
-                tiles[i][j].getImageView().setOnClickListener(new View.OnClickListener(){
-                    public void onClick(View v) {
-                        //devuelve el tile que fue presionado
-                        for (int i = 0; i < height; i++) {
+        if (layout != null) {
+            for (int i = 0; i < height; i++) {
+                LinearLayout row = new LinearLayout(this);
+                row.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+                for (int j = 0; j < width; j++) {
+                    tiles[i][j] = new Tile(this, (heightScreen / 6) * (i + 1), (widthScreen / 10) * (j + 1));
+                    tiles[i][j].getImageView().setLayoutParams(new LinearLayout.LayoutParams(widthScreen / 10, heightScreen / 6));
+                    tiles[i][j].getImageView().setOnClickListener(new View.OnClickListener() {
+                        public void onClick(View v) {
+                            //devuelve el tile que fue presionado
+                            for (int i = 0; i < height; i++) {
 
-                            for (int j = 0; j < width; j++) {
-                                if (v.getId() == tiles[i][j].getImageView().getId()) {
-                                    ClickGestion(i, j);
+                                for (int j = 0; j < width; j++) {
+                                    if (v.getId() == tiles[i][j].getImageView().getId()) {
+                                        ClickGestion(i, j);
+                                    }
                                 }
                             }
                         }
-                    }
-                });
-                tiles[i][j].getImageView().setId(j + (i * 10));
-                row.addView(tiles[i][j].getImageView());
-            }
+                    });
+                    tiles[i][j].getImageView().setId(j + (i * 10));
+                    row.addView(tiles[i][j].getImageView());
+                }
 
-            layout.addView(row);
-        }
+                layout.addView(row);
+            }
         }
     }
 
@@ -270,15 +270,15 @@ public class GameActivity extends AppCompatActivity {
                                     if ((Calendar.getInstance().getTimeInMillis() - startClickTime) >= MAX_CLICK_DURATION) {
                                         //si la duracion del arrastre es mas larga que max click time se cuenta como deslizamiento
                                         // y se comprueban las coordenadas para que luego clickgestion o swipe gestion realize los movimientos
-                                        clicks=0;
+                                        clicks = 0;
                                         int[] temporalStart = detectMove(startPoint.y, startPoint.x);
                                         int[] temporalEnd = detectMove(endPoint.y, endPoint.x);
 
-                                        if (temporalStart != null&&temporalEnd != null) {
-                                                swipeGestion(temporalStart[0], temporalStart[1]);
-                                                swipeGestion(temporalEnd[0], temporalEnd[1]);
-                                            }
-                                    }else{
+                                        if (temporalStart != null && temporalEnd != null) {
+                                            swipeGestion(temporalStart[0], temporalStart[1]);
+                                            swipeGestion(temporalEnd[0], temporalEnd[1]);
+                                        }
+                                    } else {
                                         //al no superar el tiempo toma como 1 punto y luego espera al siguiente
                                         int[] temporal = detectMove(startPoint.y, startPoint.x);
                                         if (temporal != null) {
@@ -304,14 +304,14 @@ public class GameActivity extends AppCompatActivity {
         }
     }
 
-    public int[] detectMove(float y,float x) {
+    public int[] detectMove(float y, float x) {
         //certifica que sean coordenadas validas dentro del tablero
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
-                if ((tiles[i][j].getBoundsY() - (heightScreen / 6)) <(int) y && (int) y < tiles[i][j].getBoundsY()) {
+                if ((tiles[i][j].getBoundsY() - (heightScreen / 6)) < (int) y && (int) y < tiles[i][j].getBoundsY()) {
 
-                    if ((tiles[i][j].getBoundsX() - (widthScreen / 10)) <(int) x &&(int) x < tiles[i][j].getBoundsX()) {
-                        return new int[]{i,j};
+                    if ((tiles[i][j].getBoundsX() - (widthScreen / 10)) < (int) x && (int) x < tiles[i][j].getBoundsX()) {
+                        return new int[]{i, j};
 
                     }
                 }
@@ -329,36 +329,36 @@ public class GameActivity extends AppCompatActivity {
             clicks++;
             return;
 
-        }else if ((tiles[i][j].getBall() instanceof BallPink) && clicks == 0 && (playerTurn % 2 == 1)) {
+        } else if ((tiles[i][j].getBall() instanceof BallPink) && clicks == 0 && (playerTurn % 2 == 1)) {
             ax = i;
             ay = j;
             clicks++;
             return;
 
-        }else if(clicks ==1){
+        } else if (clicks == 1) {
             //CANCEL SELECTION
             if (ax == i && ay == j) {
                 clicks = 0;
                 return;
-            }else if(Math.abs(ax - i) > 2 || Math.abs(ay - j) > 2){
+            } else if (Math.abs(ax - i) > 2 || Math.abs(ay - j) > 2) {
                 //OUTBOUND MOVEMENT
-                clicks=0;
+                clicks = 0;
                 return;
-            }else if ((Math.abs(ax - i) == 1 && Math.abs(ay - j) == 1) || (Math.abs(ax - i) == 0 && Math.abs(ay - j) == 1) || (Math.abs(ax - i) == 1 && Math.abs(ay - j) == 0)) {
+            } else if ((Math.abs(ax - i) == 1 && Math.abs(ay - j) == 1) || (Math.abs(ax - i) == 0 && Math.abs(ay - j) == 1) || (Math.abs(ax - i) == 1 && Math.abs(ay - j) == 0)) {
                 //MOVE
                 move(ax, ay, i, j);
-            }else if (ax - i == -2 && ay == j) {
+            } else if (ax - i == -2 && ay == j) {
                 //SPLIT DOWN
-                split(ax, ay,2,0);
-            }else if (ax - i == 2 && ay == j) {
+                split(ax, ay, 2, 0);
+            } else if (ax - i == 2 && ay == j) {
                 //SPLIT UP
-                split(ax, ay,-2,0);
-            }else if (ay - j == -2 && i == ax) {
+                split(ax, ay, -2, 0);
+            } else if (ay - j == -2 && i == ax) {
                 //SPLIT RIGHT
-                split(ax, ay,0,2);
-            }else{
+                split(ax, ay, 0, 2);
+            } else {
                 //SPLIT LEFT
-                split(ax, ay,0,-2);
+                split(ax, ay, 0, -2);
             }
 
             ArtificialMove();
@@ -373,45 +373,45 @@ public class GameActivity extends AppCompatActivity {
             clicks++;
             return;
 
-        }else if ((tiles[i][j].getBall() instanceof BallPink) && clicks == 0 && (playerTurn % 2 == 1)) {
+        } else if ((tiles[i][j].getBall() instanceof BallPink) && clicks == 0 && (playerTurn % 2 == 1)) {
             ax = i;
             ay = j;
             clicks++;
             return;
 
-        }else if (clicks == 1){
+        } else if (clicks == 1) {
             //CANCEL SELECTION
             if (ax == i && ay == j) {
                 clicks = 0;
                 return;
-            }else if ((Math.abs(ax - i) == 1 && Math.abs(ay - j) == 1) || (Math.abs(ax - i) == 0 && Math.abs(ay - j) == 1) || (Math.abs(ax - i) == 1 && Math.abs(ay - j) == 0)) {
+            } else if ((Math.abs(ax - i) == 1 && Math.abs(ay - j) == 1) || (Math.abs(ax - i) == 0 && Math.abs(ay - j) == 1) || (Math.abs(ax - i) == 1 && Math.abs(ay - j) == 0)) {
                 //MOVE
                 move(ax, ay, i, j);
-            }else if (ax-i <0 && ay == j) {
+            } else if (ax - i < 0 && ay == j) {
                 //SWIPE DOWN
-                move(ax, ay, ax+1, ay);
-            }else if (ax - i >0 && ay == j) {
+                move(ax, ay, ax + 1, ay);
+            } else if (ax - i > 0 && ay == j) {
                 //SWIPE UP
-                move(ax, ay, ax-1, ay);
-            }else if (ay - j <0 && i == ax) {
+                move(ax, ay, ax - 1, ay);
+            } else if (ay - j < 0 && i == ax) {
                 //SWIPE RIGHT
-                move(ax, ay, ax, ay+1);
-            }else if (ay - j >0 && i == ax) {
+                move(ax, ay, ax, ay + 1);
+            } else if (ay - j > 0 && i == ax) {
                 //SWIPE LEFT
-                move(ax, ay, ax, ay-1);
-            }else if (ay - j >0 && ax-i>0 && ay-j==(ax-i)) {
+                move(ax, ay, ax, ay - 1);
+            } else if (ay - j > 0 && ax - i > 0 && ay - j == (ax - i)) {
                 //SWIPE CORNERS
                 //esq superior izq
-                move(ax, ay, ax-1, ay-1);
-            }else if (ay - j <0 && ax-i>0 && ay-j==-(ax-i)) {
+                move(ax, ay, ax - 1, ay - 1);
+            } else if (ay - j < 0 && ax - i > 0 && ay - j == -(ax - i)) {
                 //esq superior derecha
-                move(ax, ay, ax-1, ay+1);
-            }else if (ay - j >0 && ax-i<0 && ay-j==-(ax-i)) {
+                move(ax, ay, ax - 1, ay + 1);
+            } else if (ay - j > 0 && ax - i < 0 && ay - j == -(ax - i)) {
                 //esq inferior izq
-                move(ax, ay, ax+1, ay-1);
-            }else{
+                move(ax, ay, ax + 1, ay - 1);
+            } else {
                 //esq inferior derecha
-                move(ax, ay, ax+1, ay+1);
+                move(ax, ay, ax + 1, ay + 1);
             }
             ArtificialMove();
 
@@ -421,7 +421,7 @@ public class GameActivity extends AppCompatActivity {
     public void move(int i, int j, int y, int x) {
         // primeros 2 los originales 2 dos a donde van
         //mueve la bola
-        if((!onlineMove &&isMyTurn) ||onlineMove || GameId==0) {
+        if ((!onlineMove && isMyTurn) || (onlineMove&&!movelock) || GameId == 0) {
 
             tiles[y][x].battle(tiles[i][j].getBall());
             tiles[i][j].removeBall();
@@ -433,19 +433,19 @@ public class GameActivity extends AppCompatActivity {
                     paint();
                 }
             });
+            movelock=true;
         }
         //debug();
-        if(!onlineMove && GameId!=0){
+        if (!onlineMove && GameId != 0) {
             try {
-                new SendMoveTask().execute("http://kalantos.dhs.org/gameMove.php", "MOVE", Integer.toString(j), Integer.toString(i), Integer.toString(x), Integer.toString(y), Integer.toString(0), Integer.toString(GameId),Integer.toString(onlineTurn)).get();
+                new SendMoveTask().execute("http://kalantos.dhs.org/gameMove.php", "MOVE", Integer.toString(j), Integer.toString(i), Integer.toString(x), Integer.toString(y), Integer.toString(0), Integer.toString(GameId), Integer.toString(onlineTurn)).get();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             } catch (ExecutionException e) {
                 e.printStackTrace();
             }
-            paint();
         }
-        if(GameId==0){
+        if (GameId == 0) {
             playerTurn++;
         }
     }
@@ -453,46 +453,45 @@ public class GameActivity extends AppCompatActivity {
     public void getOnlineMove() {
         //obtiene las coordenadas del ultimo movimiento y lo ejecuta de forma local
 
-            int[] onlineMoves=recieveJSON();
-            onlineMove=true;
-            if(onlineMoves[5]!=onlineTurn){
-                isMyTurn=true;
-                if (onlineMoves[4] ==0) {
-                    move(onlineMoves[1], onlineMoves[0], onlineMoves[3], onlineMoves[2]);
-                }else{
-                    split(onlineMoves[1], onlineMoves[0], onlineMoves[3], onlineMoves[2]);
-                }
-            }else{
-                isMyTurn=false;
-
+        int[] onlineMoves = recieveJSON();
+        onlineMove = true;
+        if (onlineMoves[5] != onlineTurn) {
+            if (onlineMoves[4] == 0) {
+                move(onlineMoves[1], onlineMoves[0], onlineMoves[3], onlineMoves[2]);
+            } else {
+                split(onlineMoves[1], onlineMoves[0], onlineMoves[3], onlineMoves[2]);
             }
-            onlineMove=false;
+            movelock=true;
+            isMyTurn = true;
+        } else {
+            isMyTurn = false;
+            movelock=false;
 
-
+        }
+        onlineMove = false;
 
 
     }
 
-
-    private int[] recieveJSON(){
+    private int[] recieveJSON() {
         try {
-            String st= new  SendMoveTask().execute("http://kalantos.dhs.org/gameMove.php","GETMOVE","5","1","5","1","1",String.valueOf(GameId),"1").get();
+            String st = new SendMoveTask().execute("http://kalantos.dhs.org/gameMove.php", "GETMOVE", "5", "1", "5", "1", "1", String.valueOf(GameId), "1").get();
             //Log.d("RECIBO PARSE",st);
             //parsea un JSON para obtener un array con los movimientos
-            int []moves= new int[6];
-            JSONObject json= null;
+            int[] moves = new int[6];
+            JSONObject json = null;
             try {
                 json = new JSONObject(st);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
             try {
-                moves[0]=json.getInt("XINIT");
-                moves[1]=json.getInt("YINIT");
-                moves[2]=json.getInt("XLAST");
-                moves[3]=json.getInt("YLAST");
-                moves[4]=json.getInt("SPLIT");
-                moves[5]=json.getInt("TURN");
+                moves[0] = json.getInt("XINIT");
+                moves[1] = json.getInt("YINIT");
+                moves[2] = json.getInt("XLAST");
+                moves[3] = json.getInt("YLAST");
+                moves[4] = json.getInt("SPLIT");
+                moves[5] = json.getInt("TURN");
             } catch (JSONException e1) {
                 e1.printStackTrace();
             }
@@ -518,10 +517,10 @@ public class GameActivity extends AppCompatActivity {
                         AIMoves = ArtificialInteligenceAlgorithm.easyMove(tiles);
                         break;
                     case 1:
-                        AIMoves = ArtificialInteligenceAlgorithm.hardMove(tiles,false);
+                        AIMoves = ArtificialInteligenceAlgorithm.hardMove(tiles, false);
                         break;
                     case 2:
-                        AIMoves = ArtificialInteligenceAlgorithm.hardMove(tiles,true);
+                        AIMoves = ArtificialInteligenceAlgorithm.hardMove(tiles, true);
                         break;
                     default:
                         AIMoves = ArtificialInteligenceAlgorithm.easyMove(tiles);
@@ -542,42 +541,57 @@ public class GameActivity extends AppCompatActivity {
 
     public void split(int i, int j, int y, int x) {
         //escupe una bola 33% del tamaño de ella misma
-        int splittedBallSize=tiles[i][j].getBall().getSize()/3;
 
-        if (tiles[i][j].getBall() instanceof BallGreen) {
-            BallGreen splittedBall = new BallGreen((int)(splittedBallSize*1.2));
-            if (tiles[i][j].getBall().getSize() >= 10) {
-                try {
-                    tiles[i][j].getBall().setSize(tiles[i][j].getBall().getSize() - splittedBallSize);
-                    tiles[i + y][j+x].battle(splittedBall);
-                } catch (Exception e) {
-                    System.out.println("un poco de tu masa se cayo del tablero");
-                }
+        if (!onlineMove&& GameId != 0) {
+            try {
+                new SendMoveTask().execute("http://kalantos.dhs.org/gameMove.php", "MOVE", Integer.toString(j), Integer.toString(i), Integer.toString(x), Integer.toString(y), Integer.toString(999), Integer.toString(GameId), Integer.toString(onlineTurn)).get();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
             }
         }
-        if (tiles[i][j].getBall() instanceof BallPink) {
-            BallPink splitttedBall = new BallPink((int)(splittedBallSize*1.2));
-            if (tiles[i][j].getBall().getSize() >= 10) {
-                try {
-                    tiles[i][j].getBall().setSize(tiles[i][j].getBall().getSize() - splittedBallSize);
-                    tiles[i + y][j+x].battle(splitttedBall);
-                } catch (Exception e) {
-                    System.out.println("un poco de tu masa se cayo del tablero");
+
+        if ((!onlineMove && isMyTurn) || (onlineMove && !movelock)|| GameId == 0) {
+
+            int splittedBallSize = tiles[i][j].getBall().getSize() / 3;
+
+            if (tiles[i][j].getBall() instanceof BallGreen) {
+                BallGreen splittedBall = new BallGreen((int) (splittedBallSize * 1.2));
+                if (tiles[i][j].getBall().getSize() >= 10) {
+                    try {
+                        tiles[i][j].getBall().setSize(tiles[i][j].getBall().getSize() - splittedBallSize);
+                        tiles[i + y][j + x].battle(splittedBall);
+                    } catch (Exception e) {
+                        System.out.println("un poco de tu masa se cayo del tablero");
+                    }
                 }
             }
+            if (tiles[i][j].getBall() instanceof BallPink) {
+                BallPink splitttedBall = new BallPink((int) (splittedBallSize * 1.2));
+                if (tiles[i][j].getBall().getSize() >= 10) {
+                    try {
+                        tiles[i][j].getBall().setSize(tiles[i][j].getBall().getSize() - splittedBallSize);
+                        tiles[i + y][j + x].battle(splitttedBall);
+                    } catch (Exception e) {
+                        System.out.println("un poco de tu masa se cayo del tablero");
+                    }
+                }
+            }
+
+            this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    paint();
+                }
+            });
+            clicks = 0;
+            movelock=true;
         }
-        if(!onlineMove){
-        try {
-            new SendMoveTask().execute("http://kalantos.dhs.org/getMove.php","MOVE",Integer.toString(j),Integer.toString(i),Integer.toString(x),Integer.toString(y),Integer.toString(999),Integer.toString(GameId),Integer.toString(onlineTurn)).get();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
+
+        if (GameId == 0) {
+            playerTurn++;
         }
-        }
-        paint();
-        clicks=0;
-        playerTurn++;
 
     }
 
