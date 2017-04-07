@@ -22,23 +22,21 @@ import com.kalantos.spitball.connectivity.SendMoveTask;
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.util.Calendar;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
 
 public class GameActivity extends AppCompatActivity {
 
     Tile[][] tiles;
     final int width = 10;
     final int height = 6;
-
+    boolean gameOver=false;
     private int clicks = 0;
     private int playerTurn = 0;
     private int GameId,onlineTurn;
     private int ax, ay, green, pink,difficulty;
     private boolean ArtificialInteligence,onlineMove,isMyTurn;
     private int widthScreen,heightScreen;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,11 +96,11 @@ public class GameActivity extends AppCompatActivity {
         inicialize();
         //DEBUG : TOAST PARA VER GAMEID
         Toast.makeText(this,"EL ID DEL JUEGO ES: "+GameId+"Y EL TURNO ES"+onlineTurn,Toast.LENGTH_LONG).show();
-
-        if(GameId!=0 && onlineTurn==1){
+        if(GameId!=0){
+        if(onlineTurn==1){
             playerTurn++;
             isMyTurn=false;
-        }else{
+        }else {
             isMyTurn=true;
             try {
                 new SendMoveTask().execute("http://kalantos.dhs.org/gameMove.php", "MOVE","0", "0", "0","0", "0", Integer.toString(GameId),Integer.toString(1)).get();
@@ -112,12 +110,11 @@ public class GameActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         }
-        paint();
 
         Thread refreshOnlineThread= new Thread(new Runnable() {
             @Override
             public void run() {
-                while (true) {
+                while (!gameOver) {
                     getOnlineMove();
                     Log.d("THREAD", "IS MY TURN: " + isMyTurn);
                     try {
@@ -129,6 +126,9 @@ public class GameActivity extends AppCompatActivity {
             }
         });
         refreshOnlineThread.start();
+    }
+        paint();
+
     }
 
     public void inicialize() {
@@ -176,10 +176,11 @@ public class GameActivity extends AppCompatActivity {
         }
         if (green == 0) {
             finishGame();
+            gameOver=true;
         }
         if (pink == 0) {
             finishGame();
-
+            gameOver=true;
         }
         time_end = System.currentTimeMillis();
         System.out.println("the task has taken "+ ( time_end - time_start ) +" milliseconds");

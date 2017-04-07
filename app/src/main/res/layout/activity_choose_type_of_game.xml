@@ -28,7 +28,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/button8"
-        android:onClick="mock"
+        android:onClick="intentGame"
         android:layout_above="@+id/button9"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="38dp" />
