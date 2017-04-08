@@ -94,8 +94,11 @@ public class GameActivity extends AppCompatActivity {
             swipeBoard();
         }
         inicialize();
-        //DEBUG : TOAST PARA VER GAMEID
-        Toast.makeText(this, "EL ID DEL JUEGO ES: " + GameId + "Y EL TURNO ES" + onlineTurn, Toast.LENGTH_LONG).show();
+        if(onlineTurn==0) {
+            Toast.makeText(this, " JUGADOR VERDE!", Toast.LENGTH_LONG).show();
+        }else{
+            Toast.makeText(this, " JUGADOR ROSA!", Toast.LENGTH_LONG).show();
+        }
         if (GameId != 0) {
             if (onlineTurn == 1) {
                 playerTurn++;
@@ -409,9 +412,12 @@ public class GameActivity extends AppCompatActivity {
             } else if (ay - j > 0 && ax - i < 0 && ay - j == -(ax - i)) {
                 //esq inferior izq
                 move(ax, ay, ax + 1, ay - 1);
-            } else {
+            } else if(ay - j > 0 && ax - i > 0 && ay - j == -(ax - i)){
                 //esq inferior derecha
                 move(ax, ay, ax + 1, ay + 1);
+            }else{
+                clicks=0;
+                return;
             }
             ArtificialMove();
 

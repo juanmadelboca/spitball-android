@@ -28,8 +28,9 @@ public class finishGameActivity extends AppCompatActivity {
         editText=(TextView) findViewById(R.id.textView);
         //ADS////////////////
         mInterstitialAd = new InterstitialAd(this);
-        //ADS unitId=ca-app-pub-4117912268761040/6016063611
-        mInterstitialAd.setAdUnitId("ca-app-pub-3940256099942544/1033173712");
+        //ADS unitId=ca-app-pub-4117912268761040/4576104417
+        //test id ca-app-pub-3940256099942544/1033173712
+        mInterstitialAd.setAdUnitId("ca-app-pub-4117912268761040/4576104417");
 
         mInterstitialAd.setAdListener(new AdListener() {
             @Override
@@ -103,12 +104,13 @@ public class finishGameActivity extends AppCompatActivity {
             public void run(){
                 if (mInterstitialAd.isLoaded()) {
                 mInterstitialAd.show();
+                    Log.d("FINISHGAME","CARGO BIEN");
             } else {
                     Log.d("FINISHGAME","Fallo la carga");
             }
                 restartGame();
             }
-        }, 2000);
+        }, 5000);
     }
     private void requestNewInterstitial() {
         AdRequest adRequest = new AdRequest.Builder()
