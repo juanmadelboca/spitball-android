@@ -59,7 +59,7 @@ public class MenuActivity extends AppCompatActivity {
         //va al menu de tipo de juego de 2 jugadores
         Intent intent=new Intent(MenuActivity.this,ChooseTypeOfGame.class);
         startActivity(intent);
-        finish();
+        //finish();
     }
 
     public void intentChooseDifficulty(View view){
@@ -67,7 +67,7 @@ public class MenuActivity extends AppCompatActivity {
         Intent intent=new Intent(MenuActivity.this,ChooseDifficultyActivity.class);
         startActivity(intent);
         //better finish activity? or let it background so you can go back to menu?
-        finish();
+        //finish();
     }
     public void intentSettings(View view){
         //abre las configuraciones del juego
@@ -78,7 +78,7 @@ public class MenuActivity extends AppCompatActivity {
         //abre los puntajes
         Intent intent= new Intent(MenuActivity.this,HighScores.class);
         startActivity(intent);
-        finish();
+        //finish();
     }
 
 }

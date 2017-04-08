@@ -28,15 +28,13 @@ public class finishGameActivity extends AppCompatActivity {
         editText=(TextView) findViewById(R.id.textView);
         //ADS////////////////
         mInterstitialAd = new InterstitialAd(this);
-        //ADS unitId=ca-app-pub-4117912268761040/4576104417
-        //test id ca-app-pub-3940256099942544/1033173712
         mInterstitialAd.setAdUnitId("ca-app-pub-4117912268761040/4576104417");
 
         mInterstitialAd.setAdListener(new AdListener() {
             @Override
             public void onAdClosed() {
                 requestNewInterstitial();
-              //  restartGame();
+                restartGame();
             }
         });
 
@@ -73,7 +71,24 @@ public class finishGameActivity extends AppCompatActivity {
                         }
                     }
                 });
+        Thread adThread= new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(3000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                showAd();
+            }
+        });
+        adThread.start();
     }
+    @Override
+    public void onBackPressed() {
+        restartGame();
+        }
+
 
     private void chooseWinner(){
         //selecciona un ganador y luego muestra un anuncio publicitario y llama a restart()
@@ -100,17 +115,21 @@ public class finishGameActivity extends AppCompatActivity {
 
              imageView.setImageDrawable(pic);
         }
-        new Handler().postDelayed(new Runnable(){
-            public void run(){
+
+    }
+    private void showAd(){
+
+        this.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
                 if (mInterstitialAd.isLoaded()) {
-                mInterstitialAd.show();
+                    mInterstitialAd.show();
                     Log.d("FINISHGAME","CARGO BIEN");
-            } else {
+                } else {
                     Log.d("FINISHGAME","Fallo la carga");
+                }
             }
-                restartGame();
-            }
-        }, 5000);
+        });
     }
     private void requestNewInterstitial() {
         AdRequest adRequest = new AdRequest.Builder()
@@ -126,6 +145,8 @@ public class finishGameActivity extends AppCompatActivity {
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
+        finishAffinity();
+
     }
 
 }

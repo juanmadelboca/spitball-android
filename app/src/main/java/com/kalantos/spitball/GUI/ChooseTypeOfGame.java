@@ -44,7 +44,7 @@ int GameId=1000000083,NumPlayers,turn;
         intent.putExtra("TURN",turn);
         startActivity(intent);
         //better finish activity? or let it background so you can go back to menu?
-        finish();
+        finishAffinity();
     }
     public void intentGame(View view){
         //inicia una instancia de juego de 2 jugadores en el mismo celular
@@ -52,7 +52,7 @@ int GameId=1000000083,NumPlayers,turn;
         intent.putExtra("AI",false);
         startActivity(intent);
         //better finish activity? or let it background so you can go back to menu?
-        finish();
+        finishAffinity();
     }
     public void intentGameVsAI(){
         //crea una instancia de partida contra IA
@@ -61,9 +61,8 @@ int GameId=1000000083,NumPlayers,turn;
         intent.putExtra("clicker",true);
 
         startActivity(intent);
-        //better finish activity? or let it background so you can go back to menu?
-        //finish();
-    }
+        finishAffinity();
+        }
 
 
     public void createOnlineGame(View view) throws ExecutionException, InterruptedException {

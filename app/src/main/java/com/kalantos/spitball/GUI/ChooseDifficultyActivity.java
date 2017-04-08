@@ -64,7 +64,7 @@ public class ChooseDifficultyActivity extends AppCompatActivity {
         intent.putExtra("difficulty", difficulty);
         intent.putExtra("clicker",click);
         startActivity(intent);
+        finishAffinity();
         //better finish activity? or let it background so you can go back to menu?
-        //finish();
     }
 }

@@ -17,6 +17,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.kalantos.spitball.GUI.MenuActivity;
 import com.kalantos.spitball.R;
 import com.kalantos.spitball.GUI.finishGameActivity;
 import com.kalantos.spitball.connectivity.SendMoveTask;
@@ -131,7 +132,7 @@ public class GameActivity extends AppCompatActivity {
             refreshOnlineThread.start();
         }
         paint();
-
+        //manejo de las actividades
     }
 
     public void inicialize() {
@@ -196,7 +197,7 @@ public class GameActivity extends AppCompatActivity {
         intent.putExtra("green", green);
         intent.putExtra("pink", pink);
         startActivity(intent);
-        finish();
+        finishAffinity();
     }
 
     private void clickBoard() {
