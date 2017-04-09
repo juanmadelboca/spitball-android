@@ -75,11 +75,16 @@ public class finishGameActivity extends AppCompatActivity {
             @Override
             public void run() {
                 try {
-                    Thread.sleep(3000);
+                    Thread.sleep(4000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
                 showAd();
+                try {
+                    Thread.sleep(4000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
         });
         adThread.start();
@@ -122,6 +127,7 @@ public class finishGameActivity extends AppCompatActivity {
         this.runOnUiThread(new Runnable() {
             @Override
             public void run() {
+
                 if (mInterstitialAd.isLoaded()) {
                     mInterstitialAd.show();
                     Log.d("FINISHGAME","CARGO BIEN");
