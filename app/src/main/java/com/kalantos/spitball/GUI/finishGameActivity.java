@@ -132,6 +132,7 @@ public class finishGameActivity extends AppCompatActivity {
                     mInterstitialAd.show();
                     Log.d("FINISHGAME","CARGO BIEN");
                 } else {
+                    restartGame();
                     Log.d("FINISHGAME","Fallo la carga");
                 }
             }

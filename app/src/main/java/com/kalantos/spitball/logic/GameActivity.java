@@ -40,7 +40,10 @@ public class GameActivity extends AppCompatActivity {
     private int ax, ay, green, pink, difficulty;
     private boolean ArtificialInteligence, onlineMove, isMyTurn,movelock;
     private int widthScreen, heightScreen;
-
+    /*
+    //BOUNCING
+    int paintState=0;
+    */
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,7 +110,7 @@ public class GameActivity extends AppCompatActivity {
             } else {
                 isMyTurn = true;
                 try {
-                    new SendMoveTask().execute("http://kalantos.dhs.org/gameMove.php", "MOVE", "0", "0", "0", "0", "0", Integer.toString(GameId), Integer.toString(1)).get();
+                    new SendMoveTask().execute("http://spitball.servegame.com/gameMove.php", "MOVE", "0", "0", "0", "0", "0", Integer.toString(GameId), Integer.toString(1)).get();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 } catch (ExecutionException e) {
@@ -149,6 +152,7 @@ public class GameActivity extends AppCompatActivity {
         //las imagenes no pueden exeder los 5kB porque sino el tiempo de dibujo exede los 200ms y no se ve fluido
         //recorre la matriz de tiles y va colocando las imagenes correspondientes al tamaño de la bola
 
+
         long time_start, time_end;
         time_start = System.currentTimeMillis();
         green = 0;
@@ -160,6 +164,11 @@ public class GameActivity extends AppCompatActivity {
                 int ballSize = (int) temp;
                 //probar velocidad declarando un bitmap afuera
                 if (tiles[i][j].getBall() instanceof BallGreen) {
+                    /*
+                    //BOUNCING
+                    String resourceString="ballgreen_small";
+                    int idResource = getResources().getIdentifier(cad, "id", getPackageName());
+                    */
                     Bitmap bitmapImage = BitmapFactory.decodeResource(getResources(), R.drawable.ballgreen_small);
                     Bitmap scaled = Bitmap.createScaledBitmap(bitmapImage, ballSize, ballSize, false);
                     tiles[i][j].getImageView().setImageBitmap(scaled);
@@ -189,6 +198,14 @@ public class GameActivity extends AppCompatActivity {
         time_end = System.currentTimeMillis();
         System.out.println("the task has taken " + (time_end - time_start) + " milliseconds");
         //debug();
+        /*
+        //BOUNCING
+        if(paintState==7){
+            paintState=0;
+        }else{
+            paintState++;
+        }
+        */
     }
 
     private void finishGame() {
@@ -445,7 +462,7 @@ public class GameActivity extends AppCompatActivity {
         //debug();
         if (!onlineMove && GameId != 0) {
             try {
-                new SendMoveTask().execute("http://kalantos.dhs.org/gameMove.php", "MOVE", Integer.toString(j), Integer.toString(i), Integer.toString(x), Integer.toString(y), Integer.toString(0), Integer.toString(GameId), Integer.toString(onlineTurn)).get();
+                new SendMoveTask().execute("http://spitball.servegame.com/gameMove.php", "MOVE", Integer.toString(j), Integer.toString(i), Integer.toString(x), Integer.toString(y), Integer.toString(0), Integer.toString(GameId), Integer.toString(onlineTurn)).get();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             } catch (ExecutionException e) {
@@ -482,7 +499,7 @@ public class GameActivity extends AppCompatActivity {
 
     private int[] recieveJSON() {
         try {
-            String st = new SendMoveTask().execute("http://kalantos.dhs.org/gameMove.php", "GETMOVE", "5", "1", "5", "1", "1", String.valueOf(GameId), "1").get();
+            String st = new SendMoveTask().execute("http://spitball.servegame.com/gameMove.php", "GETMOVE", "5", "1", "5", "1", "1", String.valueOf(GameId), "1").get();
             //Log.d("RECIBO PARSE",st);
             //parsea un JSON para obtener un array con los movimientos
             int[] moves = new int[6];
@@ -551,7 +568,7 @@ public class GameActivity extends AppCompatActivity {
 
         if (!onlineMove&& GameId != 0) {
             try {
-                new SendMoveTask().execute("http://kalantos.dhs.org/gameMove.php", "MOVE", Integer.toString(j), Integer.toString(i), Integer.toString(x), Integer.toString(y), Integer.toString(999), Integer.toString(GameId), Integer.toString(onlineTurn)).get();
+                new SendMoveTask().execute("http://spitball.servegame.com/gameMove.php", "MOVE", Integer.toString(j), Integer.toString(i), Integer.toString(x), Integer.toString(y), Integer.toString(999), Integer.toString(GameId), Integer.toString(onlineTurn)).get();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             } catch (ExecutionException e) {

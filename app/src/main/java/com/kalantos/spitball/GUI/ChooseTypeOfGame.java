@@ -86,7 +86,7 @@ int GameId=1000000083,NumPlayers,turn;
         }else{
             intentGameVsAI();
             try {
-                new ConnectionTask().execute("http://kalantos.dhs.org/leaveGame.php","").get();
+                new ConnectionTask().execute("http://spitball.servegame.com/leaveGame.php","").get();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             } catch (ExecutionException e) {
@@ -97,7 +97,7 @@ int GameId=1000000083,NumPlayers,turn;
     public void connect(String method){
         //conecta a una url fija y refresca los datos de GameId y numero de jugadores
         try {
-            String json= new ConnectionTask().execute("http://kalantos.dhs.org/createGame.php",method).get();
+            String json= new ConnectionTask().execute("http://spitball.servegame.com/createGame.php",method).get();
             JSONObject JSONobject= new JSONObject(json);
             if(method=="CREATE"){
                 turn=JSONobject.getInt("TURN");
