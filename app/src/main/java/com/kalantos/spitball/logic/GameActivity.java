@@ -40,10 +40,7 @@ public class GameActivity extends AppCompatActivity {
     private int ax, ay, green, pink, difficulty;
     private boolean ArtificialInteligence, onlineMove, isMyTurn,movelock;
     private int widthScreen, heightScreen;
-    /*
-    //BOUNCING
-    int paintState=0;
-    */
+    private int bouncingState=1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -133,6 +130,22 @@ public class GameActivity extends AppCompatActivity {
                 }
             });
             refreshOnlineThread.start();
+        }//BOUNCING
+         else{
+            final Thread refreshThread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    while(true){
+                        refresh();
+                        try {
+                            Thread.sleep(120);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            });
+            refreshThread.start();
         }
         paint();
         //manejo de las actividades
@@ -164,18 +177,40 @@ public class GameActivity extends AppCompatActivity {
                 int ballSize = (int) temp;
                 //probar velocidad declarando un bitmap afuera
                 if (tiles[i][j].getBall() instanceof BallGreen) {
-                    /*
-                    //BOUNCING
-                    String resourceString="ballgreen_small";
-                    int idResource = getResources().getIdentifier(cad, "id", getPackageName());
-                    */
-                    Bitmap bitmapImage = BitmapFactory.decodeResource(getResources(), R.drawable.ballgreen_small);
+                    int idR;
+                    if(tiles[i][j].isPressed()){
+                        //BOUNCING
+                        String resourstring="framel"+bouncingState;
+                        idR= getResources().getIdentifier(resourstring,"drawable",getPackageName());
+                        tiles[i][j].getImageView().setImageResource(idR);
+                        bouncingState++;
+                        if(bouncingState==9){
+                            bouncingState=1;
+                        }
+                    }else {
+                        idR= getResources().getIdentifier("ballgreen_small","drawable",getPackageName());
+                    }
+                    Bitmap bitmapImage = BitmapFactory.decodeResource(getResources(), idR);
                     Bitmap scaled = Bitmap.createScaledBitmap(bitmapImage, ballSize, ballSize, false);
                     tiles[i][j].getImageView().setImageBitmap(scaled);
                     tiles[i][j].getImageView().setScaleType(ImageView.ScaleType.CENTER);
                     green++;
+
                 } else if (tiles[i][j].getBall() instanceof BallPink) {
-                    Bitmap bitmapImage = BitmapFactory.decodeResource(getResources(), R.drawable.ballpink_small);
+                    int idR;
+                    if(tiles[i][j].isPressed()){
+                        //BOUNCING
+                        String resourstring="frame"+bouncingState;
+                        idR= getResources().getIdentifier(resourstring,"drawable",getPackageName());
+                        tiles[i][j].getImageView().setImageResource(idR);
+                        bouncingState++;
+                        if(bouncingState==9){
+                            bouncingState=1;
+                        }
+                    }else {
+                        idR= getResources().getIdentifier("ballpink_small","drawable",getPackageName());
+                    }
+                    Bitmap bitmapImage = BitmapFactory.decodeResource(getResources(),idR);
                     Bitmap scaled = Bitmap.createScaledBitmap(bitmapImage, ballSize, ballSize, false);
                     tiles[i][j].getImageView().setImageBitmap(scaled);
                     tiles[i][j].getImageView().setScaleType(ImageView.ScaleType.CENTER);
@@ -198,14 +233,7 @@ public class GameActivity extends AppCompatActivity {
         time_end = System.currentTimeMillis();
         System.out.println("the task has taken " + (time_end - time_start) + " milliseconds");
         //debug();
-        /*
-        //BOUNCING
-        if(paintState==7){
-            paintState=0;
-        }else{
-            paintState++;
-        }
-        */
+
     }
 
     private void finishGame() {
@@ -348,21 +376,27 @@ public class GameActivity extends AppCompatActivity {
             ax = i;
             ay = j;
             clicks++;
+            //BOUNCING
+            tiles[i][j].press();
             return;
 
         } else if ((tiles[i][j].getBall() instanceof BallPink) && clicks == 0 && (playerTurn % 2 == 1)) {
             ax = i;
             ay = j;
             clicks++;
+            tiles[i][j].press();
             return;
 
         } else if (clicks == 1) {
             //CANCEL SELECTION
             if (ax == i && ay == j) {
                 clicks = 0;
+                tiles[ax][ay].release();
                 return;
             } else if (Math.abs(ax - i) > 2 || Math.abs(ay - j) > 2) {
                 //OUTBOUND MOVEMENT
+                clicks=0;
+                tiles[ax][ay].release();
                 clicks = 0;
                 return;
             } else if ((Math.abs(ax - i) == 1 && Math.abs(ay - j) == 1) || (Math.abs(ax - i) == 0 && Math.abs(ay - j) == 1) || (Math.abs(ax - i) == 1 && Math.abs(ay - j) == 0)) {
@@ -377,11 +411,15 @@ public class GameActivity extends AppCompatActivity {
             } else if (ay - j == -2 && i == ax) {
                 //SPLIT RIGHT
                 split(ax, ay, 0, 2);
-            } else {
+            } else if (ay - j == 2 && i == ax){
                 //SPLIT LEFT
                 split(ax, ay, 0, -2);
+            }else{
+                clicks=0;
+                tiles[ax][ay].release();
+                return;
             }
-
+            tiles[ax][ay].release();
             ArtificialMove();
         }
     }
@@ -438,7 +476,6 @@ public class GameActivity extends AppCompatActivity {
                 return;
             }
             ArtificialMove();
-
         }
     }
 
@@ -629,6 +666,14 @@ public class GameActivity extends AppCompatActivity {
             System.out.println("\n");
         }
 
+    }
+    public void refresh(){
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                paint();
+            }
+        });
     }
 
 

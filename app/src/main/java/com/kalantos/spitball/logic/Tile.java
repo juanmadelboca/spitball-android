@@ -9,12 +9,14 @@ public class Tile extends Activity{
 	private Ball ball;
 	private ImageView imageView;
 	private final int boundsX,boundsY;
+	private boolean isPressed;
 
 public Tile(Context context,int boundsY,int boundsX){
 	ball= new Ball(0);
 	imageView= new ImageView(context);
 	this.boundsX=boundsX;
 	this.boundsY=boundsY;
+	this.isPressed=false;
 	}
 
 protected void setBall(int size, BallType tipo){
@@ -43,7 +45,16 @@ protected void removeBall(){
 protected Ball getBall(){
 	return ball;
 }
-
+//BOUNCING
+	protected boolean isPressed() {
+		return isPressed;
+	}
+	protected void press(){
+		isPressed=true;
+	}
+	protected void release(){
+		isPressed=false;
+	}
 
 	protected ImageView getImageView(){
 		return imageView;
@@ -68,3 +79,4 @@ protected Ball getBall(){
 
 	}
 }
+
