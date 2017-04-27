@@ -76,8 +76,8 @@ public class GameActivity extends AppCompatActivity {
 
         Display display = getWindowManager().getDefaultDisplay();
         Point size = new Point();
-        display.getSize(size);
-        widthScreen = size.x + size.x / 14;
+        display.getRealSize(size);
+        widthScreen = size.x;
         heightScreen = size.y;
 
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
@@ -172,7 +172,8 @@ public class GameActivity extends AppCompatActivity {
         for (int i = 0; i < height; i++) {
 
             for (int j = 0; j < width; j++) {
-                double temp = (tiles[i][j].getBall().getSize()) + 110 - ((tiles[i][j].getBall().getSize()) * 0.25);
+                //poner calculo dentro del if para no hacer calculo al pedo
+                double temp = (tiles[i][j].getBall().getSize()) + heightScreen/14 - ((tiles[i][j].getBall().getSize()) * (1/7)*(widthScreen/heightScreen));
                 int ballSize = (int) temp;
                 //probar velocidad declarando un bitmap afuera
                 if (tiles[i][j].getBall() instanceof BallGreen) {
