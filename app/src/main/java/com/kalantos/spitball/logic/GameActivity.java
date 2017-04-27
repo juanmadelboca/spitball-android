@@ -135,7 +135,7 @@ public class GameActivity extends AppCompatActivity {
             final Thread refreshThread = new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    while(true){
+                    while(!gameOver){
                         refresh();
                         try {
                             Thread.sleep(120);
@@ -160,7 +160,6 @@ public class GameActivity extends AppCompatActivity {
         tiles[2][6].setBall(20, BallType.BALLPINK);
         tiles[3][5].setBall(20, BallType.BALLPINK);
     }
-
     public void paint() {
         //las imagenes no pueden exeder los 5kB porque sino el tiempo de dibujo exede los 200ms y no se ve fluido
         //recorre la matriz de tiles y va colocando las imagenes correspondientes al tamaño de la bola
@@ -235,7 +234,6 @@ public class GameActivity extends AppCompatActivity {
         //debug();
 
     }
-
     private void finishGame() {
         //se ejecuta cuando termina el juego, finaliza la activad y procede a la acitvidad que muestra al ganador
         Intent intent = new Intent(GameActivity.this, finishGameActivity.class);
@@ -243,8 +241,8 @@ public class GameActivity extends AppCompatActivity {
         intent.putExtra("pink", pink);
         startActivity(intent);
         finishAffinity();
-    }
 
+    }
     private void clickBoard() {
         //arma el tablero  usando las medidas de la pantalla
         tiles = new Tile[height][width];
@@ -278,7 +276,6 @@ public class GameActivity extends AppCompatActivity {
             }
         }
     }
-
     private void swipeBoard() {
         //arma el tablero  usando las medidas de la pantalla
         tiles = new Tile[height][width];
@@ -352,7 +349,6 @@ public class GameActivity extends AppCompatActivity {
             }
         }
     }
-
     public int[] detectMove(float y, float x) {
         //certifica que sean coordenadas validas dentro del tablero
         for (int i = 0; i < height; i++) {
@@ -368,7 +364,6 @@ public class GameActivity extends AppCompatActivity {
         }
         return null;
     }
-
     public void ClickGestion(int i, int j) {
         //recibe dos enteros que le indican el Tile presionado y por medio de eso gestiona las acciones a realizar
         //por medio de la variable global clicks y turn maneja los clicks para saber cuando corresponde mover o esperar una coordenada
@@ -423,7 +418,6 @@ public class GameActivity extends AppCompatActivity {
             ArtificialMove();
         }
     }
-
     public void swipeGestion(int i, int j) {
         //recibe dos enteros que le indican el Tile presionado y por medio de eso gestiona las acciones a realizar
         if ((tiles[i][j].getBall() instanceof BallGreen) && clicks == 0 && (playerTurn % 2 == 0)) {
@@ -478,7 +472,6 @@ public class GameActivity extends AppCompatActivity {
             ArtificialMove();
         }
     }
-
     public void move(int i, int j, int y, int x) {
         // primeros 2 los originales 2 dos a donde van
         //mueve la bola
@@ -510,7 +503,6 @@ public class GameActivity extends AppCompatActivity {
             playerTurn++;
         }
     }
-
     public void getOnlineMove() {
         //obtiene las coordenadas del ultimo movimiento y lo ejecuta de forma local
 
@@ -533,7 +525,6 @@ public class GameActivity extends AppCompatActivity {
 
 
     }
-
     private int[] recieveJSON() {
         try {
             String st = new SendMoveTask().execute("http://spitball.servegame.com/gameMove.php", "GETMOVE", "5", "1", "5", "1", "1", String.valueOf(GameId), "1").get();
@@ -566,7 +557,6 @@ public class GameActivity extends AppCompatActivity {
 
         return null;
     }
-
     public void ArtificialMove() {
         //va en bloque try catch porque cuando termina el juego la AI intenta mover y genera excepcion de esta forma cuando esta
         //excepcion ocurre no tenogo problemas
@@ -599,7 +589,6 @@ public class GameActivity extends AppCompatActivity {
             }
         }
     }
-
     public void split(int i, int j, int y, int x) {
         //escupe una bola 33% del tamaño de ella misma
 
@@ -655,7 +644,6 @@ public class GameActivity extends AppCompatActivity {
         }
 
     }
-
     private void debug() {
         //metodo para crear una matriz con los valores size de las bolas
         //util para debugear fallas graficas
