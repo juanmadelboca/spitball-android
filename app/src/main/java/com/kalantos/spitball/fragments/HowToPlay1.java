@@ -1,4 +1,4 @@
-package com.kalantos.spitball.GUI;
+package com.kalantos.spitball.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;

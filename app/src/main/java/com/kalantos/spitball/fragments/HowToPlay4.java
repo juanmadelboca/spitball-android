@@ -1,4 +1,4 @@
-package com.kalantos.spitball.GUI;
+package com.kalantos.spitball.fragments;
 
 
 import android.os.Bundle;
@@ -13,15 +13,19 @@ import com.kalantos.spitball.R;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class HowToPlay2 extends Fragment {
+public class HowToPlay4 extends Fragment {
 
+
+    public HowToPlay4() {
+        // Required empty public constructor
+    }
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_how_to_play2, container, false);
+        return inflater.inflate(R.layout.fragment_how_to_play4, container, false);
     }
 
 }

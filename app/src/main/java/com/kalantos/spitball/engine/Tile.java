@@ -1,4 +1,4 @@
-package com.kalantos.spitball.logic;
+package com.kalantos.spitball.engine;
 
 import android.app.Activity;
 import android.content.Context;

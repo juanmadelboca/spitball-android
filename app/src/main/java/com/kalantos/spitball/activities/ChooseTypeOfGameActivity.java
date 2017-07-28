@@ -1,28 +1,22 @@
-package com.kalantos.spitball.GUI;
+package com.kalantos.spitball.activities;
 
 import android.content.Intent;
-import android.media.Image;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.kalantos.spitball.R;
-import com.kalantos.spitball.connectivity.ConnectionTask;
-import com.kalantos.spitball.connectivity.SendMoveTask;
-import com.kalantos.spitball.logic.GameActivity;
+import com.kalantos.spitball.utils.ConnectionTask;
+import com.kalantos.spitball.engine.GameActivity;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
 
-public class ChooseTypeOfGame extends AppCompatActivity {
+public class ChooseTypeOfGameActivity extends AppCompatActivity {
 int GameId=1000000083,NumPlayers,turn;
     int onlineMoves[]= new int[5];
     ImageView imageView;
@@ -38,7 +32,7 @@ int GameId=1000000083,NumPlayers,turn;
 
     public void intentGameOnline(){
         //inicia la actividad de juego con el GameID de la partida
-        Intent intent=new Intent(ChooseTypeOfGame.this,GameActivity.class);
+        Intent intent=new Intent(ChooseTypeOfGameActivity.this,GameActivity.class);
         intent.putExtra("AI",false);
         intent.putExtra("GAMEID",GameId);
         intent.putExtra("TURN",turn);
@@ -48,7 +42,7 @@ int GameId=1000000083,NumPlayers,turn;
     }
     public void intentGame(View view){
         //inicia una instancia de juego de 2 jugadores en el mismo celular
-        Intent intent=new Intent(ChooseTypeOfGame.this,GameActivity.class);
+        Intent intent=new Intent(ChooseTypeOfGameActivity.this,GameActivity.class);
         intent.putExtra("AI",false);
         startActivity(intent);
         //better finish activity? or let it background so you can go back to menu?
@@ -56,7 +50,7 @@ int GameId=1000000083,NumPlayers,turn;
     }
     public void intentGameVsAI(){
         //crea una instancia de partida contra IA
-        Intent intent=new Intent(ChooseTypeOfGame.this,GameActivity.class);
+        Intent intent=new Intent(ChooseTypeOfGameActivity.this,GameActivity.class);
         intent.putExtra("difficulty", 2);
         intent.putExtra("clicker",true);
 

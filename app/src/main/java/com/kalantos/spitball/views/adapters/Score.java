@@ -1,4 +1,4 @@
-package com.kalantos.spitball.logic;
+package com.kalantos.spitball.views.adapters;
 
 /**
  * Created by Juanma on 19/3/2017.

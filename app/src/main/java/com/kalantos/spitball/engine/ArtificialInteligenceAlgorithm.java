@@ -1,4 +1,4 @@
-package com.kalantos.spitball.logic;
+package com.kalantos.spitball.engine;
 
 import java.util.ArrayList;
 import java.util.Random;

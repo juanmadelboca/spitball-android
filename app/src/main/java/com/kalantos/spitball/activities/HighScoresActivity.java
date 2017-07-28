@@ -1,4 +1,4 @@
-package com.kalantos.spitball.GUI;
+package com.kalantos.spitball.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,16 +8,17 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.kalantos.spitball.R;
-import com.kalantos.spitball.connectivity.ConnectionTask;
-import com.kalantos.spitball.logic.Score;
-import com.kalantos.spitball.logic.Timer;
+import com.kalantos.spitball.utils.ConnectionTask;
+import com.kalantos.spitball.views.adapters.Score;
+import com.kalantos.spitball.engine.Timer;
+import com.kalantos.spitball.views.adapters.ScoreAdapter;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-public class HighScores extends AppCompatActivity {
+public class HighScoresActivity extends AppCompatActivity {
     TextView textView;
     ArrayList<Score>scores= new ArrayList<>();
     ListView listView;
@@ -74,7 +75,7 @@ public class HighScores extends AppCompatActivity {
     }
     public void intentMenu(View view){
         //vuelve al menu inicial
-        Intent intent= new Intent(HighScores.this,MenuActivity.class);
+        Intent intent= new Intent(HighScoresActivity.this,MenuActivity.class);
         startActivity(intent);
         finish();
     }

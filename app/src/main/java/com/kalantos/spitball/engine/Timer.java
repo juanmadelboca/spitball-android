@@ -1,4 +1,4 @@
-package com.kalantos.spitball.logic;
+package com.kalantos.spitball.engine;
 
 /**
  * Created by kalantos on 30/08/16.

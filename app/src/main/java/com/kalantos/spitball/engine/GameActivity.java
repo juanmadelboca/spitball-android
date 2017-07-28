@@ -1,4 +1,4 @@
-package com.kalantos.spitball.logic;
+package com.kalantos.spitball.engine;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -17,10 +17,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import com.kalantos.spitball.GUI.MenuActivity;
 import com.kalantos.spitball.R;
-import com.kalantos.spitball.GUI.finishGameActivity;
-import com.kalantos.spitball.connectivity.SendMoveTask;
+import com.kalantos.spitball.activities.finishGameActivity;
+import com.kalantos.spitball.utils.SendMoveTask;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -138,7 +137,7 @@ public class GameActivity extends AppCompatActivity {
                     while(!gameOver){
                         refresh();
                         try {
-                            Thread.sleep(120);
+                            Thread.sleep(200);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
@@ -150,7 +149,6 @@ public class GameActivity extends AppCompatActivity {
         paint();
         //manejo de las actividades
     }
-
     public void inicialize() {
         //inicializa los valores de las bolas iniciales
         tiles[1][3].setBall(20, BallType.BALLGREEN);

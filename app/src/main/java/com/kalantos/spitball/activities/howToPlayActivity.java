@@ -1,4 +1,4 @@
-package com.kalantos.spitball.GUI;
+package com.kalantos.spitball.activities;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -8,7 +8,11 @@ import android.os.Bundle;
 import android.view.View;
 
 import com.kalantos.spitball.R;
-import com.kalantos.spitball.logic.Timer;
+import com.kalantos.spitball.fragments.HowToPlay1;
+import com.kalantos.spitball.fragments.HowToPlay2;
+import com.kalantos.spitball.fragments.HowToPlay3;
+import com.kalantos.spitball.fragments.HowToPlay4;
+import com.kalantos.spitball.engine.Timer;
 
 public class howToPlayActivity extends AppCompatActivity {
 

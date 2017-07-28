@@ -16,7 +16,7 @@
             android:value="@integer/google_play_services_version" />
 
         <activity
-            android:name=".GUI.MenuActivity"
+            android:name=".activities.MenuActivity"
             android:screenOrientation="landscape">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -25,29 +25,29 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".logic.GameActivity"
+            android:name=".engine.GameActivity"
             android:screenOrientation="landscape" />
         <activity
-            android:name=".GUI.finishGameActivity"
+            android:name=".activities.finishGameActivity"
             android:screenOrientation="landscape" />
         <activity
-            android:name=".GUI.ChooseDifficultyActivity"
+            android:name=".activities.ChooseDifficultyActivity"
             android:screenOrientation="landscape">
             >
         </activity>
         <activity
-            android:name=".GUI.settings"
+            android:name=".activities.settingsActivity"
             android:screenOrientation="landscape">
             >
         </activity>
         <activity
-            android:name=".GUI.howToPlayActivity"
+            android:name=".activities.howToPlayActivity"
             android:screenOrientation="landscape" />
         <activity
-            android:name=".GUI.HighScores"
+            android:name=".activities.HighScoresActivity"
             android:label="@string/title_activity_high_scores"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
-        <activity android:name=".GUI.ChooseTypeOfGame"></activity>
+        <activity android:name=".activities.ChooseTypeOfGameActivity"></activity>
     </application>
 
 </manifest>

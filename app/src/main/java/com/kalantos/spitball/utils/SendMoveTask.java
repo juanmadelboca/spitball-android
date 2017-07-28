@@ -1,8 +1,10 @@
-package com.kalantos.spitball.connectivity;
+package com.kalantos.spitball.utils;
 
 import android.os.AsyncTask;
 import android.util.Log;
+
 import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -13,10 +15,10 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 /**
- * Async task para conectarse a un server php
+ * Created by Juanma on 24/3/2017.
  */
 
-public class ConnectionTask extends AsyncTask<String,Void,String> {
+public class SendMoveTask extends AsyncTask<String,Void,String> {
     //conecta con una url y envia los datos que sean escritos dentro del output stream
     @Override
     protected String doInBackground(String... strings) {
@@ -35,17 +37,23 @@ public class ConnectionTask extends AsyncTask<String,Void,String> {
             connection.connect();
             //la linea siguiente manda un Json
             JSONObject json= new JSONObject();
-            json.put("METHOD", strings[1]);
+            json.put("METHODTYPE", strings[1]);
+            json.put("XINIT",Integer.parseInt(strings[2]));
+            json.put("YINIT",Integer.parseInt(strings[3]));
+            json.put("XLAST",Integer.parseInt(strings[4]));
+            json.put("YLAST",Integer.parseInt(strings[5]));
+            json.put("SPLIT",Integer.parseInt(strings[6]));
+            json.put("GAMEID",Integer.parseInt(strings[7]));
+            json.put("TURN",Integer.parseInt(strings[8]));
             ////////////////////
+            Log.d("JSONSEND",json.toString());
             OutputStreamWriter wr = new OutputStreamWriter(connection.getOutputStream());
             wr.write(json.toString());
             wr.flush();
             //la linea siguiente recibe lo que el server devuelve
-            Log.d("TEST","CONNECTED TO PHP SERVER");
             InputStream stream = connection.getInputStream();
             reader = new BufferedReader(new InputStreamReader(stream));
             String st=convertStreamToString(reader);
-            Log.d("TEST",st);
             return st;
 
         }catch (MalformedURLException e){

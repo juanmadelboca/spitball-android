@@ -1,8 +1,7 @@
-package com.kalantos.spitball.GUI;
+package com.kalantos.spitball.activities;
 
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
-import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -14,7 +13,7 @@ import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.InterstitialAd;
 import com.kalantos.spitball.R;
-import com.kalantos.spitball.logic.Timer;
+import com.kalantos.spitball.engine.Timer;
 
 public class finishGameActivity extends AppCompatActivity {
     ImageView imageView;

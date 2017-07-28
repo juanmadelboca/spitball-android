@@ -1,4 +1,4 @@
-package com.kalantos.spitball.GUI;
+package com.kalantos.spitball.views.adapters;
 
 import android.content.Context;
 import android.view.View;
@@ -7,7 +7,6 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.kalantos.spitball.R;
-import com.kalantos.spitball.logic.Score;
 
 import java.util.List;
 
