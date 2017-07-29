@@ -14,7 +14,7 @@ import java.util.concurrent.ExecutionException;
  */
 
 
-public class GameManagerr {
+public class GameManager {
     Tile[][] tiles;
     final int width = 10;
     final int height = 6;
@@ -33,7 +33,7 @@ public class GameManagerr {
     public boolean gameStatus(){
         return !gameOver;
     }
-    public GameManagerr(int GameId, int difficulty, int onlineTurn, boolean ArtificialInteligence) {
+    public GameManager(int GameId, int difficulty, int onlineTurn, boolean ArtificialInteligence) {
 
         this.GameId = GameId;
         this.difficulty = difficulty;

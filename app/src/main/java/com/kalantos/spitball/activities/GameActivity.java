@@ -19,7 +19,7 @@ import android.widget.Toast;
 import com.kalantos.spitball.R;
 import com.kalantos.spitball.engine.BallGreen;
 import com.kalantos.spitball.engine.BallPink;
-import com.kalantos.spitball.engine.GameManagerr;
+import com.kalantos.spitball.engine.GameManager;
 import com.kalantos.spitball.engine.Timer;
 import com.kalantos.spitball.utils.TileView;
 
@@ -38,7 +38,7 @@ public class GameActivity extends AppCompatActivity {
     private boolean ArtificialInteligence, onlineMove, isMyTurn,movelock;
     private int widthScreen, heightScreen;
     private int bouncingState=1;
-    private GameManagerr game;
+    private GameManager game;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -87,7 +87,7 @@ public class GameActivity extends AppCompatActivity {
         ArtificialInteligence = intent.getBooleanExtra("AI", true);
         System.out.println("la dificultad es" + difficulty);
 
-        game = new GameManagerr(GameId, difficulty, onlineTurn,ArtificialInteligence);
+        game = new GameManager(GameId, difficulty, onlineTurn,ArtificialInteligence);
         //creo el  tablero de imagenes correspondiente
         if (click) {
             clickBoard();
