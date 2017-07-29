@@ -9,6 +9,7 @@ import android.graphics.PointF;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
@@ -226,6 +227,7 @@ public class GameActivity extends AppCompatActivity {
                                 for (int j = 0; j < width; j++) {
                                     if (v.getId() == tiles[i][j].getImageView().getId()) {
                                         if(game.ClickGestion(i, j)&&bouncingState>0){
+                                            //TODO reformular lo que devuelve gameManager, porque no puedo recuperar el primer valor de split por eso sigue animandose cuando no deberia
                                             tiles[i][j].press();
                                         }
                                     }

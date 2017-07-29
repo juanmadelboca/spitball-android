@@ -153,6 +153,7 @@ public class GameManager {
             ArtificialMove();
         }
         return false;
+        //split no anula animacion, outof bounds tb
     }
 
     public boolean swipeGestion(int i, int j) {
