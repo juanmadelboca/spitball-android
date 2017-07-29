@@ -14,11 +14,11 @@ import java.util.concurrent.ExecutionException;
  */
 
 
-public class GameManagerr {
-    Tile[][] tiles;
-    final int width = 10;
-    final int height = 6;
-    boolean gameOver = false;
+public class GameManager {
+    private Tile[][] tiles;
+    private final int width = 10;
+    private final int height = 6;
+    private boolean gameOver = false;
     public int clicks = 0;
     private int playerTurn = 0;
     private int GameId, onlineTurn;
@@ -33,7 +33,7 @@ public class GameManagerr {
     public boolean gameStatus(){
         return !gameOver;
     }
-    public GameManagerr(int GameId, int difficulty, int onlineTurn, boolean ArtificialInteligence) {
+    public GameManager(int GameId, int difficulty, int onlineTurn, boolean ArtificialInteligence) {
 
         this.GameId = GameId;
         this.difficulty = difficulty;
@@ -46,7 +46,7 @@ public class GameManagerr {
 
     }
 
-    public void startOnlineGame(){
+    private void startOnlineGame(){
             if (onlineTurn == 1) {
                 playerTurn++;
                 isMyTurn = false;
@@ -62,7 +62,7 @@ public class GameManagerr {
             }
         startOnlineThread();
     }
-    public void loadTiles(){
+    private void loadTiles(){
         tiles = new Tile[height][width];
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
@@ -70,7 +70,7 @@ public class GameManagerr {
             }
         }
     }
-    public void startOnlineThread(){
+    private void startOnlineThread(){
 
         Thread refreshOnlineThread = new Thread(new Runnable() {
             @Override
@@ -89,7 +89,7 @@ public class GameManagerr {
         refreshOnlineThread.start();
     }
 
-    public void inicialize() {
+    private void inicialize() {
         //inicializa los valores de las bolas iniciales
         loadTiles();
         tiles[1][3].setBall(20, BallType.BALLGREEN);
@@ -153,6 +153,7 @@ public class GameManagerr {
             ArtificialMove();
         }
         return false;
+        //split no anula animacion, outof bounds tb
     }
 
     public boolean swipeGestion(int i, int j) {
@@ -172,6 +173,11 @@ public class GameManagerr {
         } else if (clicks == 1) {
             //CANCEL SELECTION
             if (ax == i && ay == j) {
+                clicks = 0;
+                return false;
+            } else if (Math.abs(ax - i) > 2 || Math.abs(ay - j) > 2) {
+                //OUTBOUND MOVEMENT
+                //tiles[ax][ay].release();
                 clicks = 0;
                 return false;
             } else if ((Math.abs(ax - i) == 1 && Math.abs(ay - j) == 1) || (Math.abs(ax - i) == 0 && Math.abs(ay - j) == 1) || (Math.abs(ax - i) == 1 && Math.abs(ay - j) == 0)) {
@@ -211,7 +217,7 @@ public class GameManagerr {
         return false;
     }
 
-    public void move(int i, int j, int y, int x) {
+    private void move(int i, int j, int y, int x) {
         // primeros 2 los originales 2 dos a donde van
         //mueve la bola
         if ((!onlineMove && isMyTurn) || (onlineMove && !movelock) || GameId == 0) {
@@ -245,7 +251,7 @@ public class GameManagerr {
         }
     }
 
-    public void getOnlineMove() {
+    private void getOnlineMove() {
         //obtiene las coordenadas del ultimo movimiento y lo ejecuta de forma local
 
         int[] onlineMoves = receiveJSON();
@@ -301,7 +307,7 @@ public class GameManagerr {
         return null;
     }
 
-    public void ArtificialMove() {
+    private void ArtificialMove() {
         //va en bloque try catch porque cuando termina el juego la AI intenta mover y genera excepcion de esta forma cuando esta
         //excepcion ocurre no tenogo problemas
         if (ArtificialInteligence) {
@@ -335,7 +341,7 @@ public class GameManagerr {
         }
     }
 
-    public void split(int i, int j, int y, int x) {
+    private void split(int i, int j, int y, int x) {
         //escupe una bola 33% del tamaño de ella misma
 
         if (!onlineMove && GameId != 0) {

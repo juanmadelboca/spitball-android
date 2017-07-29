@@ -31,11 +31,6 @@
             android:name=".activities.finishGameActivity"
             android:screenOrientation="landscape" />
         <activity
-            android:name=".activities.ChooseDifficultyActivity"
-            android:screenOrientation="landscape">
-            >
-        </activity>
-        <activity
             android:name=".activities.settingsActivity"
             android:screenOrientation="landscape">
             >
@@ -47,7 +42,6 @@
             android:name=".activities.HighScoresActivity"
             android:label="@string/title_activity_high_scores"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
-        <activity android:name=".activities.ChooseTypeOfGameActivity"></activity>
     </application>
 
 </manifest>

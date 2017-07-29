@@ -9,6 +9,7 @@ import android.graphics.PointF;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
@@ -19,7 +20,7 @@ import android.widget.Toast;
 import com.kalantos.spitball.R;
 import com.kalantos.spitball.engine.BallGreen;
 import com.kalantos.spitball.engine.BallPink;
-import com.kalantos.spitball.engine.GameManagerr;
+import com.kalantos.spitball.engine.GameManager;
 import com.kalantos.spitball.engine.Timer;
 import com.kalantos.spitball.utils.TileView;
 
@@ -31,14 +32,10 @@ public class GameActivity extends AppCompatActivity {
     final int width = 10;
     final int height = 6;
     boolean gameOver = false;
-    private int clicks = 0;
-    private int playerTurn = 0;
-    private int GameId, onlineTurn;
-    private int ax, ay, green, pink, difficulty;
-    private boolean ArtificialInteligence, onlineMove, isMyTurn,movelock;
+    private int green=0, pink=0;
     private int widthScreen, heightScreen;
     private int bouncingState=1;
-    private GameManagerr game;
+    private GameManager game;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,15 +76,18 @@ public class GameActivity extends AppCompatActivity {
 
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
         boolean click = settings.getBoolean("clickMode", false);
-
+        boolean bouncing = settings.getBoolean("bouncing", true);
+        if(!bouncing){
+            bouncingState=-1;
+        }
         Intent intent = getIntent();
-        difficulty = intent.getIntExtra("difficulty", 0);
-        onlineTurn = intent.getIntExtra("TURN", 0);
-        GameId = intent.getIntExtra("GAMEID", 0);
-        ArtificialInteligence = intent.getBooleanExtra("AI", true);
+        int difficulty = intent.getIntExtra("difficulty", 0);
+        int onlineTurn = intent.getIntExtra("TURN", 0);
+        int GameId = intent.getIntExtra("GAMEID", 0);
+        boolean ArtificialInteligence = intent.getBooleanExtra("AI", true);
         System.out.println("la dificultad es" + difficulty);
 
-        game = new GameManagerr(GameId, difficulty, onlineTurn,ArtificialInteligence);
+        game = new GameManager(GameId, difficulty, onlineTurn,ArtificialInteligence);
         //creo el  tablero de imagenes correspondiente
         if (click) {
             clickBoard();
@@ -105,7 +105,7 @@ public class GameActivity extends AppCompatActivity {
         //manejo de las actividades
     }
 
-    public void startAnimationThread(){
+    private void startAnimationThread(){
         final Thread refreshThread = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -226,7 +226,10 @@ public class GameActivity extends AppCompatActivity {
 
                                 for (int j = 0; j < width; j++) {
                                     if (v.getId() == tiles[i][j].getImageView().getId()) {
-                                        game.ClickGestion(i, j);
+                                        if(game.ClickGestion(i, j)&&bouncingState>0){
+                                            //TODO reformular lo que devuelve gameManager, porque no puedo recuperar el primer valor de split por eso sigue animandose cuando no deberia
+                                            tiles[i][j].press();
+                                        }
                                     }
                                 }
                             }
@@ -280,7 +283,7 @@ public class GameActivity extends AppCompatActivity {
                                     if ((Calendar.getInstance().getTimeInMillis() - startClickTime) >= MAX_CLICK_DURATION) {
                                         //si la duracion del arrastre es mas larga que max click time se cuenta como deslizamiento
                                         // y se comprueban las coordenadas para que luego clickgestion o swipe gestion realize los movimientos
-                                        clicks = 0;
+                                        game.clicks = 0;
                                         int[] temporalStart = detectMove(startPoint.y, startPoint.x);
                                         int[] temporalEnd = detectMove(endPoint.y, endPoint.x);
 
@@ -292,7 +295,9 @@ public class GameActivity extends AppCompatActivity {
                                         //al no superar el tiempo toma como 1 punto y luego espera al siguiente
                                         int[] temporal = detectMove(startPoint.y, startPoint.x);
                                         if (temporal != null) {
-                                            game.ClickGestion(temporal[0], temporal[1]);
+                                            if(game.ClickGestion(temporal[0], temporal[1])&&bouncingState>0){
+                                                tiles[temporal[0]][temporal[1]].press();
+                                            }
                                         }
                                     }
 
@@ -313,7 +318,7 @@ public class GameActivity extends AppCompatActivity {
             }
         }
     }
-    public int[] detectMove(float y, float x) {
+    private int[] detectMove(float y, float x) {
         //certifica que sean coordenadas validas dentro del tablero
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {

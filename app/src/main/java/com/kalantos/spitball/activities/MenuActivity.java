@@ -7,20 +7,28 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.TextView;
-
 import com.kalantos.spitball.R;
 import com.kalantos.spitball.engine.Timer;
+import com.kalantos.spitball.fragments.ChooseDifficultyFragment;
+import com.kalantos.spitball.fragments.ChooseTypeOfGameFragment;
+import com.kalantos.spitball.fragments.MenuFragment;
+import com.kalantos.spitball.utils.ConnectionTask;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.concurrent.ExecutionException;
 
 
 public class MenuActivity extends AppCompatActivity {
+
     boolean clicker;
-    String result;
+    int GameId=1000000083,NumPlayers,turn;
+    FragmentTransaction transaction;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu);
-
         Log.d("TEST","ALL SET");
 
         final View decorView = getWindow().getDecorView();
@@ -51,21 +59,29 @@ public class MenuActivity extends AppCompatActivity {
                         }
                     }
                 });
-
+        FragmentManager fragmentManager= getSupportFragmentManager();
+        transaction= fragmentManager.beginTransaction();
+        MenuFragment startFragment= new MenuFragment();
+        transaction.add(R.id.fragmentHolderMenu,startFragment);
+        transaction.commit();
     }
+
     public void intentChooseTypeOfGame(View view){
-        //va al menu de tipo de juego de 2 jugadores
-        Intent intent=new Intent(MenuActivity.this,ChooseTypeOfGameActivity.class);
-        startActivity(intent);
-        //finish();
+
+        ChooseTypeOfGameFragment newFragment = new ChooseTypeOfGameFragment();
+        transaction =getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.fragmentHolderMenu, newFragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
     }
 
-    public void intentChooseDifficulty(View view){
-        //va al menu para elegir dificultad de IA
-        Intent intent=new Intent(MenuActivity.this,ChooseDifficultyActivity.class);
-        startActivity(intent);
-        //better finish activity? or let it background so you can go back to menu?
-        //finish();
+    public void chooseDifficultyFragment(View view){
+
+        ChooseDifficultyFragment newFragment = new ChooseDifficultyFragment();
+        transaction =getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.fragmentHolderMenu, newFragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
     }
 
     public void intentSettings(View view){
@@ -81,4 +97,93 @@ public class MenuActivity extends AppCompatActivity {
         //finish();
     }
 
+    public void hardDifficult(View view){
+        intentGameVsAI(2);
+    }
+
+    public void forDummiesDifficult(View view){
+        intentGameVsAI(0);
+    }
+
+    public void easyDifficult(View view){
+        intentGameVsAI(1);
+    }
+
+    private void intentGameVsAI( int difficulty){
+        Intent intent=new Intent(MenuActivity.this,GameActivity.class);
+        intent.putExtra("difficulty", difficulty);
+        intent.putExtra("clicker",clicker);
+        startActivity(intent);
+        finishAffinity();
+        //better finish activity? or let it background so you can go back to menu?
+    }
+
+    private void intentGameOnline(){
+        //inicia la actividad de juego con el GameID de la partida
+        Intent intent=new Intent(MenuActivity.this,GameActivity.class);
+        intent.putExtra("AI",false);
+        intent.putExtra("GAMEID",GameId);
+        intent.putExtra("TURN",turn);
+        startActivity(intent);
+        //better finish activity? or let it background so you can go back to menu?
+        finishAffinity();
+    }
+
+    public void intentGame(View view){
+        //inicia una instancia de juego de 2 jugadores en el mismo celular
+        Intent intent=new Intent(MenuActivity.this,GameActivity.class);
+        intent.putExtra("AI",false);
+        startActivity(intent);
+        //better finish activity? or let it background so you can go back to menu?
+        finishAffinity();
+    }
+
+    public void createOnlineGame(View view) throws ExecutionException, InterruptedException {
+        //crea un juego o se conecta a uno si es que hay una partida creada
+        //al crearla espera un tiempo y luego arranca una partida online si encontro oponente o una contra IA avanzada
+        connect("CREATE");
+        int counter=0;
+        while(NumPlayers==1&& counter<20) {
+            connect("GET");
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            counter++;
+        }
+        Log.d("TEST",""+counter);
+        if(NumPlayers==2){
+            intentGameOnline();
+
+        }else{
+            intentGameVsAI(2);
+            try {
+                new ConnectionTask().execute("http://spitball.servegame.com/leaveGame.php","").get();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void connect(String method){
+        //conecta a una url fija y refresca los datos de GameId y numero de jugadores
+        try {
+            String json= new ConnectionTask().execute("http://spitball.servegame.com/createGame.php",method).get();
+            JSONObject JSONobject= new JSONObject(json);
+            if(method.equals("CREATE")){
+                turn=JSONobject.getInt("TURN");
+            }
+            GameId=JSONobject.getInt("GAMEID");
+            NumPlayers=JSONobject.getInt("NUMPLAYERS");
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
 }
