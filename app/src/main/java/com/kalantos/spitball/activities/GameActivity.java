@@ -31,11 +31,7 @@ public class GameActivity extends AppCompatActivity {
     final int width = 10;
     final int height = 6;
     boolean gameOver = false;
-    private int clicks = 0;
-    private int playerTurn = 0;
-    private int GameId, onlineTurn;
-    private int ax, ay, green, pink, difficulty;
-    private boolean ArtificialInteligence, onlineMove, isMyTurn,movelock;
+    private int green=0, pink=0;
     private int widthScreen, heightScreen;
     private int bouncingState=1;
     private GameManager game;
@@ -81,10 +77,10 @@ public class GameActivity extends AppCompatActivity {
         boolean click = settings.getBoolean("clickMode", false);
 
         Intent intent = getIntent();
-        difficulty = intent.getIntExtra("difficulty", 0);
-        onlineTurn = intent.getIntExtra("TURN", 0);
-        GameId = intent.getIntExtra("GAMEID", 0);
-        ArtificialInteligence = intent.getBooleanExtra("AI", true);
+        int difficulty = intent.getIntExtra("difficulty", 0);
+        int onlineTurn = intent.getIntExtra("TURN", 0);
+        int GameId = intent.getIntExtra("GAMEID", 0);
+        boolean ArtificialInteligence = intent.getBooleanExtra("AI", true);
         System.out.println("la dificultad es" + difficulty);
 
         game = new GameManager(GameId, difficulty, onlineTurn,ArtificialInteligence);
@@ -280,7 +276,7 @@ public class GameActivity extends AppCompatActivity {
                                     if ((Calendar.getInstance().getTimeInMillis() - startClickTime) >= MAX_CLICK_DURATION) {
                                         //si la duracion del arrastre es mas larga que max click time se cuenta como deslizamiento
                                         // y se comprueban las coordenadas para que luego clickgestion o swipe gestion realize los movimientos
-                                        clicks = 0;
+                                        game.clicks = 0;
                                         int[] temporalStart = detectMove(startPoint.y, startPoint.x);
                                         int[] temporalEnd = detectMove(endPoint.y, endPoint.x);
 

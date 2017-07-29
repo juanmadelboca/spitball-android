@@ -6,7 +6,7 @@
     android:screenOrientation="landscape"
     tools:context="com.kalantos.spitball.activities.MenuActivity"
     android:background="@drawable/backgreen">
-
+    <!-- Agregar las balls al back background, o volver a colocar las imageviews como en la version 4cde71a de git-->
     <LinearLayout
         android:id="@+id/fragmentHolderMenu"
         android:orientation="vertical"
