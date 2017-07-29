@@ -7,16 +7,9 @@ import android.widget.ImageView;
 
 public class Tile extends Activity{
 	private Ball ball;
-	private ImageView imageView;
-	private final int boundsX,boundsY;
-	private boolean isPressed;
 
-public Tile(Context context,int boundsY,int boundsX){
+public Tile(){
 	ball= new Ball(0);
-	imageView= new ImageView(context);
-	this.boundsX=boundsX;
-	this.boundsY=boundsY;
-	this.isPressed=false;
 	}
 
 protected void setBall(int size, BallType tipo){
@@ -30,35 +23,14 @@ protected void setBall(int size, BallType tipo){
 		default: break;
 	}
 }
-	protected int getBoundsX(){
-		return	boundsX;
-	}
-	protected int getBoundsY(){
-		return boundsY;
-	}
-
 
 protected void removeBall(){
 	ball=new Ball(0);
 }
 
-protected Ball getBall(){
+public Ball getBall(){
 	return ball;
 }
-//BOUNCING
-	protected boolean isPressed() {
-		return isPressed;
-	}
-	protected void press(){
-		isPressed=true;
-	}
-	protected void release(){
-		isPressed=false;
-	}
-
-	protected ImageView getImageView(){
-		return imageView;
-	}
 
 	//el metodo battle sirve para definir que bola quedara cuando se intersectan 2
 	//y tambien redefine el tamaño

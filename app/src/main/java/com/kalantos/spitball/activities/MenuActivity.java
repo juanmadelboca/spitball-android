@@ -1,6 +1,8 @@
 package com.kalantos.spitball.activities;
 
 import android.content.Intent;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -19,8 +21,6 @@ public class MenuActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu);
 
-        TextView textView=(TextView)findViewById(R.id.textView3);
-        textView.setText(result);
         Log.d("TEST","ALL SET");
 
         final View decorView = getWindow().getDecorView();
@@ -52,7 +52,6 @@ public class MenuActivity extends AppCompatActivity {
                     }
                 });
 
-
     }
     public void intentChooseTypeOfGame(View view){
         //va al menu de tipo de juego de 2 jugadores
@@ -68,11 +67,13 @@ public class MenuActivity extends AppCompatActivity {
         //better finish activity? or let it background so you can go back to menu?
         //finish();
     }
+
     public void intentSettings(View view){
         //abre las configuraciones del juego
         Intent intent=new Intent(MenuActivity.this,settingsActivity.class);
         startActivity(intent);
     }
+
     public void intentHighScores(View view){
         //abre los puntajes
         Intent intent= new Intent(MenuActivity.this,HighScoresActivity.class);

@@ -14,7 +14,7 @@ import java.util.concurrent.ExecutionException;
  */
 
 
-public class GameManager {
+public class GameManagerr {
     Tile[][] tiles;
     final int width = 10;
     final int height = 6;
@@ -33,7 +33,7 @@ public class GameManager {
     public boolean gameStatus(){
         return !gameOver;
     }
-    public GameManager(int GameId, int difficulty, int onlineTurn, boolean ArtificialInteligence) {
+    public GameManagerr(int GameId, int difficulty, int onlineTurn, boolean ArtificialInteligence) {
 
         this.GameId = GameId;
         this.difficulty = difficulty;
@@ -172,11 +172,6 @@ public class GameManager {
         } else if (clicks == 1) {
             //CANCEL SELECTION
             if (ax == i && ay == j) {
-                clicks = 0;
-                return false;
-            }else if (Math.abs(ax - i) > 2 || Math.abs(ay - j) > 2) {
-                //OUTBOUND MOVEMENT
-                //tiles[ax][ay].release();
                 clicks = 0;
                 return false;
             } else if ((Math.abs(ax - i) == 1 && Math.abs(ay - j) == 1) || (Math.abs(ax - i) == 0 && Math.abs(ay - j) == 1) || (Math.abs(ax - i) == 1 && Math.abs(ay - j) == 0)) {

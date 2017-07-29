@@ -9,7 +9,6 @@ import android.widget.ImageView;
 
 import com.kalantos.spitball.R;
 import com.kalantos.spitball.utils.ConnectionTask;
-import com.kalantos.spitball.engine.GameActivity;
 
 import org.json.JSONException;
 import org.json.JSONObject;

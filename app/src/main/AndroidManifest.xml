@@ -25,7 +25,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".engine.GameActivity"
+            android:name=".activities.GameActivity"
             android:screenOrientation="landscape" />
         <activity
             android:name=".activities.finishGameActivity"

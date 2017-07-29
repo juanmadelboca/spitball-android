@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.view.View;
 
 import com.kalantos.spitball.R;
-import com.kalantos.spitball.engine.GameActivity;
 import com.kalantos.spitball.engine.Timer;
 
 public class ChooseDifficultyActivity extends AppCompatActivity {

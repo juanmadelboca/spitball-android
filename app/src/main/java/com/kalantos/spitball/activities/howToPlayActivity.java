@@ -8,10 +8,6 @@ import android.os.Bundle;
 import android.view.View;
 
 import com.kalantos.spitball.R;
-import com.kalantos.spitball.fragments.HowToPlay1;
-import com.kalantos.spitball.fragments.HowToPlay2;
-import com.kalantos.spitball.fragments.HowToPlay3;
-import com.kalantos.spitball.fragments.HowToPlay4;
 import com.kalantos.spitball.engine.Timer;
 
 public class howToPlayActivity extends AppCompatActivity {
@@ -50,12 +46,12 @@ public class howToPlayActivity extends AppCompatActivity {
                         }
                     }
                 });
-
+/*
         FragmentManager fragmentManager= getSupportFragmentManager();
         FragmentTransaction transaction= fragmentManager.beginTransaction();
         HowToPlay1 startFragment= new HowToPlay1();
         transaction.add(R.id.fragmentHolder,startFragment);
-        transaction.commit();
+        transaction.commit();*/
     }
     public void nextFragment(View view){
         state++;
@@ -65,7 +61,7 @@ public class howToPlayActivity extends AppCompatActivity {
         state--;
         onSelectFragment();
     }
-    public void onSelectFragment(){
+    public void onSelectFragment(){/*
         Fragment newFragment;
         switch (state){
             case 0: newFragment=new HowToPlay1();
@@ -81,6 +77,6 @@ public class howToPlayActivity extends AppCompatActivity {
         FragmentTransaction transaction =getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.fragmentHolder, newFragment);
         transaction.addToBackStack(null);
-        transaction.commit();
+        transaction.commit();*/
     }
 }
