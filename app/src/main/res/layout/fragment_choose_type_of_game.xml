@@ -20,7 +20,7 @@
         app:layout_constraintLeft_toLeftOf="parent"
         android:layout_marginEnd="16dp"
         app:layout_constraintRight_toRightOf="parent"
-        android:onClick="intentChooseTypeOfGame"
+        android:onClick="createOnlineGame"
         />
 
     <Button

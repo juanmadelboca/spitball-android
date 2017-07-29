@@ -101,7 +101,7 @@ public class GameActivity extends AppCompatActivity {
         //manejo de las actividades
     }
 
-    public void startAnimationThread(){
+    private void startAnimationThread(){
         final Thread refreshThread = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -309,7 +309,7 @@ public class GameActivity extends AppCompatActivity {
             }
         }
     }
-    public int[] detectMove(float y, float x) {
+    private int[] detectMove(float y, float x) {
         //certifica que sean coordenadas validas dentro del tablero
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {

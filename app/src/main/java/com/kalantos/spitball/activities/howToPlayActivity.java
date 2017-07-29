@@ -61,7 +61,7 @@ public class howToPlayActivity extends AppCompatActivity {
         state--;
         onSelectFragment();
     }
-    public void onSelectFragment(){/*
+    private void onSelectFragment(){/*
         Fragment newFragment;
         switch (state){
             case 0: newFragment=new HowToPlay1();

@@ -15,10 +15,10 @@ import java.util.concurrent.ExecutionException;
 
 
 public class GameManager {
-    Tile[][] tiles;
-    final int width = 10;
-    final int height = 6;
-    boolean gameOver = false;
+    private Tile[][] tiles;
+    private final int width = 10;
+    private final int height = 6;
+    private boolean gameOver = false;
     public int clicks = 0;
     private int playerTurn = 0;
     private int GameId, onlineTurn;
@@ -46,7 +46,7 @@ public class GameManager {
 
     }
 
-    public void startOnlineGame(){
+    private void startOnlineGame(){
             if (onlineTurn == 1) {
                 playerTurn++;
                 isMyTurn = false;
@@ -62,7 +62,7 @@ public class GameManager {
             }
         startOnlineThread();
     }
-    public void loadTiles(){
+    private void loadTiles(){
         tiles = new Tile[height][width];
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
@@ -70,7 +70,7 @@ public class GameManager {
             }
         }
     }
-    public void startOnlineThread(){
+    private void startOnlineThread(){
 
         Thread refreshOnlineThread = new Thread(new Runnable() {
             @Override
@@ -89,7 +89,7 @@ public class GameManager {
         refreshOnlineThread.start();
     }
 
-    public void inicialize() {
+    private void inicialize() {
         //inicializa los valores de las bolas iniciales
         loadTiles();
         tiles[1][3].setBall(20, BallType.BALLGREEN);
@@ -211,7 +211,7 @@ public class GameManager {
         return false;
     }
 
-    public void move(int i, int j, int y, int x) {
+    private void move(int i, int j, int y, int x) {
         // primeros 2 los originales 2 dos a donde van
         //mueve la bola
         if ((!onlineMove && isMyTurn) || (onlineMove && !movelock) || GameId == 0) {
@@ -245,7 +245,7 @@ public class GameManager {
         }
     }
 
-    public void getOnlineMove() {
+    private void getOnlineMove() {
         //obtiene las coordenadas del ultimo movimiento y lo ejecuta de forma local
 
         int[] onlineMoves = receiveJSON();
@@ -301,7 +301,7 @@ public class GameManager {
         return null;
     }
 
-    public void ArtificialMove() {
+    private void ArtificialMove() {
         //va en bloque try catch porque cuando termina el juego la AI intenta mover y genera excepcion de esta forma cuando esta
         //excepcion ocurre no tenogo problemas
         if (ArtificialInteligence) {
@@ -335,7 +335,7 @@ public class GameManager {
         }
     }
 
-    public void split(int i, int j, int y, int x) {
+    private void split(int i, int j, int y, int x) {
         //escupe una bola 33% del tamaño de ella misma
 
         if (!onlineMove && GameId != 0) {

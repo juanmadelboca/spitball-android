@@ -109,7 +109,7 @@ public class MenuActivity extends AppCompatActivity {
         intentGameVsAI(1);
     }
 
-    public void intentGameVsAI( int difficulty){
+    private void intentGameVsAI( int difficulty){
         Intent intent=new Intent(MenuActivity.this,GameActivity.class);
         intent.putExtra("difficulty", difficulty);
         intent.putExtra("clicker",clicker);
@@ -118,7 +118,7 @@ public class MenuActivity extends AppCompatActivity {
         //better finish activity? or let it background so you can go back to menu?
     }
 
-    public void intentGameOnline(){
+    private void intentGameOnline(){
         //inicia la actividad de juego con el GameID de la partida
         Intent intent=new Intent(MenuActivity.this,GameActivity.class);
         intent.putExtra("AI",false);
@@ -168,12 +168,12 @@ public class MenuActivity extends AppCompatActivity {
         }
     }
 
-    public void connect(String method){
+    private void connect(String method){
         //conecta a una url fija y refresca los datos de GameId y numero de jugadores
         try {
             String json= new ConnectionTask().execute("http://spitball.servegame.com/createGame.php",method).get();
             JSONObject JSONobject= new JSONObject(json);
-            if(method=="CREATE"){
+            if(method.equals("CREATE")){
                 turn=JSONobject.getInt("TURN");
             }
             GameId=JSONobject.getInt("GAMEID");

@@ -40,7 +40,7 @@ public class HighScoresActivity extends AppCompatActivity {
 
 
         }catch (Exception e){
-
+            e.printStackTrace();
         }
 
 
@@ -91,7 +91,7 @@ public class HighScoresActivity extends AppCompatActivity {
                 scores.add(tempScore);
             }
         }catch (Exception e){
-
+            e.printStackTrace();
         }
 
     }
