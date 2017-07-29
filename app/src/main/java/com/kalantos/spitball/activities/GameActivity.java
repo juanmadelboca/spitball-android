@@ -75,7 +75,10 @@ public class GameActivity extends AppCompatActivity {
 
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
         boolean click = settings.getBoolean("clickMode", false);
-
+        boolean bouncing = settings.getBoolean("bouncing", true);
+        if(!bouncing){
+            bouncingState=-1;
+        }
         Intent intent = getIntent();
         int difficulty = intent.getIntExtra("difficulty", 0);
         int onlineTurn = intent.getIntExtra("TURN", 0);
@@ -222,7 +225,9 @@ public class GameActivity extends AppCompatActivity {
 
                                 for (int j = 0; j < width; j++) {
                                     if (v.getId() == tiles[i][j].getImageView().getId()) {
-                                        game.ClickGestion(i, j);
+                                        if(game.ClickGestion(i, j)&&bouncingState>0){
+                                            tiles[i][j].press();
+                                        }
                                     }
                                 }
                             }
@@ -288,7 +293,9 @@ public class GameActivity extends AppCompatActivity {
                                         //al no superar el tiempo toma como 1 punto y luego espera al siguiente
                                         int[] temporal = detectMove(startPoint.y, startPoint.x);
                                         if (temporal != null) {
-                                            game.ClickGestion(temporal[0], temporal[1]);
+                                            if(game.ClickGestion(temporal[0], temporal[1])&&bouncingState>0){
+                                                tiles[temporal[0]][temporal[1]].press();
+                                            }
                                         }
                                     }
 

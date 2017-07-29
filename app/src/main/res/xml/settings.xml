@@ -4,6 +4,10 @@
         android:key="clickMode"
         android:title="Modo Click"
         android:summary="Deshabilita el modo swipe"/>
+    <CheckBoxPreference
+    android:key="bouncing"
+    android:title="Animacion al clickear"
+    android:summary="Habilita la animacion de rebote de las pelotas"/>
     <ListPreference
         android:key="ballColor"
         android:title="Color de bola"

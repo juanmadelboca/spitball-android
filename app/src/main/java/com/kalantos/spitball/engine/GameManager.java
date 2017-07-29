@@ -174,6 +174,11 @@ public class GameManager {
             if (ax == i && ay == j) {
                 clicks = 0;
                 return false;
+            } else if (Math.abs(ax - i) > 2 || Math.abs(ay - j) > 2) {
+                //OUTBOUND MOVEMENT
+                //tiles[ax][ay].release();
+                clicks = 0;
+                return false;
             } else if ((Math.abs(ax - i) == 1 && Math.abs(ay - j) == 1) || (Math.abs(ax - i) == 0 && Math.abs(ay - j) == 1) || (Math.abs(ax - i) == 1 && Math.abs(ay - j) == 0)) {
                 //MOVE
                 move(ax, ay, i, j);
