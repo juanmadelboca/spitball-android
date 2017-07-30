@@ -1,5 +1,6 @@
 package com.kalantos.spitball.activities;
 
+import android.app.Fragment;
 import android.content.Intent;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -7,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.kalantos.spitball.R;
@@ -26,6 +28,7 @@ public class MenuActivity extends AppCompatActivity {
     boolean clicker;
     int GameId=1000000083,NumPlayers,turn;
     FragmentTransaction transaction;
+    ImageView imageSettings;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,11 +64,18 @@ public class MenuActivity extends AppCompatActivity {
                         }
                     }
                 });
+        imageSettings = (ImageView)findViewById(R.id.imageSettings);
         FragmentManager fragmentManager= getSupportFragmentManager();
         transaction= fragmentManager.beginTransaction();
         MenuFragment startFragment= new MenuFragment();
         transaction.add(R.id.fragmentHolderMenu,startFragment);
         transaction.commit();
+    }
+
+    @Override
+    public void onBackPressed() {
+        imageSettings.setVisibility(View.VISIBLE);
+        super.onBackPressed();
     }
 
     public void intentChooseTypeOfGame(View view){
@@ -75,6 +85,7 @@ public class MenuActivity extends AppCompatActivity {
         transaction.replace(R.id.fragmentHolderMenu, newFragment);
         transaction.addToBackStack(null);
         transaction.commit();
+        imageSettings.setVisibility(View.GONE);
     }
 
     public void chooseDifficultyFragment(View view){
@@ -84,6 +95,7 @@ public class MenuActivity extends AppCompatActivity {
         transaction.replace(R.id.fragmentHolderMenu, newFragment);
         transaction.addToBackStack(null);
         transaction.commit();
+        imageSettings.setVisibility(View.GONE);
     }
 
     public void intentSettings(View view){

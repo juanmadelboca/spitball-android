@@ -4,8 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:screenOrientation="landscape"
-    tools:context="com.kalantos.spitball.activities.MenuActivity"
-    android:background="@drawable/backgreen">
+    tools:context="com.kalantos.spitball.activities.MenuActivity">
     <!-- Agregar las balls al back background, o volver a colocar las imageviews como en la version 4cde71a de git-->
     <LinearLayout
         android:id="@+id/fragmentHolderMenu"
@@ -18,7 +17,7 @@
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:src="@drawable/settings"
-        android:id="@+id/imageView6"
+        android:id="@+id/imageSettings"
         android:onClick="intentSettings"
         android:layout_gravity="end"
         android:layout_marginEnd="20dp"
