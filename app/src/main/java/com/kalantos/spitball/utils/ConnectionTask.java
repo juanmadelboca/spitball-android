@@ -29,8 +29,8 @@ public class ConnectionTask extends AsyncTask<String,Void,String> {
             connection = (HttpURLConnection)
                     url.openConnection();
             connection.setRequestMethod("POST");
-            connection.setReadTimeout(10000);
-            connection.setConnectTimeout(15000);
+            connection.setReadTimeout(3000);
+            connection.setConnectTimeout(3000);
             connection.setDoOutput(true);
             connection.connect();
             //la linea siguiente manda un Json

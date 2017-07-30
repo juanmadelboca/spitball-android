@@ -7,6 +7,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
+
 import com.kalantos.spitball.R;
 import com.kalantos.spitball.engine.Timer;
 import com.kalantos.spitball.fragments.ChooseDifficultyFragment;
@@ -141,34 +143,33 @@ public class MenuActivity extends AppCompatActivity {
     public void createOnlineGame(View view) throws ExecutionException, InterruptedException {
         //crea un juego o se conecta a uno si es que hay una partida creada
         //al crearla espera un tiempo y luego arranca una partida online si encontro oponente o una contra IA avanzada
-        connect("CREATE");
-        int counter=0;
-        while(NumPlayers==1&& counter<20) {
-            connect("GET");
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+        if(connect("CREATE")) {
+            int counter = 0;
+            while (NumPlayers == 1 && counter < 20) {
+                connect("GET");
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                counter++;
             }
-            counter++;
-        }
-        Log.d("TEST",""+counter);
-        if(NumPlayers==2){
-            intentGameOnline();
+            Log.d("TEST", "" + counter);
+            if (NumPlayers == 2) {
+                intentGameOnline();
 
-        }else{
-            intentGameVsAI(2);
-            try {
-                new ConnectionTask().execute("http://spitball.servegame.com/leaveGame.php","").get();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } catch (ExecutionException e) {
-                e.printStackTrace();
+            } else {
+                intentGameVsAI(2);
+                try {
+                    new ConnectionTask().execute("http://spitball.servegame.com/leaveGame.php", "").get();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
 
-    private void connect(String method){
+    private boolean connect(String method){
         //conecta a una url fija y refresca los datos de GameId y numero de jugadores
         try {
             String json= new ConnectionTask().execute("http://spitball.servegame.com/createGame.php",method).get();
@@ -178,12 +179,11 @@ public class MenuActivity extends AppCompatActivity {
             }
             GameId=JSONobject.getInt("GAMEID");
             NumPlayers=JSONobject.getInt("NUMPLAYERS");
-        } catch (InterruptedException e) {
+        } catch (Exception e) {
             e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (JSONException e) {
-            e.printStackTrace();
+            Toast.makeText(this,"No fue posible conectarse al servidor",Toast.LENGTH_SHORT).show();
+            return false;
         }
+        return true;
     }
 }
