@@ -9,7 +9,6 @@
     <string name="highScores">High Scores</string>
     <string name="hard">Hard</string>
     <string name="howToPlayInfo">El juego consiste en comer todas las bolas del tablero para poder lograr esto cuentas con unos interesantes movimientos que te mostraremos a continuacion..</string>
-
     <string-array name="ballColors">
         <item>Color Rosa</item>
         <item>Color Verde</item>
@@ -21,4 +20,7 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="title_activity_high_scores">HighScores</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
