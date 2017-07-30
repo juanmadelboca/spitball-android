@@ -117,6 +117,13 @@ public class GameActivity extends AppCompatActivity {
                         e.printStackTrace();
                     }
                 }
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        paint();
+                    }
+                });
             }
         });
         refreshThread.start();
@@ -187,11 +194,11 @@ public class GameActivity extends AppCompatActivity {
         }
         if (green == 0) {
             finishGame();
-            //gameOver = true;
+            game.setGameStatus(true);
         }
         if (pink == 0) {
             finishGame();
-            gameOver = true;
+            game.setGameStatus(true);
         }
         time_end = System.currentTimeMillis();
         System.out.println("the task has taken " + (time_end - time_start) + " milliseconds");
@@ -203,6 +210,7 @@ public class GameActivity extends AppCompatActivity {
         Intent intent = new Intent(GameActivity.this, finishGameActivity.class);
         intent.putExtra("green", green);
         intent.putExtra("pink", pink);
+        Log.d("DEBUG","ENTRE AL FINISH,gameover: "+gameOver+" - gren: "+green+" -pink: "+pink);
         startActivity(intent);
         finishAffinity();
 

@@ -30,8 +30,13 @@ public class GameManager {
     public Tile[][] getTiles(){
         return tiles;
     }
+
     public boolean gameStatus(){
         return !gameOver;
+    }
+
+    public void setGameStatus(boolean status){
+        gameOver= status;
     }
     public GameManager(int GameId, int difficulty, int onlineTurn, boolean ArtificialInteligence) {
 
