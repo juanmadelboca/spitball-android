@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.kalantos.spitball.R;
 import com.kalantos.spitball.utils.ConnectionTask;
@@ -41,6 +42,7 @@ public class HighScoresActivity extends AppCompatActivity {
 
         }catch (Exception e){
             e.printStackTrace();
+            Toast.makeText(this,"No fue posible conectarse al servidor",Toast.LENGTH_SHORT).show();
         }
 
 
