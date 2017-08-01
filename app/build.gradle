@@ -8,8 +8,8 @@ android {
         applicationId "com.kalantos.spitball"
         minSdkVersion 19
         targetSdkVersion 23
-        versionCode 7
-        versionName "4.1.7"
+        versionCode 8
+        versionName "2.1.8"
     }
     buildTypes {
         release {

@@ -24,6 +24,7 @@ public class GameManager {
     private int GameId, onlineTurn;
     private int ax, ay, difficulty;
     private boolean ArtificialInteligence, onlineMove, isMyTurn, movelock;
+    private boolean anyMove;
 
     //metricas de pantalla? puedo pedirlas sin activity?
 
@@ -37,6 +38,12 @@ public class GameManager {
 
     public void setGameStatus(boolean status){
         gameOver= status;
+    }
+    public boolean detectMoves(){
+
+        boolean temporal=anyMove;
+        anyMove=false;
+        return  temporal;
     }
     public GameManager(int GameId, int difficulty, int onlineTurn, boolean ArtificialInteligence) {
 
@@ -112,27 +119,24 @@ public class GameManager {
             ax = i;
             ay = j;
             clicks++;
-            //BOUNCING
-            //tiles[i][j].press();
             return true;
 
         } else if ((tiles[i][j].getBall() instanceof BallPink) && clicks == 0 && (playerTurn % 2 == 1)) {
             ax = i;
             ay = j;
             clicks++;
-            //tiles[i][j].press();
             return true;
 
         } else if (clicks == 1) {
             //CANCEL SELECTION
             if (ax == i && ay == j) {
                 clicks = 0;
-                //tiles[ax][ay].release();
+                anyMove=true;
                 return false;
             } else if (Math.abs(ax - i) > 2 || Math.abs(ay - j) > 2) {
                 //OUTBOUND MOVEMENT
-                //tiles[ax][ay].release();
                 clicks = 0;
+                anyMove=true;
                 return false;
             } else if ((Math.abs(ax - i) == 1 && Math.abs(ay - j) == 1) || (Math.abs(ax - i) == 0 && Math.abs(ay - j) == 1) || (Math.abs(ax - i) == 1 && Math.abs(ay - j) == 0)) {
                 //MOVE
@@ -151,10 +155,9 @@ public class GameManager {
                 split(ax, ay, 0, -2);
             } else {
                 clicks = 0;
-                //tiles[ax][ay].release();
+                anyMove=true;
                 return false;
             }
-            //tiles[ax][ay].release();
             ArtificialMove();
         }
         return false;
@@ -179,10 +182,11 @@ public class GameManager {
             //CANCEL SELECTION
             if (ax == i && ay == j) {
                 clicks = 0;
+                anyMove=true;
                 return false;
             } else if (Math.abs(ax - i) > 2 || Math.abs(ay - j) > 2) {
                 //OUTBOUND MOVEMENT
-                //tiles[ax][ay].release();
+                anyMove=true;
                 clicks = 0;
                 return false;
             } else if ((Math.abs(ax - i) == 1 && Math.abs(ay - j) == 1) || (Math.abs(ax - i) == 0 && Math.abs(ay - j) == 1) || (Math.abs(ax - i) == 1 && Math.abs(ay - j) == 0)) {
@@ -215,6 +219,7 @@ public class GameManager {
                 move(ax, ay, ax + 1, ay + 1);
             } else {
                 clicks = 0;
+                anyMove=true;
                 return false;
             }
             ArtificialMove();
@@ -225,20 +230,12 @@ public class GameManager {
     private void move(int i, int j, int y, int x) {
         // primeros 2 los originales 2 dos a donde van
         //mueve la bola
+        anyMove=true;
         if ((!onlineMove && isMyTurn) || (onlineMove && !movelock) || GameId == 0) {
 
             tiles[y][x].battle(tiles[i][j].getBall());
             tiles[i][j].removeBall();
             clicks = 0;
-            debug();
-            /* TO-DO
-            this.runOnUiThread(new Runnable() {
-
-                @Override
-                public void run() {
-                    paint();
-                }
-            });*/
             movelock = true;
         }
         //debug();
@@ -348,6 +345,7 @@ public class GameManager {
 
     private void split(int i, int j, int y, int x) {
         //escupe una bola 33% del tamaño de ella misma
+        anyMove=true;
 
         if (!onlineMove && GameId != 0) {
             try {
