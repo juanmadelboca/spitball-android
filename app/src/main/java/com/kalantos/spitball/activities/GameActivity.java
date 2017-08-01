@@ -26,6 +26,7 @@ import com.kalantos.spitball.engine.GameManager;
 import com.kalantos.spitball.engine.Timer;
 import com.kalantos.spitball.utils.TileView;
 
+import java.sql.Timestamp;
 import java.util.Calendar;
 
 public class GameActivity extends AppCompatActivity {
@@ -38,6 +39,7 @@ public class GameActivity extends AppCompatActivity {
     private int widthScreen, heightScreen;
     private int bouncingState=1;
     private GameManager game;
+    boolean debug=false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -87,8 +89,6 @@ public class GameActivity extends AppCompatActivity {
         int onlineTurn = intent.getIntExtra("TURN", 0);
         int GameId = intent.getIntExtra("GAMEID", 0);
         boolean ArtificialInteligence = intent.getBooleanExtra("AI", true);
-        System.out.println("la dificultad es" + difficulty);
-
         game = new GameManager(GameId, difficulty, onlineTurn,ArtificialInteligence);
         //creo el  tablero de imagenes correspondiente
         if (click) {
@@ -103,6 +103,7 @@ public class GameActivity extends AppCompatActivity {
             Toast.makeText(this, " JUGADOR ROSA!", Toast.LENGTH_LONG).show();
         }
         startAnimationThread();
+
 
         //manejo de las actividades
     }
@@ -130,10 +131,13 @@ public class GameActivity extends AppCompatActivity {
     }
 
     private void startAnimationThread(){
-        final Thread refreshThread = new Thread(new Runnable() {
+        Runnable runnable= new Runnable() {
             @Override
             public void run() {
                 while(game.gameStatus()){
+                    /*Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+                    if(debug)
+                        System.out.println("Thread1: "+timestamp);*/
                     refresh();
                     try {
                         Thread.sleep(200);
@@ -149,16 +153,32 @@ public class GameActivity extends AppCompatActivity {
                     }
                 });
             }
-        });
-        refreshThread.start();
+        };
+        final Thread refreshThread1 = new Thread(runnable);refreshThread1.start();
+       /* final Thread refreshThread2 = new Thread(runnable);
+        final Thread refreshThread3 = new Thread(runnable);
+        final Thread refreshThread4 = new Thread(runnable);
+        try {
+            refreshThread1.start();
+            Thread.sleep(200);
+            refreshThread2.start();
+            Thread.sleep(200);
+            refreshThread3.start();
+            Thread.sleep(200);
+            refreshThread4.start();
 
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }*/
         paint();
     }
     public void paint() {
         //las imagenes no pueden exeder los 5kB porque sino el tiempo de dibujo exede los 200ms y no se ve fluido
         //recorre la matriz de tiles y va colocando las imagenes correspondientes al tamaño de la bola
 
-
+        if(game.detectMoves()){
+            unpressTiles();
+        }
         long time_start, time_end;
         time_start = System.currentTimeMillis();
         green = 0;
@@ -167,7 +187,7 @@ public class GameActivity extends AppCompatActivity {
 
             for (int j = 0; j < width; j++) {
                 //poner calculo dentro del if para no hacer calculo al pedo
-                double temp = (game.getTiles()[i][j].getBall().getSize()) + heightScreen/14 - ((game.getTiles()[i][j].getBall().getSize()) * (1/7)*(widthScreen/heightScreen));
+                double temp = (game.getTiles()[i][j].getBall().getSize()) + heightScreen/14 - ((game.getTiles()[i][j].getBall().getSize())*(1/7)*((double)widthScreen/heightScreen));
                 int ballSize = (int) temp;
                 //probar velocidad declarando un bitmap afuera
                 if (game.getTiles()[i][j].getBall() instanceof BallGreen) {
@@ -225,9 +245,17 @@ public class GameActivity extends AppCompatActivity {
             game.setGameStatus(true);
         }
         time_end = System.currentTimeMillis();
-        System.out.println("the task has taken " + (time_end - time_start) + " milliseconds");
+        if(debug)
+            System.out.println("the task has taken " + (time_end - time_start) + " milliseconds");
         //debug();
 
+    }
+    private void unpressTiles(){
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
+                tiles[i][j].release();
+            }
+        }
     }
     private void finishGame() {
         //se ejecuta cuando termina el juego, finaliza la activad y procede a la acitvidad que muestra al ganador
@@ -258,9 +286,10 @@ public class GameActivity extends AppCompatActivity {
 
                                 for (int j = 0; j < width; j++) {
                                     if (v.getId() == tiles[i][j].getImageView().getId()) {
-                                        if(game.ClickGestion(i, j)&&bouncingState>0){
-                                            //TODO reformular lo que devuelve gameManager, porque no puedo recuperar el primer valor de split por eso sigue animandose cuando no deberia
+                                        if(game.ClickGestion(i, j)){
                                             tiles[i][j].press();
+                                        }else{
+                                            tiles[i][j].release();
                                         }
                                     }
                                 }
