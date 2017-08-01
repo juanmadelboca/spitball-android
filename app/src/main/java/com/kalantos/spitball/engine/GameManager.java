@@ -131,6 +131,7 @@ public class GameManager {
             //CANCEL SELECTION
             if (ax == i && ay == j) {
                 clicks = 0;
+                anyMove=true;
                 return false;
             } else if (Math.abs(ax - i) > 2 || Math.abs(ay - j) > 2) {
                 //OUTBOUND MOVEMENT
@@ -181,6 +182,7 @@ public class GameManager {
             //CANCEL SELECTION
             if (ax == i && ay == j) {
                 clicks = 0;
+                anyMove=true;
                 return false;
             } else if (Math.abs(ax - i) > 2 || Math.abs(ay - j) > 2) {
                 //OUTBOUND MOVEMENT
