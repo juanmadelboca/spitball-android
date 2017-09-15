@@ -28,7 +28,7 @@ public class finishGameActivity extends AppCompatActivity {
         //ADS////////////////
         mInterstitialAd = new InterstitialAd(this);
         //"ca-app-pub-4117912268761040/4576104417" mi addres
-        mInterstitialAd.setAdUnitId("ca-app-pub-3940256099942544/1033173712");
+        mInterstitialAd.setAdUnitId("ca-app-pub-4117912268761040/4576104417");
 
         mInterstitialAd.setAdListener(new AdListener() {
             @Override
