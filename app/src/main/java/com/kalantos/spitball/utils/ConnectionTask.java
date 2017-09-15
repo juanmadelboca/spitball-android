@@ -32,6 +32,7 @@ public class ConnectionTask extends AsyncTask<String,Void,String> {
             connection.setReadTimeout(3000);
             connection.setConnectTimeout(3000);
             connection.setDoOutput(true);
+            connection.setRequestProperty("Content-Type", "application/json;charset=utf-8");
             connection.connect();
             //la linea siguiente manda un Json
             JSONObject json= new JSONObject();
@@ -44,7 +45,7 @@ public class ConnectionTask extends AsyncTask<String,Void,String> {
             Log.d("TEST","CONNECTED TO PHP SERVER");
             InputStream stream = connection.getInputStream();
             reader = new BufferedReader(new InputStreamReader(stream));
-            String st=convertStreamToString(reader);
+            String st = convertStreamToString(reader);
             Log.d("TEST",st);
             return st;
 

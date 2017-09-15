@@ -59,21 +59,22 @@ public class GameManager {
     }
 
     private void startOnlineGame(){
-            if (onlineTurn == 1) {
-                playerTurn++;
-                isMyTurn = false;
-            } else {
-                isMyTurn = true;
-                try {
-                    new SendMoveTask().execute("http://spitball.servegame.com/gameMove.php", "MOVE", "0", "0", "0", "0", "0", Integer.toString(GameId), Integer.toString(1)).get();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } catch (ExecutionException e) {
-                    e.printStackTrace();
-                }
-            }
+        try {
+            new SendMoveTask().execute("http://spitball.000webhostapp.com/gameMove.php", "MOVE", "0", "0", "0", "0", "0", Integer.toString(GameId), Integer.toString(1)).get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        if (onlineTurn == 1) {
+            playerTurn++;
+            isMyTurn = false;
+        } else {
+            isMyTurn = true;
+        }
         startOnlineThread();
     }
+
     private void loadTiles(){
         tiles = new Tile[height][width];
         for (int i = 0; i < height; i++) {
@@ -241,7 +242,7 @@ public class GameManager {
         //debug();
         if (!onlineMove && GameId != 0) {
             try {
-                new SendMoveTask().execute("http://spitball.servegame.com/gameMove.php", "MOVE", Integer.toString(j), Integer.toString(i), Integer.toString(x), Integer.toString(y), Integer.toString(0), Integer.toString(GameId), Integer.toString(onlineTurn)).get();
+                new SendMoveTask().execute("http://spitball.000webhostapp.com/gameMove.php", "MOVE", Integer.toString(j), Integer.toString(i), Integer.toString(x), Integer.toString(y), Integer.toString(0), Integer.toString(GameId), Integer.toString(onlineTurn)).get();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             } catch (ExecutionException e) {
@@ -278,11 +279,12 @@ public class GameManager {
 
     private int[] receiveJSON() {
         try {
-            String st = new SendMoveTask().execute("http://spitball.servegame.com/gameMove.php", "GETMOVE", "5", "1", "5", "1", "1", String.valueOf(GameId), "1").get();
+            String st = new SendMoveTask().execute("http://spitball.000webhostapp.com/gameMove.php", "GETMOVE", "5", "1", "5", "1", "1", String.valueOf(GameId), "1").get();
             //Log.d("RECIBO PARSE",st);
             //parsea un JSON para obtener un array con los movimientos
             int[] moves = new int[6];
             JSONObject json = null;
+            Log.d("JSON-POST",st);
             try {
                 json = new JSONObject(st);
             } catch (JSONException e) {
@@ -349,7 +351,7 @@ public class GameManager {
 
         if (!onlineMove && GameId != 0) {
             try {
-                new SendMoveTask().execute("http://spitball.servegame.com/gameMove.php", "MOVE", Integer.toString(j), Integer.toString(i), Integer.toString(x), Integer.toString(y), Integer.toString(999), Integer.toString(GameId), Integer.toString(onlineTurn)).get();
+                new SendMoveTask().execute("http://spitball.000webhostapp.com/gameMove.php", "MOVE", Integer.toString(j), Integer.toString(i), Integer.toString(x), Integer.toString(y), Integer.toString(999), Integer.toString(GameId), Integer.toString(onlineTurn)).get();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             } catch (ExecutionException e) {
