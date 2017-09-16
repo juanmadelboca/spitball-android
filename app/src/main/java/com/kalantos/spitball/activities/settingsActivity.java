@@ -3,15 +3,14 @@ package com.kalantos.spitball.activities;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
 import android.view.View;
-
 import com.kalantos.spitball.R;
 import com.kalantos.spitball.engine.Timer;
 
-/**
- * Created by kalantos on 25/08/16.
- */
+/*
+* Settings Menu saved in XML format
+* */
 public class settingsActivity extends PreferenceActivity {
-    //menu de settings guardadas de forma local en un xml
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

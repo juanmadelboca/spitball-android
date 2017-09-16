@@ -27,7 +27,10 @@ public class finishGameActivity extends AppCompatActivity {
         editText=(TextView) findViewById(R.id.textView);
         //ADS////////////////
         mInterstitialAd = new InterstitialAd(this);
-        //"ca-app-pub-4117912268761040/4576104417" mi addres
+        /*
+        * test-id:ca-app-pub-3940256099942544/1033173712
+        * admob-id:ca-app-pub-4117912268761040/4576104417
+        * */
         mInterstitialAd.setAdUnitId("ca-app-pub-4117912268761040/4576104417");
 
         mInterstitialAd.setAdListener(new AdListener() {
@@ -39,11 +42,9 @@ public class finishGameActivity extends AppCompatActivity {
         });
 
         requestNewInterstitial();
-        ////////////////
-       chooseWinner();
+        chooseWinner();
 
-
-	final View decorView = getWindow().getDecorView();
+	    final View decorView = getWindow().getDecorView();
         final int flags = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                         | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                         | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
@@ -96,9 +97,9 @@ public class finishGameActivity extends AppCompatActivity {
 
 
     private void chooseWinner(){
-        //selecciona un ganador y luego muestra un anuncio publicitario y llama a restart()
-
-
+    /*
+    * Choose a winner and show the stats
+    * */
         imageView=(ImageView)findViewById(R.id.imageView);
         editText=(TextView) findViewById(R.id.textView);
         Bundle extras = getIntent().getExtras();
@@ -122,12 +123,14 @@ public class finishGameActivity extends AppCompatActivity {
         }
 
     }
-    private void showAd(){
 
+    private void showAd(){
+    /*
+    * Show Ad.
+    * */
         this.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-
                 if (mInterstitialAd.isLoaded()) {
                     mInterstitialAd.show();
                     Log.d("FINISHGAME","CARGO BIEN");
@@ -138,16 +141,21 @@ public class finishGameActivity extends AppCompatActivity {
             }
         });
     }
+
     private void requestNewInterstitial() {
+    /*
+    * Request new Ad.
+    * */
         AdRequest adRequest = new AdRequest.Builder()
                 .addTestDevice("SEE_YOUR_LOGCAT_TO_GET_YOUR_DEVICE_ID")
                 .build();
-
         mInterstitialAd.loadAd(adRequest);
     }
 
     private void restartGame(){
-//vuelve al menu inicial
+   /*
+    * Returns to menu.
+    * */
         Intent intent = new Intent(finishGameActivity.this, MenuActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

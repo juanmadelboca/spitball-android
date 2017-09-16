@@ -2,9 +2,7 @@ package com.kalantos.spitball.utils;
 
 import android.os.AsyncTask;
 import android.util.Log;
-
 import org.json.JSONObject;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -15,15 +13,19 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 /**
- * Created by Juanma on 24/3/2017.
+ * Async task to conect server php.
+ * TODO: DUPLICATE!.
  */
 
 public class SendMoveTask extends AsyncTask<String,Void,String> {
-    //conecta con una url y envia los datos que sean escritos dentro del output stream
+
     @Override
     protected String doInBackground(String... strings) {
-        HttpURLConnection connection = null;
-        BufferedReader reader = null;
+    /*
+    * conect with an url and send the data received by parameters.
+    * */
+        HttpURLConnection connection;
+        BufferedReader reader ;
 
         try {
             URL url = new URL(strings[0]);
@@ -35,7 +37,6 @@ public class SendMoveTask extends AsyncTask<String,Void,String> {
             connection.setConnectTimeout(15000);
             connection.setDoOutput(true);
             connection.connect();
-            //la linea siguiente manda un Json
             JSONObject json= new JSONObject();
             json.put("METHODTYPE", strings[1]);
             json.put("XINIT",Integer.parseInt(strings[2]));
@@ -50,10 +51,11 @@ public class SendMoveTask extends AsyncTask<String,Void,String> {
             OutputStreamWriter wr = new OutputStreamWriter(connection.getOutputStream());
             wr.write(json.toString());
             wr.flush();
-            //la linea siguiente recibe lo que el server devuelve
+            //next line receive data that server sends
             InputStream stream = connection.getInputStream();
             reader = new BufferedReader(new InputStreamReader(stream));
             String st=convertStreamToString(reader);
+            Log.d("TEST",st);
             return st;
 
         }catch (MalformedURLException e){
@@ -71,10 +73,12 @@ public class SendMoveTask extends AsyncTask<String,Void,String> {
         }
     }
     private String convertStreamToString(BufferedReader reader) {
-        //devuelve un string a partir del stream que recibio
+    /*
+    * return a string build from a data stream
+    * */
         StringBuilder sb = new StringBuilder();
 
-        String line = null;
+        String line;
         try {
             while ((line = reader.readLine()) != null) {
                 sb.append(line).append('\n');

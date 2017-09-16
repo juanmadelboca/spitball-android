@@ -1,6 +1,5 @@
 package com.kalantos.spitball.activities;
 
-import android.app.Fragment;
 import android.content.Intent;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -10,14 +9,12 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
-
 import com.kalantos.spitball.R;
 import com.kalantos.spitball.engine.Timer;
 import com.kalantos.spitball.fragments.ChooseDifficultyFragment;
 import com.kalantos.spitball.fragments.ChooseTypeOfGameFragment;
 import com.kalantos.spitball.fragments.MenuFragment;
 import com.kalantos.spitball.utils.ConnectionTask;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.concurrent.ExecutionException;
@@ -26,6 +23,7 @@ import java.util.concurrent.ExecutionException;
 public class MenuActivity extends AppCompatActivity {
 
     boolean clicker;
+    //TODO: Check dummy GAMEID
     int GameId=1000000083,NumPlayers,turn;
     FragmentTransaction transaction;
     ImageView imageSettings;
@@ -64,6 +62,7 @@ public class MenuActivity extends AppCompatActivity {
                 }
             }
         });
+
         imageSettings = (ImageView)findViewById(R.id.imageSettings);
         FragmentManager fragmentManager= getSupportFragmentManager();
         transaction= fragmentManager.beginTransaction();
@@ -79,7 +78,9 @@ public class MenuActivity extends AppCompatActivity {
     }
 
     public void intentChooseTypeOfGame(View view){
-
+    /*
+    * Launches a new menu to choose between online or local.
+    * */
         ChooseTypeOfGameFragment newFragment = new ChooseTypeOfGameFragment();
         transaction =getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.fragmentHolderMenu, newFragment);
@@ -89,7 +90,9 @@ public class MenuActivity extends AppCompatActivity {
     }
 
     public void chooseDifficultyFragment(View view){
-
+    /*
+    * Launches new menu to choose IA difficult.
+    * */
         ChooseDifficultyFragment newFragment = new ChooseDifficultyFragment();
         transaction =getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.fragmentHolderMenu, newFragment);
@@ -99,13 +102,17 @@ public class MenuActivity extends AppCompatActivity {
     }
 
     public void intentSettings(View view){
-        //abre las configuraciones del juego
+    /*
+    * Launches settings menu.
+    * */
         Intent intent=new Intent(MenuActivity.this,settingsActivity.class);
         startActivity(intent);
     }
 
     public void intentHighScores(View view){
-        //abre los puntajes
+    /*
+    * Launches menu activity.
+    * */
         Toast.makeText(this,"En desarrollo",Toast.LENGTH_SHORT).show();
         /*Intent intent= new Intent(MenuActivity.this,HighScoresActivity.class);
         startActivity(intent);
@@ -125,37 +132,43 @@ public class MenuActivity extends AppCompatActivity {
     }
 
     private void intentGameVsAI( int difficulty){
+    /*
+    * Start a Game vs IA with using parameter received as difficulty.
+    * */
         Intent intent=new Intent(MenuActivity.this,GameActivity.class);
         intent.putExtra("difficulty", difficulty);
         intent.putExtra("clicker",clicker);
         startActivity(intent);
         finishAffinity();
-        //better finish activity? or let it background so you can go back to menu?
     }
 
     private void intentGameOnline(){
-        //inicia la actividad de juego con el GameID de la partida
+    /*
+    * Start Online Game with GameId global variable.
+    * */
         Intent intent=new Intent(MenuActivity.this,GameActivity.class);
         intent.putExtra("AI",false);
         intent.putExtra("GAMEID",GameId);
         intent.putExtra("TURN",turn);
         startActivity(intent);
-        //better finish activity? or let it background so you can go back to menu?
         finishAffinity();
     }
 
     public void intentGame(View view){
-        //inicia una instancia de juego de 2 jugadores en el mismo celular
+    /*
+    * Start a local multiplayer game.
+    * */
         Intent intent=new Intent(MenuActivity.this,GameActivity.class);
         intent.putExtra("AI",false);
         startActivity(intent);
-        //better finish activity? or let it background so you can go back to menu?
         finishAffinity();
     }
 
     public void createOnlineGame(View view) throws ExecutionException, InterruptedException {
-        //crea un juego o se conecta a uno si es que hay una partida creada
-        //al crearla espera un tiempo y luego arranca una partida online si encontro oponente o una contra IA avanzada
+    /*
+    * Create a game in database or connect to a game created which need another player, if timeout
+    * create a vs IA game in the hardest difficulty.
+    * */
         if(connect("CREATE")) {
             int counter = 0;
             while (NumPlayers == 1 && counter < 40) {
@@ -185,7 +198,9 @@ public class MenuActivity extends AppCompatActivity {
     }
 
     private boolean connect(String method){
-        //conecta a una url fija y refresca los datos de GameId y numero de jugadores
+    /*
+    * connect to database and refresh room stats, as number of players.
+    * */
         try {
             String json= new ConnectionTask().execute("http://spitball.000webhostapp.com/createGame.php",method).get();
             JSONObject JSONobject= new JSONObject(json);

@@ -13,15 +13,18 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 /**
- * Async task para conectarse a un server php
+ * Async task to conect server php.
  */
 
 public class ConnectionTask extends AsyncTask<String,Void,String> {
-    //conecta con una url y envia los datos que sean escritos dentro del output stream
+
     @Override
     protected String doInBackground(String... strings) {
-        HttpURLConnection connection = null;
-        BufferedReader reader = null;
+    /*
+    * conect with an url and send the data received by parameters.
+    * */
+        HttpURLConnection connection;
+        BufferedReader reader;
 
         try {
             URL url = new URL(strings[0]);
@@ -34,14 +37,13 @@ public class ConnectionTask extends AsyncTask<String,Void,String> {
             connection.setDoOutput(true);
             connection.setRequestProperty("Content-Type", "application/json;charset=utf-8");
             connection.connect();
-            //la linea siguiente manda un Json
             JSONObject json= new JSONObject();
             json.put("METHOD", strings[1]);
             ////////////////////
             OutputStreamWriter wr = new OutputStreamWriter(connection.getOutputStream());
             wr.write(json.toString());
             wr.flush();
-            //la linea siguiente recibe lo que el server devuelve
+            //next line receive data that server sends
             Log.d("TEST","CONNECTED TO PHP SERVER");
             InputStream stream = connection.getInputStream();
             reader = new BufferedReader(new InputStreamReader(stream));
@@ -64,10 +66,12 @@ public class ConnectionTask extends AsyncTask<String,Void,String> {
         }
     }
     private String convertStreamToString(BufferedReader reader) {
-        //devuelve un string a partir del stream que recibio
+    /*
+    * return a string build from a data stream
+    * */
         StringBuilder sb = new StringBuilder();
 
-        String line = null;
+        String line;
         try {
             while ((line = reader.readLine()) != null) {
                 sb.append(line).append('\n');

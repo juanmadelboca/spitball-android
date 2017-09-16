@@ -1,20 +1,17 @@
 package com.kalantos.spitball.engine;
 
 import android.util.Log;
-
 import com.kalantos.spitball.utils.SendMoveTask;
-
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.util.concurrent.ExecutionException;
 
 /**
- * Created by Juanma on 27/7/2017.
+ * Manage all the game, create the game and is responsible of getting online moves, and process all
+ * the commands received from Game Activity in order to reflect the moves inserted by the player
  */
-
-
 public class GameManager {
+
     private Tile[][] tiles;
     private final int width = 10;
     private final int height = 6;
@@ -26,17 +23,33 @@ public class GameManager {
     private boolean ArtificialInteligence, onlineMove, isMyTurn, movelock;
     private boolean anyMove;
 
-    //metricas de pantalla? puedo pedirlas sin activity?
+    public GameManager(int GameId, int difficulty, int onlineTurn, boolean ArtificialInteligence) {
+
+        this.GameId = GameId;
+        this.difficulty = difficulty;
+        this.onlineTurn = onlineTurn;
+        this.ArtificialInteligence = ArtificialInteligence;
+        loadTiles();
+        inicialize();
+        if (GameId != 0) {
+            startOnlineGame();
+            startOnlineThread();
+        }
+
+    }
 
     public Tile[][] getTiles(){
+
         return tiles;
     }
 
     public boolean gameStatus(){
+
         return !gameOver;
     }
 
     public void setGameStatus(boolean status){
+
         gameOver= status;
     }
     public boolean detectMoves(){
@@ -45,25 +58,14 @@ public class GameManager {
         anyMove=false;
         return  temporal;
     }
-    public GameManager(int GameId, int difficulty, int onlineTurn, boolean ArtificialInteligence) {
-
-        this.GameId = GameId;
-        this.difficulty = difficulty;
-        this.onlineTurn = onlineTurn;
-        this.ArtificialInteligence = ArtificialInteligence;
-        inicialize();
-        if (GameId != 0) {
-            startOnlineGame();
-        }
-
-    }
 
     private void startOnlineGame(){
+    /*
+    * Setup turns in order to assign one color to each online player, and send a dummy move to avoid a crash while player2 fetches database.
+    * */
         try {
             new SendMoveTask().execute("http://spitball.000webhostapp.com/gameMove.php", "MOVE", "0", "0", "0", "0", "0", Integer.toString(GameId), Integer.toString(1)).get();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
+        } catch (InterruptedException|ExecutionException e) {
             e.printStackTrace();
         }
         if (onlineTurn == 1) {
@@ -72,10 +74,12 @@ public class GameManager {
         } else {
             isMyTurn = true;
         }
-        startOnlineThread();
     }
 
     private void loadTiles(){
+    /*
+    * Create board made up with Tiles.
+    * */
         tiles = new Tile[height][width];
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
@@ -84,12 +88,16 @@ public class GameManager {
         }
     }
     private void startOnlineThread(){
-
+    /*
+    * Start a thread that fetch moves from database periodically.
+    * */
         Thread refreshOnlineThread = new Thread(new Runnable() {
             @Override
             public void run() {
+                int[] onlineMoves;
                 while (!gameOver) {
-                    getOnlineMove();
+                    onlineMoves=getOnlineMove();
+                    updateBoard(onlineMoves);
                     Log.d("THREAD", "IS MY TURN: " + isMyTurn);
                     try {
                         Thread.sleep(2000);
@@ -103,8 +111,9 @@ public class GameManager {
     }
 
     private void inicialize() {
-        //inicializa los valores de las bolas iniciales
-        loadTiles();
+    /*
+    * Initializes ball positions.
+    * */
         tiles[1][3].setBall(20, BallType.BALLGREEN);
         tiles[2][2].setBall(20, BallType.BALLGREEN);
         tiles[3][3].setBall(20, BallType.BALLGREEN);
@@ -114,8 +123,10 @@ public class GameManager {
     }
 
     public boolean ClickGestion(int i, int j) {
-        //recibe dos enteros que le indican el Tile presionado y por medio de eso gestiona las acciones a realizar
-        //por medio de la variable global clicks y turn maneja los clicks para saber cuando corresponde mover o esperar una coordenada
+    /*
+    * Receive a Tile (x and y position) and using turn, clicks and olderX and olderY manage to know
+    * when balls must move/split or wait for another coordinate.
+    * */
         if ((tiles[i][j].getBall() instanceof BallGreen) && clicks == 0 && (playerTurn % 2 == 0)) {
             ax = i;
             ay = j;
@@ -162,11 +173,15 @@ public class GameManager {
             ArtificialMove();
         }
         return false;
-        //split no anula animacion, outof bounds tb
     }
 
     public boolean swipeGestion(int i, int j) {
-        //recibe dos enteros que le indican el Tile presionado y por medio de eso gestiona las acciones a realizar
+    /*
+    * Receive a Tile (x and y position) and using turn, clicks and olderX and olderY manage to know
+    * when balls must move/split or wait for another coordinate.
+    * TODO: DUPLICATED!
+    * TODO: CHANGE GESTION TO HANDLER
+    * */
         if ((tiles[i][j].getBall() instanceof BallGreen) && clicks == 0 && (playerTurn % 2 == 0)) {
             ax = i;
             ay = j;
@@ -207,16 +222,16 @@ public class GameManager {
                 move(ax, ay, ax, ay - 1);
             } else if (ay - j > 0 && ax - i > 0 && ay - j == (ax - i)) {
                 //SWIPE CORNERS
-                //esq superior izq
+                //UP-LEFT CORNER
                 move(ax, ay, ax - 1, ay - 1);
             } else if (ay - j < 0 && ax - i > 0 && ay - j == -(ax - i)) {
-                //esq superior derecha
+                //UP-RIGHT CORNER
                 move(ax, ay, ax - 1, ay + 1);
             } else if (ay - j > 0 && ax - i < 0 && ay - j == -(ax - i)) {
-                //esq inferior izq
+                //DOWN-LEFT CORNER
                 move(ax, ay, ax + 1, ay - 1);
             } else if (ay - j > 0 && ax - i > 0 && ay - j == -(ax - i)) {
-                //esq inferior derecha
+                //DOWN-RIGHT CORNER
                 move(ax, ay, ax + 1, ay + 1);
             } else {
                 clicks = 0;
@@ -228,24 +243,22 @@ public class GameManager {
         return false;
     }
 
-    private void move(int i, int j, int y, int x) {
-        // primeros 2 los originales 2 dos a donde van
-        //mueve la bola
+    private void move(int initialY, int initialX, int finalY, int finalX) {
+    /*
+    * Move the ball from initial x and y to final x and y.
+    * */
         anyMove=true;
         if ((!onlineMove && isMyTurn) || (onlineMove && !movelock) || GameId == 0) {
 
-            tiles[y][x].battle(tiles[i][j].getBall());
-            tiles[i][j].removeBall();
+            tiles[finalY][finalX].battle(tiles[initialY][initialX].getBall());
+            tiles[initialY][initialX].removeBall();
             clicks = 0;
             movelock = true;
         }
-        //debug();
         if (!onlineMove && GameId != 0) {
             try {
-                new SendMoveTask().execute("http://spitball.000webhostapp.com/gameMove.php", "MOVE", Integer.toString(j), Integer.toString(i), Integer.toString(x), Integer.toString(y), Integer.toString(0), Integer.toString(GameId), Integer.toString(onlineTurn)).get();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } catch (ExecutionException e) {
+                new SendMoveTask().execute("http://spitball.000webhostapp.com/gameMove.php", "MOVE", Integer.toString(initialX), Integer.toString(initialY), Integer.toString(finalX), Integer.toString(finalY), Integer.toString(0), Integer.toString(GameId), Integer.toString(onlineTurn)).get();
+            } catch (InterruptedException|ExecutionException e) {
                 e.printStackTrace();
             }
         }
@@ -254,10 +267,10 @@ public class GameManager {
         }
     }
 
-    private void getOnlineMove() {
-        //obtiene las coordenadas del ultimo movimiento y lo ejecuta de forma local
-
-        int[] onlineMoves = receiveJSON();
+    private void updateBoard(int[] onlineMoves) {
+    /*
+    * Update local board using database received information.
+    * */
         onlineMove = true;
         if (onlineMoves[5] != onlineTurn) {
             if (onlineMoves[4] == 0) {
@@ -277,34 +290,26 @@ public class GameManager {
 
     }
 
-    private int[] receiveJSON() {
+    private int[] getOnlineMove() {
+    /*
+    * Get last move in json format from online database and parse it to array form.
+    * */
         try {
             String st = new SendMoveTask().execute("http://spitball.000webhostapp.com/gameMove.php", "GETMOVE", "5", "1", "5", "1", "1", String.valueOf(GameId), "1").get();
-            //Log.d("RECIBO PARSE",st);
-            //parsea un JSON para obtener un array con los movimientos
             int[] moves = new int[6];
-            JSONObject json = null;
+            JSONObject json;
             Log.d("JSON-POST",st);
-            try {
                 json = new JSONObject(st);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            try {
                 moves[0] = json.getInt("XINIT");
                 moves[1] = json.getInt("YINIT");
                 moves[2] = json.getInt("XLAST");
                 moves[3] = json.getInt("YLAST");
                 moves[4] = json.getInt("SPLIT");
                 moves[5] = json.getInt("TURN");
-            } catch (JSONException e1) {
-                e1.printStackTrace();
-            }
+
             return moves;
 
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
+        } catch (InterruptedException|ExecutionException|NullPointerException|JSONException e) {
             e.printStackTrace();
         }
 
@@ -312,8 +317,9 @@ public class GameManager {
     }
 
     private void ArtificialMove() {
-        //va en bloque try catch porque cuando termina el juego la AI intenta mover y genera excepcion de esta forma cuando esta
-        //excepcion ocurre no tenogo problemas
+    /*
+    * Manage AI moves/split depending in the game difficulty.
+    * */
         if (ArtificialInteligence) {
             try {
                 int[] AIMoves;
@@ -339,26 +345,26 @@ public class GameManager {
 
 
             } catch (Exception e) {
-                //finishGame();
+                //catch exception: when game ends IA try to move causing an error.
                 gameOver = true;
             }
         }
     }
 
     private void split(int i, int j, int y, int x) {
-        //escupe una bola 33% del tamaño de ella misma
+    /*
+    * Spit a smaller ball (33% size) and reduce spitter ball size.
+    * TODO: DUPLICATE CODE, GENERALIZE SPITTING.
+    * */
         anyMove=true;
 
         if (!onlineMove && GameId != 0) {
             try {
                 new SendMoveTask().execute("http://spitball.000webhostapp.com/gameMove.php", "MOVE", Integer.toString(j), Integer.toString(i), Integer.toString(x), Integer.toString(y), Integer.toString(999), Integer.toString(GameId), Integer.toString(onlineTurn)).get();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } catch (ExecutionException e) {
+            } catch (InterruptedException|ExecutionException e) {
                 e.printStackTrace();
             }
         }
-
         if ((!onlineMove && isMyTurn) || (onlineMove && !movelock) || GameId == 0) {
 
             int splittedBallSize = tiles[i][j].getBall().getSize() / 3;
@@ -370,7 +376,7 @@ public class GameManager {
                         tiles[i][j].getBall().setSize(tiles[i][j].getBall().getSize() - splittedBallSize);
                         tiles[i + y][j + x].battle(splittedBall);
                     } catch (Exception e) {
-                        System.out.println("un poco de tu masa se cayo del tablero");
+                        Log.i("GAME","Some of you mass pour down the board");
                     }
                 }
             }
@@ -381,17 +387,10 @@ public class GameManager {
                         tiles[i][j].getBall().setSize(tiles[i][j].getBall().getSize() - splittedBallSize);
                         tiles[i + y][j + x].battle(splitttedBall);
                     } catch (Exception e) {
-                        System.out.println("un poco de tu masa se cayo del tablero");
+                        Log.i("GAME","Some of you mass pour down the board");
                     }
                 }
             }
-            /* TO-DO
-            this.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    paint();
-                }
-            });*/
             clicks = 0;
             movelock = true;
         }
@@ -400,16 +399,5 @@ public class GameManager {
             playerTurn++;
         }
 
-    }
-
-    private void debug() {
-        //metodo para crear una matriz con los valores size de las bolas
-        //util para debugear fallas graficas
-        for (int i = 0; i < height; i++) {
-            for (int j = 0; j < width; j++) {
-                System.out.print(tiles[i][j].getBall().getSize() + "    ");
-            }
-            System.out.println("\n");
-        }
     }
 }
