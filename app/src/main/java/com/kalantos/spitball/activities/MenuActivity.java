@@ -23,8 +23,7 @@ import java.util.concurrent.ExecutionException;
 public class MenuActivity extends AppCompatActivity {
 
     boolean clicker;
-    //TODO: Check dummy GAMEID
-    int GameId=1000000083,NumPlayers,turn;
+    int GameId,NumPlayers,turn;
     FragmentTransaction transaction;
     ImageView imageSettings;
 
