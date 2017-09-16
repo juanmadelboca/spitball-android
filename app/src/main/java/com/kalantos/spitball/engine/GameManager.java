@@ -1,7 +1,9 @@
 package com.kalantos.spitball.engine;
 
 import android.util.Log;
-import com.kalantos.spitball.utils.SendMoveTask;
+
+import com.kalantos.spitball.utils.HTTPSocket;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.util.concurrent.ExecutionException;
@@ -64,7 +66,9 @@ public class GameManager {
     * Setup turns in order to assign one color to each online player, and send a dummy move to avoid a crash while player2 fetches database.
     * */
         try {
-            new SendMoveTask().execute("http://spitball.000webhostapp.com/gameMove.php", "MOVE", "0", "0", "0", "0", "0", Integer.toString(GameId), Integer.toString(1)).get();
+            String jsonData = createJson( "METHODTYPE","MOVE","XINIT", "0","YINIT", "0","XLAST", "0",
+                    "YLAST", "0","SPLIT", "0","GAMEID", Integer.toString(GameId),"TURN", Integer.toString(1));
+            new HTTPSocket().execute("http://spitball.000webhostapp.com/gameMove.php","POST",jsonData).get();
         } catch (InterruptedException|ExecutionException e) {
             e.printStackTrace();
         }
@@ -257,8 +261,12 @@ public class GameManager {
         }
         if (!onlineMove && GameId != 0) {
             try {
-                new SendMoveTask().execute("http://spitball.000webhostapp.com/gameMove.php", "MOVE", Integer.toString(initialX), Integer.toString(initialY), Integer.toString(finalX), Integer.toString(finalY), Integer.toString(0), Integer.toString(GameId), Integer.toString(onlineTurn)).get();
-            } catch (InterruptedException|ExecutionException e) {
+                String jsonData = createJson( "METHODTYPE","MOVE","XINIT", Integer.toString(initialX),
+                        "YINIT", Integer.toString(initialY),"XLAST", Integer.toString(finalX), "YLAST",
+                        Integer.toString(finalY),"SPLIT", Integer.toString(0),"GAMEID",
+                        Integer.toString(GameId),"TURN", Integer.toString(onlineTurn));
+                new HTTPSocket().execute("http://spitball.000webhostapp.com/gameMove.php","POST",jsonData).get();
+               } catch (InterruptedException|ExecutionException e) {
                 e.printStackTrace();
             }
         }
@@ -293,9 +301,11 @@ public class GameManager {
     private int[] getOnlineMove() {
     /*
     * Get last move in json format from online database and parse it to array form.
+    * TODO: HTTPSocket should use a get method not a post to ask for info.
     * */
         try {
-            String st = new SendMoveTask().execute("http://spitball.000webhostapp.com/gameMove.php", "GETMOVE", "5", "1", "5", "1", "1", String.valueOf(GameId), "1").get();
+            String jsonData = createJson( "METHODTYPE","GETMOVE","GAMEID",Integer.toString(GameId));
+            String st = new HTTPSocket().execute("http://spitball.000webhostapp.com/gameMove.php","POST",jsonData).get();
             int[] moves = new int[6];
             JSONObject json;
             Log.d("JSON-POST",st);
@@ -351,7 +361,7 @@ public class GameManager {
         }
     }
 
-    private void split(int i, int j, int y, int x) {
+    private void split(int initialY, int initialX, int finalY, int finalX) {
     /*
     * Spit a smaller ball (33% size) and reduce spitter ball size.
     * TODO: DUPLICATE CODE, GENERALIZE SPITTING.
@@ -360,32 +370,37 @@ public class GameManager {
 
         if (!onlineMove && GameId != 0) {
             try {
-                new SendMoveTask().execute("http://spitball.000webhostapp.com/gameMove.php", "MOVE", Integer.toString(j), Integer.toString(i), Integer.toString(x), Integer.toString(y), Integer.toString(999), Integer.toString(GameId), Integer.toString(onlineTurn)).get();
-            } catch (InterruptedException|ExecutionException e) {
+                //TODO: CHECK SEND DATA!
+                String jsonData = createJson( "METHODTYPE","MOVE","XINIT", Integer.toString(initialX),
+                    "YINIT", Integer.toString(initialY),"XLAST", Integer.toString(finalX), "YLAST",
+                    Integer.toString(finalY),"SPLIT", Integer.toString(0),"GAMEID",
+                    Integer.toString(GameId),"TURN", Integer.toString(onlineTurn));
+                new HTTPSocket().execute("http://spitball.000webhostapp.com/gameMove.php","POST",jsonData).get();
+             } catch (InterruptedException|ExecutionException e) {
                 e.printStackTrace();
             }
         }
         if ((!onlineMove && isMyTurn) || (onlineMove && !movelock) || GameId == 0) {
 
-            int splittedBallSize = tiles[i][j].getBall().getSize() / 3;
+            int splittedBallSize = tiles[initialY][initialX].getBall().getSize() / 3;
 
-            if (tiles[i][j].getBall() instanceof BallGreen) {
+            if (tiles[initialY][initialX].getBall() instanceof BallGreen) {
                 BallGreen splittedBall = new BallGreen((int) (splittedBallSize * 1.2));
-                if (tiles[i][j].getBall().getSize() >= 10) {
+                if (tiles[initialY][initialX].getBall().getSize() >= 10) {
                     try {
-                        tiles[i][j].getBall().setSize(tiles[i][j].getBall().getSize() - splittedBallSize);
-                        tiles[i + y][j + x].battle(splittedBall);
+                        tiles[initialY][initialX].getBall().setSize(tiles[initialY][initialX].getBall().getSize() - splittedBallSize);
+                        tiles[initialY + finalY][initialX + finalX].battle(splittedBall);
                     } catch (Exception e) {
                         Log.i("GAME","Some of you mass pour down the board");
                     }
                 }
             }
-            if (tiles[i][j].getBall() instanceof BallPink) {
+            if (tiles[initialY][initialX].getBall() instanceof BallPink) {
                 BallPink splitttedBall = new BallPink((int) (splittedBallSize * 1.2));
-                if (tiles[i][j].getBall().getSize() >= 10) {
+                if (tiles[initialY][initialX].getBall().getSize() >= 10) {
                     try {
-                        tiles[i][j].getBall().setSize(tiles[i][j].getBall().getSize() - splittedBallSize);
-                        tiles[i + y][j + x].battle(splitttedBall);
+                        tiles[initialY][initialX].getBall().setSize(tiles[initialY][initialX].getBall().getSize() - splittedBallSize);
+                        tiles[initialY + finalY][initialX + finalX].battle(splitttedBall);
                     } catch (Exception e) {
                         Log.i("GAME","Some of you mass pour down the board");
                     }
@@ -399,5 +414,19 @@ public class GameManager {
             playerTurn++;
         }
 
+    }
+    private String createJson(String... strings){
+    /*
+    * Create a Json with all data received and returns the json in string format.
+    * */
+        JSONObject json= new JSONObject();
+        for(int i=0; i<strings.length; i=i+2){
+            try{
+                json.put(strings[i],strings[i+1]);
+            }catch(JSONException e){
+                e.printStackTrace();
+            }
+        }
+        return json.toString();
     }
 }

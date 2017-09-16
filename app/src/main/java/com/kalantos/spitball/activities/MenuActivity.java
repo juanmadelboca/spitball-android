@@ -191,7 +191,8 @@ public class MenuActivity extends AppCompatActivity {
                 intentGameVsAI(2);
                 try {
                     Log.d("TEST", "Attemp to leaveGame");
-                    new ConnectionTask().execute("http://spitball.000webhostapp.com/leaveGame.php", Integer.toString(GameId)).get();
+                    String jsonData = createJson("GAMEID",Integer.toString(GameId));
+                    new HTTPSocket().execute("http://spitball.000webhostapp.com/leaveGame.php","POST",jsonData).get();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
