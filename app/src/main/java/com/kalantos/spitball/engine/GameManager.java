@@ -361,20 +361,21 @@ public class GameManager {
         }
     }
 
-    private void split(int initialY, int initialX, int finalY, int finalX) {
+    private void split(int initialY, int initialX, int deltaY, int deltaX) {
     /*
-    * Spit a smaller ball (33% size) and reduce spitter ball size.
+    * Receive a start coordinate of the original ball, and spit a smaller ball (33% size) into
+    * the delta direction and reduce spitter ball size.
     * TODO: DUPLICATE CODE, GENERALIZE SPITTING.
     * */
         anyMove=true;
 
         if (!onlineMove && GameId != 0) {
             try {
-                //TODO: CHECK SEND DATA!
                 String jsonData = createJson( "METHODTYPE","MOVE","XINIT", Integer.toString(initialX),
-                    "YINIT", Integer.toString(initialY),"XLAST", Integer.toString(finalX), "YLAST",
-                    Integer.toString(finalY),"SPLIT", Integer.toString(0),"GAMEID",
+                    "YINIT", Integer.toString(initialY),"XLAST", Integer.toString(deltaX), "YLAST",
+                    Integer.toString(deltaY),"SPLIT", Integer.toString(1),"GAMEID",
                     Integer.toString(GameId),"TURN", Integer.toString(onlineTurn));
+                Log.d("DATA-SEND",jsonData);
                 new HTTPSocket().execute("http://spitball.000webhostapp.com/gameMove.php","POST",jsonData).get();
              } catch (InterruptedException|ExecutionException e) {
                 e.printStackTrace();
@@ -389,7 +390,7 @@ public class GameManager {
                 if (tiles[initialY][initialX].getBall().getSize() >= 10) {
                     try {
                         tiles[initialY][initialX].getBall().setSize(tiles[initialY][initialX].getBall().getSize() - splittedBallSize);
-                        tiles[initialY + finalY][initialX + finalX].battle(splittedBall);
+                        tiles[initialY + deltaY][initialX + deltaX].battle(splittedBall);
                     } catch (Exception e) {
                         Log.i("GAME","Some of you mass pour down the board");
                     }
@@ -400,7 +401,7 @@ public class GameManager {
                 if (tiles[initialY][initialX].getBall().getSize() >= 10) {
                     try {
                         tiles[initialY][initialX].getBall().setSize(tiles[initialY][initialX].getBall().getSize() - splittedBallSize);
-                        tiles[initialY + finalY][initialX + finalX].battle(splitttedBall);
+                        tiles[initialY + deltaY][initialX + deltaX].battle(splitttedBall);
                     } catch (Exception e) {
                         Log.i("GAME","Some of you mass pour down the board");
                     }
