@@ -14,43 +14,32 @@ import java.net.URL;
 
 /**
  * Async task to conect server php.
- * TODO: DUPLICATE!.
- * TODO: GENERALIZE ASYNC TASK.
+ * TODO: REFACTOR APP, NOW ALL MESSAGES ARE POSTS, MAYBE GET WILL IMPROVE THE SPEED
  */
-/*
-* params: URL, METHOD (POST,GET..),JSON/PLAINTEXT, if needed ->setRequestProperty
-* */
-public class SendMoveTask extends AsyncTask<String,Void,String> {
+public class HTTPSocket extends AsyncTask<String,Void,String> {
 
     @Override
     protected String doInBackground(String... strings) {
     /*
-    * conect with an url and send the data received by parameters.
+    * Receive an URL a Method (post, get..), a Json or Plain text and make the Http request.
     * */
+        String method, message;
         HttpURLConnection connection;
         BufferedReader reader ;
+        method = strings[1];
+        message = strings[2];
 
         try {
             URL url = new URL(strings[0]);
-
             connection = (HttpURLConnection)
                     url.openConnection();
-            connection.setRequestMethod("POST");
+            connection.setRequestMethod(method);
             connection.setReadTimeout(10000);
             connection.setConnectTimeout(15000);
             connection.setDoOutput(true);
+            //connection.setRequestProperty("Content-Type", "application/json;charset=utf-8");
             connection.connect();
-            JSONObject json= new JSONObject();
-            json.put("METHODTYPE", strings[1]);
-            json.put("XINIT",Integer.parseInt(strings[2]));
-            json.put("YINIT",Integer.parseInt(strings[3]));
-            json.put("XLAST",Integer.parseInt(strings[4]));
-            json.put("YLAST",Integer.parseInt(strings[5]));
-            json.put("SPLIT",Integer.parseInt(strings[6]));
-            json.put("GAMEID",Integer.parseInt(strings[7]));
-            json.put("TURN",Integer.parseInt(strings[8]));
-            ////////////////////
-            Log.d("JSONSEND",json.toString());
+            JSONObject json= new JSONObject(message);
             OutputStreamWriter wr = new OutputStreamWriter(connection.getOutputStream());
             wr.write(json.toString());
             wr.flush();

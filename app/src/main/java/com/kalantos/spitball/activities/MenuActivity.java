@@ -15,6 +15,9 @@ import com.kalantos.spitball.fragments.ChooseDifficultyFragment;
 import com.kalantos.spitball.fragments.ChooseTypeOfGameFragment;
 import com.kalantos.spitball.fragments.MenuFragment;
 import com.kalantos.spitball.utils.ConnectionTask;
+import com.kalantos.spitball.utils.HTTPSocket;
+
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.concurrent.ExecutionException;
@@ -201,7 +204,8 @@ public class MenuActivity extends AppCompatActivity {
     * connect to database and refresh room stats, as number of players.
     * */
         try {
-            String json= new ConnectionTask().execute("http://spitball.000webhostapp.com/createGame.php",method).get();
+            String jsonData = createJson("METHOD",method);
+            String json= new HTTPSocket().execute("http://spitball.000webhostapp.com/createGame.php","POST",jsonData).get();
             JSONObject JSONobject= new JSONObject(json);
             if(method.equals("CREATE")){
                 turn=JSONobject.getInt("TURN");
@@ -214,5 +218,19 @@ public class MenuActivity extends AppCompatActivity {
             return false;
         }
         return true;
+    }
+    private String createJson(String... strings){
+        /*
+        * Create a Json with all data received and returns the json in string format.
+        * */
+        JSONObject json= new JSONObject();
+        for(int i=0; i<strings.length; i=i+2){
+            try{
+                json.put(strings[i],strings[i+1]);
+            }catch(JSONException e){
+                e.printStackTrace();
+            }
+        }
+        return json.toString();
     }
 }
