@@ -184,6 +184,7 @@ public class MenuActivity extends AppCompatActivity {
             } else {
                 intentGameVsAI(2);
                 try {
+                    //TODO: Think a way that leave the game even if the player leave the search room with back button
                     String jsonData = createJson("GAMEID",Integer.toString(GameId));
                     new HTTPSocket().execute("http://spitball.000webhostapp.com/leaveGame.php","POST",jsonData).get();
                 } catch (Exception e) {
