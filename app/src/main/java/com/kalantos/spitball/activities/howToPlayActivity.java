@@ -2,6 +2,7 @@ package com.kalantos.spitball.activities;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import com.kalantos.spitball.R;
 import com.kalantos.spitball.engine.Timer;
@@ -34,7 +35,7 @@ public class howToPlayActivity extends AppCompatActivity {
                     try {
                         thread.join();
                     } catch (InterruptedException e) {
-                        e.printStackTrace();
+                        Log.e("AUTO-HIDE BAR", e.getMessage());
                     }
 
                     decorView.setSystemUiVisibility(flags);

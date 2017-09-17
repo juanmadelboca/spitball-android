@@ -31,8 +31,7 @@ public class GameActivity extends AppCompatActivity {
     TileView[][] tiles;
     final int width = 10;
     final int height = 6;
-    boolean gameOver = false;
-    private int green=0, pink=0;
+    private int greenBallsLeft=0, pinkBallsLeft=0;
     private int widthScreen, heightScreen;
     private int bouncingState=1;
     private GameManager game;
@@ -61,7 +60,7 @@ public class GameActivity extends AppCompatActivity {
                     try {
                         thread.join();
                     } catch (InterruptedException e) {
-                        e.printStackTrace();
+                        Log.e("AUTO-HIDE BAR", e.getMessage());
                     }
 
                     decorView.setSystemUiVisibility(flags);
@@ -136,7 +135,7 @@ public class GameActivity extends AppCompatActivity {
                     try {
                         Thread.sleep(200);
                     } catch (InterruptedException e) {
-                        e.printStackTrace();
+                        Log.e("BOUNCING ANIMATION", e.getMessage());
                     }
                 }
 
@@ -162,8 +161,8 @@ public class GameActivity extends AppCompatActivity {
         }
         long time_start, time_end;
         time_start = System.currentTimeMillis();
-        green = 0;
-        pink = 0;
+        greenBallsLeft = 0;
+        pinkBallsLeft = 0;
         for (int i = 0; i < height; i++) {
 
             for (int j = 0; j < width; j++) {
@@ -177,7 +176,7 @@ public class GameActivity extends AppCompatActivity {
                         //BOUNCING
                         String resourstring="framel"+bouncingState;
                         idR= getResources().getIdentifier(resourstring,"drawable",getPackageName());
-                        tiles[i][j].getImageView().setImageResource(idR);
+                        tiles[i][j].getBallImage().setImageResource(idR);
                         bouncingState++;
                         if(bouncingState==9){
                             bouncingState=1;
@@ -187,9 +186,9 @@ public class GameActivity extends AppCompatActivity {
                     }
                     Bitmap bitmapImage = BitmapFactory.decodeResource(getResources(), idR);
                     Bitmap scaled = Bitmap.createScaledBitmap(bitmapImage, ballSize, ballSize, false);
-                    tiles[i][j].getImageView().setImageBitmap(scaled);
-                    tiles[i][j].getImageView().setScaleType(ImageView.ScaleType.CENTER);
-                    green++;
+                    tiles[i][j].getBallImage().setImageBitmap(scaled);
+                    tiles[i][j].getBallImage().setScaleType(ImageView.ScaleType.CENTER);
+                    greenBallsLeft++;
 
                 } else if (game.getTiles()[i][j].getBall() instanceof BallPink) {
                     int idR;
@@ -197,7 +196,7 @@ public class GameActivity extends AppCompatActivity {
                         //BOUNCING
                         String resourstring="frame"+bouncingState;
                         idR= getResources().getIdentifier(resourstring,"drawable",getPackageName());
-                        tiles[i][j].getImageView().setImageResource(idR);
+                        tiles[i][j].getBallImage().setImageResource(idR);
                         bouncingState++;
                         if(bouncingState==9){
                             bouncingState=1;
@@ -207,19 +206,19 @@ public class GameActivity extends AppCompatActivity {
                     }
                     Bitmap bitmapImage = BitmapFactory.decodeResource(getResources(),idR);
                     Bitmap scaled = Bitmap.createScaledBitmap(bitmapImage, ballSize, ballSize, false);
-                    tiles[i][j].getImageView().setImageBitmap(scaled);
-                    tiles[i][j].getImageView().setScaleType(ImageView.ScaleType.CENTER);
-                    pink++;
+                    tiles[i][j].getBallImage().setImageBitmap(scaled);
+                    tiles[i][j].getBallImage().setScaleType(ImageView.ScaleType.CENTER);
+                    pinkBallsLeft++;
                 } else {
-                    tiles[i][j].getImageView().setImageDrawable(null);
+                    tiles[i][j].getBallImage().setImageDrawable(null);
                 }
             }
         }
-        if (green == 0) {
+        if (greenBallsLeft == 0) {
             finishGame();
             game.setGameStatus(true);
         }
-        if (pink == 0) {
+        if (pinkBallsLeft == 0) {
             finishGame();
             game.setGameStatus(true);
         }
@@ -244,9 +243,8 @@ public class GameActivity extends AppCompatActivity {
     * */
         //se ejecuta cuando termina el juego, finaliza la activad y procede a la acitvidad que muestra al ganador
         Intent intent = new Intent(GameActivity.this, finishGameActivity.class);
-        intent.putExtra("green", green);
-        intent.putExtra("pink", pink);
-        Log.d("DEBUG","ENTRE AL FINISH,gameover: "+gameOver+" - gren: "+green+" -pink: "+pink);
+        intent.putExtra("green", greenBallsLeft);
+        intent.putExtra("pink", pinkBallsLeft);
         startActivity(intent);
         finishAffinity();
 
@@ -255,6 +253,7 @@ public class GameActivity extends AppCompatActivity {
     /*
     * Make a custom UI board with the size of the screen.
     * TODO:USE LEGIBLE VARIABLES.
+    * TODO: DUPLICATE! ONLY NEED ONE BOARD A LITTLE MORE COMPLETE
     * */
         tiles = new TileView[height][width];
         LinearLayout layout = (LinearLayout) findViewById(R.id.layaout); //Can also be done in xml by android:orientation="vertical"
@@ -265,14 +264,14 @@ public class GameActivity extends AppCompatActivity {
                 row.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
                 for (int j = 0; j < width; j++) {
                     tiles[i][j] = new TileView(this, (heightScreen / 6) * (i + 1), (widthScreen / 10) * (j + 1));
-                    tiles[i][j].getImageView().setLayoutParams(new LinearLayout.LayoutParams(widthScreen / 10, heightScreen / 6));
-                    tiles[i][j].getImageView().setOnClickListener(new View.OnClickListener() {
+                    tiles[i][j].getBallImage().setLayoutParams(new LinearLayout.LayoutParams(widthScreen / 10, heightScreen / 6));
+                    tiles[i][j].getBallImage().setOnClickListener(new View.OnClickListener() {
                         public void onClick(View v) {
                             //retun the pressed one
                             for (int i = 0; i < height; i++) {
 
                                 for (int j = 0; j < width; j++) {
-                                    if (v.getId() == tiles[i][j].getImageView().getId()) {
+                                    if (v.getId() == tiles[i][j].getBallImage().getId()) {
                                         if(game.ClickGestion(i, j)){
                                             tiles[i][j].press();
                                         }else{
@@ -283,8 +282,8 @@ public class GameActivity extends AppCompatActivity {
                             }
                         }
                     });
-                    tiles[i][j].getImageView().setId(j + (i * 10));
-                    row.addView(tiles[i][j].getImageView());
+                    tiles[i][j].getBallImage().setId(j + (i * 10));
+                    row.addView(tiles[i][j].getBallImage());
                 }
 
                 layout.addView(row);
@@ -307,9 +306,9 @@ public class GameActivity extends AppCompatActivity {
                 row.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
                 for (int j = 0; j < width; j++) {
                     tiles[i][j] = new TileView(this, (heightScreen / 6) * (i + 1), (widthScreen / 10) * (j + 1));
-                    tiles[i][j].getImageView().setLayoutParams(new LinearLayout.LayoutParams(widthScreen / 10, heightScreen / 6));
+                    tiles[i][j].getBallImage().setLayoutParams(new LinearLayout.LayoutParams(widthScreen / 10, heightScreen / 6));
                     //config swipe action
-                    tiles[i][j].getImageView().setOnTouchListener(new View.OnTouchListener() {
+                    tiles[i][j].getBallImage().setOnTouchListener(new View.OnTouchListener() {
                         final int MAX_CLICK_DURATION = 200;
                         long startClickTime;
                         PointF startPoint = new PointF();
@@ -361,8 +360,8 @@ public class GameActivity extends AppCompatActivity {
                             return true;
                         }
                     });
-                    tiles[i][j].getImageView().setId(j + (i * 10));
-                    row.addView(tiles[i][j].getImageView());
+                    tiles[i][j].getBallImage().setId(j + (i * 10));
+                    row.addView(tiles[i][j].getBallImage());
                 }
 
                 layout.addView(row);
@@ -373,6 +372,7 @@ public class GameActivity extends AppCompatActivity {
     private int[] detectMove(float y, float x) {
     /*
     * Check that coordinates are valid ones, inside the board.
+    * TODO: USE LEGIBLE VARIABLES
     * */
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {

@@ -1,9 +1,9 @@
 package com.kalantos.spitball.engine;
 
 import android.util.Log;
+import android.widget.Toast;
 
 import com.kalantos.spitball.utils.HTTPSocket;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.util.concurrent.ExecutionException;
@@ -102,7 +102,6 @@ public class GameManager {
                 while (!gameOver) {
                     onlineMoves=getOnlineMove();
                     updateBoard(onlineMoves);
-                    Log.d("THREAD", "IS MY TURN: " + isMyTurn);
                     try {
                         Thread.sleep(2000);
                     } catch (InterruptedException e) {
@@ -184,7 +183,8 @@ public class GameManager {
     * Receive a Tile (x and y position) and using turn, clicks and olderX and olderY manage to know
     * when balls must move/split or wait for another coordinate.
     * TODO: DUPLICATED!
-    * TODO: CHANGE GESTION TO HANDLER
+    * TODO: CHANGE GESTION TO HANDLER.
+    * TODO: LEGIBLE VARIABLES.
     * */
         if ((tiles[i][j].getBall() instanceof BallGreen) && clicks == 0 && (playerTurn % 2 == 0)) {
             ax = i;
@@ -267,7 +267,7 @@ public class GameManager {
                         Integer.toString(GameId),"TURN", Integer.toString(onlineTurn));
                 new HTTPSocket().execute("http://spitball.000webhostapp.com/gameMove.php","POST",jsonData).get();
                } catch (InterruptedException|ExecutionException e) {
-                e.printStackTrace();
+                Log.e("ONLINE CONNECTION", e.getMessage());
             }
         }
         if (GameId == 0) {
@@ -308,7 +308,6 @@ public class GameManager {
             String st = new HTTPSocket().execute("http://spitball.000webhostapp.com/gameMove.php","POST",jsonData).get();
             int[] moves = new int[6];
             JSONObject json;
-            Log.d("JSON-POST",st);
                 json = new JSONObject(st);
                 moves[0] = json.getInt("XINIT");
                 moves[1] = json.getInt("YINIT");
@@ -320,7 +319,7 @@ public class GameManager {
             return moves;
 
         } catch (InterruptedException|ExecutionException|NullPointerException|JSONException e) {
-            e.printStackTrace();
+            Log.e("ONLINE CONNECTION", e.getMessage());
         }
 
         return null;
@@ -355,6 +354,7 @@ public class GameManager {
 
 
             } catch (Exception e) {
+                Log.e("AI", e.getMessage());
                 //catch exception: when game ends IA try to move causing an error.
                 gameOver = true;
             }
@@ -365,7 +365,6 @@ public class GameManager {
     /*
     * Receive a start coordinate of the original ball, and spit a smaller ball (33% size) into
     * the delta direction and reduce spitter ball size.
-    * TODO: DUPLICATE CODE, GENERALIZE SPITTING.
     * */
         anyMove=true;
 
@@ -375,19 +374,26 @@ public class GameManager {
                     "YINIT", Integer.toString(initialY),"XLAST", Integer.toString(deltaX), "YLAST",
                     Integer.toString(deltaY),"SPLIT", Integer.toString(1),"GAMEID",
                     Integer.toString(GameId),"TURN", Integer.toString(onlineTurn));
-                Log.d("DATA-SEND",jsonData);
                 new HTTPSocket().execute("http://spitball.000webhostapp.com/gameMove.php","POST",jsonData).get();
              } catch (InterruptedException|ExecutionException e) {
-                e.printStackTrace();
+                Log.e("ONLINE CONNECTION", e.getMessage());
             }
         }
         if ((!onlineMove && isMyTurn) || (onlineMove && !movelock) || GameId == 0) {
 
-            int splittedBallSize = tiles[initialY][initialX].getBall().getSize() / 3;
+            if (tiles[initialY][initialX].getBall() != null) {
 
-            if (tiles[initialY][initialX].getBall() instanceof BallGreen) {
-                BallGreen splittedBall = new BallGreen((int) (splittedBallSize * 1.2));
+                Ball splittedBall;
+                int splittedBallSize = tiles[initialY][initialX].getBall().getSize() / 3;
+                if (tiles[initialY][initialX].getBall() instanceof BallPink){
+
+                    splittedBall = new BallPink((int) (splittedBallSize * 1.2));
+                }else{
+
+                    splittedBall = new BallGreen((int) (splittedBallSize * 1.2));
+                }
                 if (tiles[initialY][initialX].getBall().getSize() >= 10) {
+
                     try {
                         tiles[initialY][initialX].getBall().setSize(tiles[initialY][initialX].getBall().getSize() - splittedBallSize);
                         tiles[initialY + deltaY][initialX + deltaX].battle(splittedBall);
@@ -395,27 +401,17 @@ public class GameManager {
                         Log.i("GAME","Some of you mass pour down the board");
                     }
                 }
+            }else {
+                Log.e("SPIT","Not valid movement uncaught by handler");
             }
-            if (tiles[initialY][initialX].getBall() instanceof BallPink) {
-                BallPink splitttedBall = new BallPink((int) (splittedBallSize * 1.2));
-                if (tiles[initialY][initialX].getBall().getSize() >= 10) {
-                    try {
-                        tiles[initialY][initialX].getBall().setSize(tiles[initialY][initialX].getBall().getSize() - splittedBallSize);
-                        tiles[initialY + deltaY][initialX + deltaX].battle(splitttedBall);
-                    } catch (Exception e) {
-                        Log.i("GAME","Some of you mass pour down the board");
-                    }
-                }
-            }
-            clicks = 0;
-            movelock = true;
         }
-
         if (GameId == 0) {
             playerTurn++;
         }
-
+        clicks = 0;
+        movelock = true;
     }
+
     private String createJson(String... strings){
     /*
     * Create a Json with all data received and returns the json in string format.
@@ -425,7 +421,7 @@ public class GameManager {
             try{
                 json.put(strings[i],strings[i+1]);
             }catch(JSONException e){
-                e.printStackTrace();
+                Log.e("ONLINE CONNECTION", e.getMessage());
             }
         }
         return json.toString();

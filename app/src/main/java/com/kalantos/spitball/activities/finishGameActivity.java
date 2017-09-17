@@ -8,7 +8,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.InterstitialAd;
@@ -16,15 +15,16 @@ import com.kalantos.spitball.R;
 import com.kalantos.spitball.engine.Timer;
 
 public class finishGameActivity extends AppCompatActivity {
-    ImageView imageView;
-    TextView editText;
+
+    ImageView winnerImage;
+    TextView winnerBanner;
     InterstitialAd mInterstitialAd;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_finish_game);
-        editText=(TextView) findViewById(R.id.textView);
+        winnerBanner=(TextView) findViewById(R.id.textView);
         //ADS////////////////
         mInterstitialAd = new InterstitialAd(this);
         /*
@@ -65,7 +65,7 @@ public class finishGameActivity extends AppCompatActivity {
                             try {
                                 thread.join();
                             } catch (InterruptedException e) {
-                                e.printStackTrace();
+                                Log.e("AUTO-HIDE BAR", e.getMessage());
                             }
 
                             decorView.setSystemUiVisibility(flags);
@@ -78,13 +78,13 @@ public class finishGameActivity extends AppCompatActivity {
                 try {
                     Thread.sleep(4000);
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    Log.e("ADS", e.getMessage());
                 }
                 showAd();
                 try {
                     Thread.sleep(4000);
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    Log.e("ADS", e.getMessage());
                 }
             }
         });
@@ -100,26 +100,24 @@ public class finishGameActivity extends AppCompatActivity {
     /*
     * Choose a winner and show the stats
     * */
-        imageView=(ImageView)findViewById(R.id.imageView);
-        editText=(TextView) findViewById(R.id.textView);
+        winnerImage=(ImageView)findViewById(R.id.imageView);
+        winnerBanner=(TextView) findViewById(R.id.textView);
         Bundle extras = getIntent().getExtras();
         int green=extras.getInt("green");
         int pink=extras.getInt("pink");
         if(green>pink){
-            if(editText!=null){
-            editText.setText(R.string.winnerGreen);
+            if(winnerBanner!=null){
+                winnerBanner.setText(R.string.winnerGreen);
             }
             Drawable pic=getResources().getDrawable(R.drawable.ballgreen);
-
-                imageView.setImageDrawable(pic);
+            winnerImage.setImageDrawable(pic);
         }
         else{
-            if(editText!=null) {
-                editText.setText(R.string.winnerPink);
+            if(winnerBanner!=null) {
+                winnerBanner.setText(R.string.winnerPink);
             }
             Drawable pic=getResources().getDrawable(R.drawable.ballpink);
-
-             imageView.setImageDrawable(pic);
+            winnerImage.setImageDrawable(pic);
         }
 
     }
