@@ -283,14 +283,14 @@ public class GameActivity extends AppCompatActivity {
                                         int[] temporalEnd = detectMove(endPoint.y, endPoint.x);
 
                                         if (temporalStart != null && temporalEnd != null) {
-                                            game.swipeGestion(temporalStart[0], temporalStart[1]);
-                                            game.swipeGestion(temporalEnd[0], temporalEnd[1]);
+                                            game.swipeHandler(temporalStart[0], temporalStart[1]);
+                                            game.swipeHandler(temporalEnd[0], temporalEnd[1]);
                                         }
                                     } else {
                                         //if drag time is not overcome, is processed as a click and keep waiting for another click.
                                         int[] temporal = detectMove(startPoint.y, startPoint.x);
                                         if (temporal != null) {
-                                            if(game.ClickGestion(temporal[0], temporal[1])&&bouncingState>0){
+                                            if(game.swipeHandler(temporal[0], temporal[1])&&bouncingState>0){
                                                 tiles[temporal[0]][temporal[1]].press();
                                             }
                                         }

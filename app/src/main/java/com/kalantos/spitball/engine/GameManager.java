@@ -123,7 +123,7 @@ public class GameManager {
         tiles[3][5].setBall(20, BallType.BALLPINK);
     }
 
-    public boolean ClickGestion(int actualX, int actualY) {
+    public boolean swipeHandler(int actualX, int actualY) {
     /*
     * Receive a Tile (x and y position) and using turn, clicks and olderX and olderY manage to know
     * when balls must move/split or wait for another coordinate.
@@ -148,13 +148,13 @@ public class GameManager {
                 return false;
             } else if (Math.abs(initialX - actualX) > 2 || Math.abs(initialY - actualY) > 2) {
                 //OUTBOUND MOVEMENT
-                clicks = 0;
                 anyMove=true;
+                clicks = 0;
                 return false;
             } else if ((Math.abs(initialX - actualX) == 1 && Math.abs(initialY - actualY) == 1) || (Math.abs(initialX - actualX) == 0 && Math.abs(initialY - actualY) == 1) || (Math.abs(initialX - actualX) == 1 && Math.abs(initialY - actualY) == 0)) {
                 //MOVE
                 move(initialX, initialY, actualX, actualY);
-            } else if (initialX - actualX == -2 && initialY == actualY) {
+            }else if (initialX - actualX == -2 && initialY == actualY) {
                 //SPLIT DOWN
                 split(initialX, initialY, 2, 0);
             } else if (initialX - actualX == 2 && initialY == actualY) {
@@ -166,75 +166,6 @@ public class GameManager {
             } else if (initialY - actualY == 2 && actualX == initialX) {
                 //SPLIT LEFT
                 split(initialX, initialY, 0, -2);
-            } else {
-                clicks = 0;
-                anyMove=true;
-                return false;
-            }
-            ArtificialMove();
-        }
-        return false;
-    }
-
-    public boolean swipeGestion(int actualX, int actualY) {
-    /*
-    * Receive a Tile (x and y position) and using turn, clicks and olderX and olderY manage to know
-    * when balls must move/split or wait for another coordinate.
-    * TODO: DUPLICATED!
-    * TODO: CHANGE GESTION TO HANDLER.
-    * TODO: LEGIBLE VARIABLES.
-    * */
-        if ((tiles[actualX][actualY].getBall() instanceof BallGreen) && clicks == 0 && (playerTurn % 2 == 0)) {
-            initialX = actualX;
-            initialY = actualY;
-            clicks++;
-            return true;
-
-        } else if ((tiles[actualX][actualY].getBall() instanceof BallPink) && clicks == 0 && (playerTurn % 2 == 1)) {
-            initialX = actualX;
-            initialY = actualY;
-            clicks++;
-            return true;
-
-        } else if (clicks == 1) {
-            //CANCEL SELECTION
-            if (initialX == actualX && initialY == actualY) {
-                clicks = 0;
-                anyMove=true;
-                return false;
-            } else if (Math.abs(initialX - actualX) > 2 || Math.abs(initialY - actualY) > 2) {
-                //OUTBOUND MOVEMENT
-                anyMove=true;
-                clicks = 0;
-                return false;
-            } else if ((Math.abs(initialX - actualX) == 1 && Math.abs(initialY - actualY) == 1) || (Math.abs(initialX - actualX) == 0 && Math.abs(initialY - actualY) == 1) || (Math.abs(initialX - actualX) == 1 && Math.abs(initialY - actualY) == 0)) {
-                //MOVE
-                move(initialX, initialY, actualX, actualY);
-            } else if (initialX - actualX < 0 && initialY == actualY) {
-                //SWIPE DOWN
-                move(initialX, initialY, initialX + 1, initialY);
-            } else if (initialX - actualX > 0 && initialY == actualY) {
-                //SWIPE UP
-                move(initialX, initialY, initialX - 1, initialY);
-            } else if (initialY - actualY < 0 && actualX == initialX) {
-                //SWIPE RIGHT
-                move(initialX, initialY, initialX, initialY + 1);
-            } else if (initialY - actualY > 0 && actualX == initialX) {
-                //SWIPE LEFT
-                move(initialX, initialY, initialX, initialY - 1);
-            } else if (initialY - actualY > 0 && initialX - actualX > 0 && initialY - actualY == (initialX - actualX)) {
-                //SWIPE CORNERS
-                //UP-LEFT CORNER
-                move(initialX, initialY, initialX - 1, initialY - 1);
-            } else if (initialY - actualY < 0 && initialX - actualX > 0 && initialY - actualY == -(initialX - actualX)) {
-                //UP-RIGHT CORNER
-                move(initialX, initialY, initialX - 1, initialY + 1);
-            } else if (initialY - actualY > 0 && initialX - actualX < 0 && initialY - actualY == -(initialX - actualX)) {
-                //DOWN-LEFT CORNER
-                move(initialX, initialY, initialX + 1, initialY - 1);
-            } else if (initialY - actualY > 0 && initialX - actualX > 0 && initialY - actualY == -(initialX - actualX)) {
-                //DOWN-RIGHT CORNER
-                move(initialX, initialY, initialX + 1, initialY + 1);
             } else {
                 clicks = 0;
                 anyMove=true;
