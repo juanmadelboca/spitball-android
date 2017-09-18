@@ -380,29 +380,23 @@ public class GameManager {
             }
         }
         if ((!onlineMove && isMyTurn) || (onlineMove && !movelock) || GameId == 0) {
+            Ball splittedBall;
+            int splittedBallSize = tiles[initialY][initialX].getBall().getSize() / 3;
+            if (tiles[initialY][initialX].getBall() instanceof BallPink){
 
-            if (tiles[initialY][initialX].getBall() != null) {
+                splittedBall = new BallPink((int) (splittedBallSize * 1.2));
+            }else{
 
-                Ball splittedBall;
-                int splittedBallSize = tiles[initialY][initialX].getBall().getSize() / 3;
-                if (tiles[initialY][initialX].getBall() instanceof BallPink){
+                splittedBall = new BallGreen((int) (splittedBallSize * 1.2));
+            }
+            if (tiles[initialY][initialX].getBall().getSize() >= 10) {
 
-                    splittedBall = new BallPink((int) (splittedBallSize * 1.2));
-                }else{
-
-                    splittedBall = new BallGreen((int) (splittedBallSize * 1.2));
+                try {
+                    tiles[initialY][initialX].getBall().setSize(tiles[initialY][initialX].getBall().getSize() - splittedBallSize);
+                    tiles[initialY + deltaY][initialX + deltaX].battle(splittedBall);
+                } catch (Exception e) {
+                    Log.i("GAME","Some of you mass pour down the board");
                 }
-                if (tiles[initialY][initialX].getBall().getSize() >= 10) {
-
-                    try {
-                        tiles[initialY][initialX].getBall().setSize(tiles[initialY][initialX].getBall().getSize() - splittedBallSize);
-                        tiles[initialY + deltaY][initialX + deltaX].battle(splittedBall);
-                    } catch (Exception e) {
-                        Log.i("GAME","Some of you mass pour down the board");
-                    }
-                }
-            }else {
-                Log.e("SPIT","Not valid movement uncaught by handler");
             }
         }
         if (GameId == 0) {

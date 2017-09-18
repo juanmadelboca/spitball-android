@@ -20,7 +20,6 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 import com.kalantos.spitball.R;
 import com.kalantos.spitball.engine.BallGreen;
-import com.kalantos.spitball.engine.BallPink;
 import com.kalantos.spitball.engine.GameManager;
 import com.kalantos.spitball.engine.Timer;
 import com.kalantos.spitball.utils.TileView;
@@ -35,7 +34,6 @@ public class GameActivity extends AppCompatActivity {
     private int widthScreen, heightScreen;
     private int bouncingState=1;
     private GameManager game;
-    boolean debug=false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -150,81 +148,74 @@ public class GameActivity extends AppCompatActivity {
         final Thread refreshThread1 = new Thread(runnable);refreshThread1.start();
         paint();
     }
-    public void paint() {
-        /*
-        * Update all images in UI board using the data from Logic board, size, color and also animation effects.
-        * CONSTRAINTS: images cant exceed 5k, or app must use thread logic
-        * TODO: DUPLICATE! GENERALIZE BALLS
-        * */
+    private void resetFrame(){
+    /*
+    * Reset status of press tiles and ball counters
+    * */
         if(game.detectMoves()){
             unpressTiles();
         }
-        long time_start, time_end;
-        time_start = System.currentTimeMillis();
         greenBallsLeft = 0;
         pinkBallsLeft = 0;
+    }
+    private void checkGameStatus(){
+        if (greenBallsLeft == 0 || pinkBallsLeft == 0) {
+            finishGame();
+            game.setGameStatus(true);
+        }
+    }
+    public void paint() {
+    /*
+    * Re paint all board images, rescaling and animating with the information provide by game class, also counts
+    * each team balls.
+    * CONSTRAINTS: images cant exceed 5k, or app must use thread logic
+    * */
+        int ballSize;
+        String ballImage;
+        Bitmap bitmapImage,scaled;
+        //debugging time stuff
+        long time_start, time_end;
+        time_start = System.currentTimeMillis();
+
         for (int i = 0; i < height; i++) {
-
             for (int j = 0; j < width; j++) {
-                //TODO: put math inside if to avoid calculate with no ball.
-                double temp = (game.getTiles()[i][j].getBall().getSize()) + heightScreen/14 - ((game.getTiles()[i][j].getBall().getSize())*(1/7)*((double)widthScreen/heightScreen));
-                int ballSize = (int) temp;
-                //TODO: try speed declaring bitMap outside loop.
-                if (game.getTiles()[i][j].getBall() instanceof BallGreen) {
-                    int idR;
-                    if(tiles[i][j].isPressed()){
-                        //BOUNCING
-                        String resourstring="framel"+bouncingState;
-                        idR= getResources().getIdentifier(resourstring,"drawable",getPackageName());
-                        tiles[i][j].getBallImage().setImageResource(idR);
-                        bouncingState++;
-                        if(bouncingState==9){
-                            bouncingState=1;
-                        }
-                    }else {
-                        idR= getResources().getIdentifier("ballgreen_small","drawable",getPackageName());
-                    }
-                    Bitmap bitmapImage = BitmapFactory.decodeResource(getResources(), idR);
-                    Bitmap scaled = Bitmap.createScaledBitmap(bitmapImage, ballSize, ballSize, false);
-                    tiles[i][j].getBallImage().setImageBitmap(scaled);
-                    tiles[i][j].getBallImage().setScaleType(ImageView.ScaleType.CENTER);
-                    greenBallsLeft++;
 
-                } else if (game.getTiles()[i][j].getBall() instanceof BallPink) {
+                if(game.getTiles()[i][j].getBall().getSize() > 0){
+                    //image
+                    if (game.getTiles()[i][j].getBall() instanceof BallGreen) {
+                        ballImage = "ballgreen_small";
+                        greenBallsLeft++;
+                    } else {
+                        ballImage = "ballpink_small";
+                        pinkBallsLeft++;
+                    }
                     int idR;
+                    //animation
                     if(tiles[i][j].isPressed()){
-                        //BOUNCING
-                        String resourstring="frame"+bouncingState;
-                        idR= getResources().getIdentifier(resourstring,"drawable",getPackageName());
-                        tiles[i][j].getBallImage().setImageResource(idR);
+                        ballImage = ballImage+bouncingState;
                         bouncingState++;
                         if(bouncingState==9){
                             bouncingState=1;
                         }
-                    }else {
-                        idR= getResources().getIdentifier("ballpink_small","drawable",getPackageName());
                     }
-                    Bitmap bitmapImage = BitmapFactory.decodeResource(getResources(),idR);
-                    Bitmap scaled = Bitmap.createScaledBitmap(bitmapImage, ballSize, ballSize, false);
+
+                    idR= getResources().getIdentifier(ballImage,"drawable",getPackageName());
+
+                    //painting
+                    ballSize =(int)((game.getTiles()[i][j].getBall().getSize()) + heightScreen/14 -
+                            ((game.getTiles()[i][j].getBall().getSize())*(1/7)*((double)widthScreen/heightScreen)));
+                    bitmapImage = BitmapFactory.decodeResource(getResources(), idR);
+                    scaled = Bitmap.createScaledBitmap(bitmapImage, ballSize, ballSize, false);
                     tiles[i][j].getBallImage().setImageBitmap(scaled);
                     tiles[i][j].getBallImage().setScaleType(ImageView.ScaleType.CENTER);
-                    pinkBallsLeft++;
+
                 } else {
                     tiles[i][j].getBallImage().setImageDrawable(null);
                 }
             }
         }
-        if (greenBallsLeft == 0) {
-            finishGame();
-            game.setGameStatus(true);
-        }
-        if (pinkBallsLeft == 0) {
-            finishGame();
-            game.setGameStatus(true);
-        }
         time_end = System.currentTimeMillis();
-        if(debug)
-            System.out.println("the task has taken " + (time_end - time_start) + " milliseconds");
+        Log.d("PAINT","the task has taken " + (time_end - time_start) + " milliseconds");
     }
 
     private void unpressTiles(){
@@ -393,9 +384,12 @@ public class GameActivity extends AppCompatActivity {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                resetFrame();
                 paint();
+                checkGameStatus();
             }
         });
+
     }
 
 
