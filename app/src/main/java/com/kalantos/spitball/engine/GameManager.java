@@ -1,8 +1,6 @@
 package com.kalantos.spitball.engine;
 
 import android.util.Log;
-import android.widget.Toast;
-
 import com.kalantos.spitball.utils.HTTPSocket;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -21,7 +19,7 @@ public class GameManager {
     public int clicks = 0;
     private int playerTurn = 0;
     private int GameId, onlineTurn;
-    private int ax, ay, difficulty;
+    private int initialX, initialY, difficulty;
     private boolean ArtificialInteligence, onlineMove, isMyTurn, movelock;
     private boolean anyMove;
 
@@ -125,49 +123,49 @@ public class GameManager {
         tiles[3][5].setBall(20, BallType.BALLPINK);
     }
 
-    public boolean ClickGestion(int i, int j) {
+    public boolean ClickGestion(int actualX, int actualY) {
     /*
     * Receive a Tile (x and y position) and using turn, clicks and olderX and olderY manage to know
     * when balls must move/split or wait for another coordinate.
     * */
-        if ((tiles[i][j].getBall() instanceof BallGreen) && clicks == 0 && (playerTurn % 2 == 0)) {
-            ax = i;
-            ay = j;
+        if ((tiles[actualX][actualY].getBall() instanceof BallGreen) && clicks == 0 && (playerTurn % 2 == 0)) {
+            initialX = actualX;
+            initialY = actualY;
             clicks++;
             return true;
 
-        } else if ((tiles[i][j].getBall() instanceof BallPink) && clicks == 0 && (playerTurn % 2 == 1)) {
-            ax = i;
-            ay = j;
+        } else if ((tiles[actualX][actualY].getBall() instanceof BallPink) && clicks == 0 && (playerTurn % 2 == 1)) {
+            initialX = actualX;
+            initialY = actualY;
             clicks++;
             return true;
 
         } else if (clicks == 1) {
             //CANCEL SELECTION
-            if (ax == i && ay == j) {
+            if (initialX == actualX && initialY == actualY) {
                 clicks = 0;
                 anyMove=true;
                 return false;
-            } else if (Math.abs(ax - i) > 2 || Math.abs(ay - j) > 2) {
+            } else if (Math.abs(initialX - actualX) > 2 || Math.abs(initialY - actualY) > 2) {
                 //OUTBOUND MOVEMENT
                 clicks = 0;
                 anyMove=true;
                 return false;
-            } else if ((Math.abs(ax - i) == 1 && Math.abs(ay - j) == 1) || (Math.abs(ax - i) == 0 && Math.abs(ay - j) == 1) || (Math.abs(ax - i) == 1 && Math.abs(ay - j) == 0)) {
+            } else if ((Math.abs(initialX - actualX) == 1 && Math.abs(initialY - actualY) == 1) || (Math.abs(initialX - actualX) == 0 && Math.abs(initialY - actualY) == 1) || (Math.abs(initialX - actualX) == 1 && Math.abs(initialY - actualY) == 0)) {
                 //MOVE
-                move(ax, ay, i, j);
-            } else if (ax - i == -2 && ay == j) {
+                move(initialX, initialY, actualX, actualY);
+            } else if (initialX - actualX == -2 && initialY == actualY) {
                 //SPLIT DOWN
-                split(ax, ay, 2, 0);
-            } else if (ax - i == 2 && ay == j) {
+                split(initialX, initialY, 2, 0);
+            } else if (initialX - actualX == 2 && initialY == actualY) {
                 //SPLIT UP
-                split(ax, ay, -2, 0);
-            } else if (ay - j == -2 && i == ax) {
+                split(initialX, initialY, -2, 0);
+            } else if (initialY - actualY == -2 && actualX == initialX) {
                 //SPLIT RIGHT
-                split(ax, ay, 0, 2);
-            } else if (ay - j == 2 && i == ax) {
+                split(initialX, initialY, 0, 2);
+            } else if (initialY - actualY == 2 && actualX == initialX) {
                 //SPLIT LEFT
-                split(ax, ay, 0, -2);
+                split(initialX, initialY, 0, -2);
             } else {
                 clicks = 0;
                 anyMove=true;
@@ -178,7 +176,7 @@ public class GameManager {
         return false;
     }
 
-    public boolean swipeGestion(int i, int j) {
+    public boolean swipeGestion(int actualX, int actualY) {
     /*
     * Receive a Tile (x and y position) and using turn, clicks and olderX and olderY manage to know
     * when balls must move/split or wait for another coordinate.
@@ -186,57 +184,57 @@ public class GameManager {
     * TODO: CHANGE GESTION TO HANDLER.
     * TODO: LEGIBLE VARIABLES.
     * */
-        if ((tiles[i][j].getBall() instanceof BallGreen) && clicks == 0 && (playerTurn % 2 == 0)) {
-            ax = i;
-            ay = j;
+        if ((tiles[actualX][actualY].getBall() instanceof BallGreen) && clicks == 0 && (playerTurn % 2 == 0)) {
+            initialX = actualX;
+            initialY = actualY;
             clicks++;
             return true;
 
-        } else if ((tiles[i][j].getBall() instanceof BallPink) && clicks == 0 && (playerTurn % 2 == 1)) {
-            ax = i;
-            ay = j;
+        } else if ((tiles[actualX][actualY].getBall() instanceof BallPink) && clicks == 0 && (playerTurn % 2 == 1)) {
+            initialX = actualX;
+            initialY = actualY;
             clicks++;
             return true;
 
         } else if (clicks == 1) {
             //CANCEL SELECTION
-            if (ax == i && ay == j) {
+            if (initialX == actualX && initialY == actualY) {
                 clicks = 0;
                 anyMove=true;
                 return false;
-            } else if (Math.abs(ax - i) > 2 || Math.abs(ay - j) > 2) {
+            } else if (Math.abs(initialX - actualX) > 2 || Math.abs(initialY - actualY) > 2) {
                 //OUTBOUND MOVEMENT
                 anyMove=true;
                 clicks = 0;
                 return false;
-            } else if ((Math.abs(ax - i) == 1 && Math.abs(ay - j) == 1) || (Math.abs(ax - i) == 0 && Math.abs(ay - j) == 1) || (Math.abs(ax - i) == 1 && Math.abs(ay - j) == 0)) {
+            } else if ((Math.abs(initialX - actualX) == 1 && Math.abs(initialY - actualY) == 1) || (Math.abs(initialX - actualX) == 0 && Math.abs(initialY - actualY) == 1) || (Math.abs(initialX - actualX) == 1 && Math.abs(initialY - actualY) == 0)) {
                 //MOVE
-                move(ax, ay, i, j);
-            } else if (ax - i < 0 && ay == j) {
+                move(initialX, initialY, actualX, actualY);
+            } else if (initialX - actualX < 0 && initialY == actualY) {
                 //SWIPE DOWN
-                move(ax, ay, ax + 1, ay);
-            } else if (ax - i > 0 && ay == j) {
+                move(initialX, initialY, initialX + 1, initialY);
+            } else if (initialX - actualX > 0 && initialY == actualY) {
                 //SWIPE UP
-                move(ax, ay, ax - 1, ay);
-            } else if (ay - j < 0 && i == ax) {
+                move(initialX, initialY, initialX - 1, initialY);
+            } else if (initialY - actualY < 0 && actualX == initialX) {
                 //SWIPE RIGHT
-                move(ax, ay, ax, ay + 1);
-            } else if (ay - j > 0 && i == ax) {
+                move(initialX, initialY, initialX, initialY + 1);
+            } else if (initialY - actualY > 0 && actualX == initialX) {
                 //SWIPE LEFT
-                move(ax, ay, ax, ay - 1);
-            } else if (ay - j > 0 && ax - i > 0 && ay - j == (ax - i)) {
+                move(initialX, initialY, initialX, initialY - 1);
+            } else if (initialY - actualY > 0 && initialX - actualX > 0 && initialY - actualY == (initialX - actualX)) {
                 //SWIPE CORNERS
                 //UP-LEFT CORNER
-                move(ax, ay, ax - 1, ay - 1);
-            } else if (ay - j < 0 && ax - i > 0 && ay - j == -(ax - i)) {
+                move(initialX, initialY, initialX - 1, initialY - 1);
+            } else if (initialY - actualY < 0 && initialX - actualX > 0 && initialY - actualY == -(initialX - actualX)) {
                 //UP-RIGHT CORNER
-                move(ax, ay, ax - 1, ay + 1);
-            } else if (ay - j > 0 && ax - i < 0 && ay - j == -(ax - i)) {
+                move(initialX, initialY, initialX - 1, initialY + 1);
+            } else if (initialY - actualY > 0 && initialX - actualX < 0 && initialY - actualY == -(initialX - actualX)) {
                 //DOWN-LEFT CORNER
-                move(ax, ay, ax + 1, ay - 1);
-            } else if (ay - j > 0 && ax - i > 0 && ay - j == -(ax - i)) {
+                move(initialX, initialY, initialX + 1, initialY - 1);
+            } else if (initialY - actualY > 0 && initialX - actualX > 0 && initialY - actualY == -(initialX - actualX)) {
                 //DOWN-RIGHT CORNER
-                move(ax, ay, ax + 1, ay + 1);
+                move(initialX, initialY, initialX + 1, initialY + 1);
             } else {
                 clicks = 0;
                 anyMove=true;
