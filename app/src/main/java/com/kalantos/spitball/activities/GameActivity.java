@@ -73,7 +73,7 @@ public class GameActivity extends AppCompatActivity {
         heightScreen = size.y;
 
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-        boolean click = settings.getBoolean("clickMode", false);
+        boolean swipe = settings.getBoolean("swipeMode", true);
         boolean bouncing = settings.getBoolean("bouncing", true);
         if(!bouncing){
             bouncingState=-1;
@@ -85,11 +85,7 @@ public class GameActivity extends AppCompatActivity {
         boolean ArtificialInteligence = intent.getBooleanExtra("AI", true);
         //create logic board.
         game = new GameManager(GameId, difficulty, onlineTurn,ArtificialInteligence);
-        if (click) {
-            clickBoard();
-        } else {
-            swipeBoard();
-        }
+        createBoard(swipe);
         //Tell the user with which color plays.
         if(onlineTurn==0) {
             Toast.makeText(this, " JUGADOR VERDE!", Toast.LENGTH_LONG).show();
@@ -241,49 +237,8 @@ public class GameActivity extends AppCompatActivity {
         finishAffinity();
 
     }
-    private void clickBoard() {
-    /*
-    * Make a custom UI board with the size of the screen.
-    * TODO:USE LEGIBLE VARIABLES.
-    * TODO: DUPLICATE! ONLY NEED ONE BOARD A LITTLE MORE COMPLETE
-    * */
-        tiles = new TileView[height][width];
-        LinearLayout layout = (LinearLayout) findViewById(R.id.layaout); //Can also be done in xml by android:orientation="vertical"
 
-        if (layout != null) {
-            for (int i = 0; i < height; i++) {
-                LinearLayout row = new LinearLayout(this);
-                row.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-                for (int j = 0; j < width; j++) {
-                    tiles[i][j] = new TileView(this, (heightScreen / 6) * (i + 1), (widthScreen / 10) * (j + 1));
-                    tiles[i][j].getBallImage().setLayoutParams(new LinearLayout.LayoutParams(widthScreen / 10, heightScreen / 6));
-                    tiles[i][j].getBallImage().setOnClickListener(new View.OnClickListener() {
-                        public void onClick(View v) {
-                            //retun the pressed one
-                            for (int i = 0; i < height; i++) {
-
-                                for (int j = 0; j < width; j++) {
-                                    if (v.getId() == tiles[i][j].getBallImage().getId()) {
-                                        if(game.ClickGestion(i, j)){
-                                            tiles[i][j].press();
-                                        }else{
-                                            tiles[i][j].release();
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    });
-                    tiles[i][j].getBallImage().setId(j + (i * 10));
-                    row.addView(tiles[i][j].getBallImage());
-                }
-
-                layout.addView(row);
-            }
-        }
-    }
-
-    private void swipeBoard() {
+    private void createBoard(final boolean swipeOn) {
     /*
     * Make a custom UI board with the size of the screen.
     * */
@@ -321,7 +276,7 @@ public class GameActivity extends AppCompatActivity {
                                     break;
                                 case MotionEvent.ACTION_UP:
                                     //when the finger is raised final coordinates are send to detectMove for processing.
-                                    if ((Calendar.getInstance().getTimeInMillis() - startClickTime) >= MAX_CLICK_DURATION) {
+                                    if (((Calendar.getInstance().getTimeInMillis() - startClickTime) >= MAX_CLICK_DURATION)&& swipeOn) {
                                         //if drag duration is longer than max click is processed as a swipe, and send to the correct gestion.
                                         game.clicks = 0;
                                         int[] temporalStart = detectMove(startPoint.y, startPoint.x);
