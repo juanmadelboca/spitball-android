@@ -148,6 +148,7 @@ public class GameActivity extends AppCompatActivity {
         final Thread refreshThread1 = new Thread(runnable);refreshThread1.start();
         paint();
     }
+
     private void resetFrame(){
     /*
     * Reset status of press tiles and ball counters
@@ -158,6 +159,7 @@ public class GameActivity extends AppCompatActivity {
         greenBallsLeft = 0;
         pinkBallsLeft = 0;
     }
+
     private void checkGameStatus(){
         if (greenBallsLeft == 0 || pinkBallsLeft == 0) {
             finishGame();
@@ -284,8 +286,6 @@ public class GameActivity extends AppCompatActivity {
     private void swipeBoard() {
     /*
     * Make a custom UI board with the size of the screen.
-    * TODO:USE LEGIBLE VARIABLES.
-    * TODO: MAYBE DUPLICATE!.
     * */
         tiles = new TileView[height][width];
         LinearLayout layout = (LinearLayout) findViewById(R.id.layaout); //Can also be done in xml by android:orientation="vertical"
@@ -361,8 +361,8 @@ public class GameActivity extends AppCompatActivity {
 
     private int[] detectMove(float y, float x) {
     /*
-    * Check that coordinates are valid ones, inside the board.
-    * TODO: USE LEGIBLE VARIABLES
+    * Receive 2 float coordinates identifying a click or drag in the screen, and returns
+    * a Tile position from the board.
     * */
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
@@ -375,6 +375,7 @@ public class GameActivity extends AppCompatActivity {
                 }
             }
         }
+        //TODO: when called the function must catch the exception
         return null;
     }
 
