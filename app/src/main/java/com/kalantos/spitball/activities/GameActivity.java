@@ -279,20 +279,28 @@ public class GameActivity extends AppCompatActivity {
                                     if (((Calendar.getInstance().getTimeInMillis() - startClickTime) >= MAX_CLICK_DURATION)&& swipeOn) {
                                         //if drag duration is longer than max click is processed as a swipe, and send to the correct gestion.
                                         game.clicks = 0;
-                                        int[] temporalStart = detectMove(startPoint.y, startPoint.x);
-                                        int[] temporalEnd = detectMove(endPoint.y, endPoint.x);
+                                        try{
+                                            int[] temporalStart = detectMove(startPoint.y, startPoint.x);
+                                            int[] temporalEnd = detectMove(endPoint.y, endPoint.x);
 
-                                        if (temporalStart != null && temporalEnd != null) {
-                                            game.swipeHandler(temporalStart[0], temporalStart[1]);
-                                            game.swipeHandler(temporalEnd[0], temporalEnd[1]);
+                                            if (temporalStart != null && temporalEnd != null) {
+                                                game.swipeHandler(temporalStart[0], temporalStart[1]);
+                                                game.swipeHandler(temporalEnd[0], temporalEnd[1]);
+                                            }
+                                        }catch (Exception e){
+                                            Log.e("GAME-ACTIVITY",e.getMessage());
                                         }
                                     } else {
                                         //if drag time is not overcome, is processed as a click and keep waiting for another click.
-                                        int[] temporal = detectMove(startPoint.y, startPoint.x);
-                                        if (temporal != null) {
-                                            if(game.swipeHandler(temporal[0], temporal[1])&&bouncingState>0){
-                                                tiles[temporal[0]][temporal[1]].press();
+                                        try {
+                                            int[] temporal = detectMove(startPoint.y, startPoint.x);
+                                            if (temporal != null) {
+                                                if (game.swipeHandler(temporal[0], temporal[1]) && bouncingState > 0) {
+                                                    tiles[temporal[0]][temporal[1]].press();
+                                                }
                                             }
+                                        }catch (Exception e){
+                                            Log.e("GAME-ACTIVITY",e.getMessage());
                                         }
                                     }
 
@@ -314,7 +322,7 @@ public class GameActivity extends AppCompatActivity {
         }
     }
 
-    private int[] detectMove(float y, float x) {
+    private int[] detectMove(float y, float x) throws Exception {
     /*
     * Receive 2 float coordinates identifying a click or drag in the screen, and returns
     * a Tile position from the board.
@@ -330,8 +338,8 @@ public class GameActivity extends AppCompatActivity {
                 }
             }
         }
-        //TODO: when called the function must catch the exception
-        return null;
+        Log.e("GAME-ACTIVITY","Invalid coordinates for move");
+        throw new Exception();
     }
 
 

@@ -230,7 +230,6 @@ public class GameManager {
     private int[] getOnlineMove() {
     /*
     * Get last move in json format from online database and parse it to array form.
-    * TODO: HTTPSocket should use a get method not a post to ask for info.
     * */
         try {
             String jsonData = createJson( "METHODTYPE","GETMOVE","GAMEID",Integer.toString(GameId));
