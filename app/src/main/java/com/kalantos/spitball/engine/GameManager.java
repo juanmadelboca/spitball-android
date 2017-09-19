@@ -20,7 +20,7 @@ public class GameManager {
     private int playerTurn = 0;
     private int GameId, onlineTurn;
     private int initialX, initialY, difficulty;
-    private boolean ArtificialInteligence, onlineMove, isMyTurn, movelock;
+    private boolean ArtificialInteligence, onlineMove, isMyTurn;
     private boolean anyMove;
 
     public GameManager(int GameId, int difficulty, int onlineTurn, boolean ArtificialInteligence) {
@@ -181,24 +181,13 @@ public class GameManager {
     * Move the ball from initial x and y to final x and y.
     * */
         anyMove=true;
-        if ((!onlineMove && isMyTurn) || (onlineMove && !movelock) || GameId == 0) {
+        if ((!onlineMove && isMyTurn) || (onlineMove && !isMyTurn)|| GameId == 0) {
 
             tiles[finalY][finalX].battle(tiles[initialY][initialX].getBall());
             tiles[initialY][initialX].removeBall();
             clicks = 0;
-            movelock = true;
         }
-        if (!onlineMove && GameId != 0) {
-            try {
-                String jsonData = createJson( "METHODTYPE","MOVE","XINIT", Integer.toString(initialX),
-                        "YINIT", Integer.toString(initialY),"XLAST", Integer.toString(finalX), "YLAST",
-                        Integer.toString(finalY),"SPLIT", Integer.toString(0),"GAMEID",
-                        Integer.toString(GameId),"TURN", Integer.toString(onlineTurn));
-                new HTTPSocket().execute("http://spitball.000webhostapp.com/gameMove.php","POST",jsonData).get();
-               } catch (InterruptedException|ExecutionException e) {
-                Log.e("ONLINE CONNECTION", e.getMessage());
-            }
-        }
+        sendMoves(initialY, initialX, finalY, finalX, 0);
         if (GameId == 0) {
             playerTurn++;
         }
@@ -215,11 +204,9 @@ public class GameManager {
             } else {
                 split(onlineMoves[1], onlineMoves[0], onlineMoves[3], onlineMoves[2]);
             }
-            movelock = true;
             isMyTurn = true;
         } else {
             isMyTurn = false;
-            movelock = false;
 
         }
         onlineMove = false;
@@ -288,26 +275,29 @@ public class GameManager {
             }
         }
     }
+    private void sendMoves(int initialY, int initialX, int deltaY, int deltaX, int splitIdentifier){
+        //TODO: generalize variables
+        if (!onlineMove && GameId != 0) {
+            try {
+                String jsonData = createJson( "METHODTYPE","MOVE","XINIT", Integer.toString(initialX),
+                        "YINIT", Integer.toString(initialY),"XLAST", Integer.toString(deltaX), "YLAST",
+                        Integer.toString(deltaY),"SPLIT", Integer.toString(splitIdentifier),"GAMEID",
+                        Integer.toString(GameId),"TURN", Integer.toString(onlineTurn));
+                new HTTPSocket().execute("http://spitball.000webhostapp.com/gameMove.php","POST",jsonData).get();
+            } catch (InterruptedException|ExecutionException e) {
+                Log.e("ONLINE CONNECTION", e.getMessage());
+            }
+        }
+    }
 
-    private void split(int initialY, int initialX, int deltaY, int deltaX) {
+    private void split(int initialY, int initialX, int deltaY, int deltaX){
     /*
     * Receive a start coordinate of the original ball, and spit a smaller ball (33% size) into
     * the delta direction and reduce spitter ball size.
     * */
         anyMove=true;
 
-        if (!onlineMove && GameId != 0) {
-            try {
-                String jsonData = createJson( "METHODTYPE","MOVE","XINIT", Integer.toString(initialX),
-                    "YINIT", Integer.toString(initialY),"XLAST", Integer.toString(deltaX), "YLAST",
-                    Integer.toString(deltaY),"SPLIT", Integer.toString(1),"GAMEID",
-                    Integer.toString(GameId),"TURN", Integer.toString(onlineTurn));
-                new HTTPSocket().execute("http://spitball.000webhostapp.com/gameMove.php","POST",jsonData).get();
-             } catch (InterruptedException|ExecutionException e) {
-                Log.e("ONLINE CONNECTION", e.getMessage());
-            }
-        }
-        if ((!onlineMove && isMyTurn) || (onlineMove && !movelock) || GameId == 0) {
+        if ((!onlineMove && isMyTurn) || (onlineMove && !isMyTurn) || GameId == 0) {
             Ball splittedBall;
             int splittedBallSize = tiles[initialY][initialX].getBall().getSize() / 3;
             if (tiles[initialY][initialX].getBall() instanceof BallPink){
@@ -322,16 +312,20 @@ public class GameManager {
                 try {
                     tiles[initialY][initialX].getBall().setSize(tiles[initialY][initialX].getBall().getSize() - splittedBallSize);
                     tiles[initialY + deltaY][initialX + deltaX].battle(splittedBall);
+
+                    if (GameId == 0) {
+                        playerTurn++;
+                    }
+                    sendMoves(initialY, initialX, deltaY, deltaX, 1);
                 } catch (Exception e) {
                     Log.i("GAME","Some of you mass pour down the board");
                 }
+            }else{
+                //TODO: have to cancel AI movement if enters to else.
+                Log.e("GAME","Try to spit with a really small ball");
             }
+            clicks = 0;
         }
-        if (GameId == 0) {
-            playerTurn++;
-        }
-        clicks = 0;
-        movelock = true;
     }
 
     private String createJson(String... strings){
