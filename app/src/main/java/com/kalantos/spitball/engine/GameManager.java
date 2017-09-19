@@ -141,8 +141,8 @@ public class GameManager {
             return true;
 
         } else if (clicks == 1) {
-            //CANCEL SELECTION
             if (initialX == actualX && initialY == actualY) {
+                //CANCEL SELECTION
                 clicks = 0;
                 anyMove=true;
                 return false;
@@ -153,32 +153,34 @@ public class GameManager {
                 return false;
             } else if ((Math.abs(initialX - actualX) == 1 && Math.abs(initialY - actualY) == 1) || (Math.abs(initialX - actualX) == 0 && Math.abs(initialY - actualY) == 1) || (Math.abs(initialX - actualX) == 1 && Math.abs(initialY - actualY) == 0)) {
                 //MOVE
-                move(initialX, initialY, actualX, actualY);
-            }else if (initialX - actualX == -2 && initialY == actualY) {
-                //SPLIT DOWN
-                split(initialX, initialY, 2, 0);
-            } else if (initialX - actualX == 2 && initialY == actualY) {
-                //SPLIT UP
-                split(initialX, initialY, -2, 0);
-            } else if (initialY - actualY == -2 && actualX == initialX) {
-                //SPLIT RIGHT
-                split(initialX, initialY, 0, 2);
-            } else if (initialY - actualY == 2 && actualX == initialX) {
-                //SPLIT LEFT
-                split(initialX, initialY, 0, -2);
+                try{
+                    move(initialX, initialY, actualX, actualY);
+                    ArtificialMove();
+                }catch (Exception e){
+                    Log.e("GAME",e.getMessage());
+                }
+            }else if ((initialX - actualX == -2 && initialY == actualY) || (initialX - actualX == 2 && initialY == actualY) ||
+                    (initialY - actualY == -2 && actualX == initialX) || (initialY - actualY == 2 && actualX == initialX) ) {
+                //SPLIT
+                try{
+                    split(initialX, initialY, actualX, actualY);
+                    ArtificialMove();
+                }catch (Exception e){
+                    Log.e("GAME",e.getMessage());
+                }
             } else {
                 clicks = 0;
                 anyMove=true;
                 return false;
             }
-            ArtificialMove();
         }
         return false;
     }
 
-    private void move(int initialY, int initialX, int finalY, int finalX) {
+    private void move(int initialY, int initialX, int finalY, int finalX) throws Exception{
     /*
     * Move the ball from initial x and y to final x and y.
+    * TODO: Exception should be a custom one
     * */
         anyMove=true;
         if ((!onlineMove && isMyTurn) || (onlineMove && !isMyTurn)|| GameId == 0) {
@@ -186,10 +188,12 @@ public class GameManager {
             tiles[finalY][finalX].battle(tiles[initialY][initialX].getBall());
             tiles[initialY][initialX].removeBall();
             clicks = 0;
-        }
-        sendMoves(initialY, initialX, finalY, finalX, 0);
-        if (GameId == 0) {
-            playerTurn++;
+            sendMoves(initialY, initialX, finalY, finalX, 0);
+            if (GameId == 0) {
+                playerTurn++;
+            }
+        }else{
+            throw new Exception("Invalid move");
         }
     }
 
@@ -200,9 +204,19 @@ public class GameManager {
         onlineMove = true;
         if (onlineMoves[5] != onlineTurn) {
             if (onlineMoves[4] == 0) {
-                move(onlineMoves[1], onlineMoves[0], onlineMoves[3], onlineMoves[2]);
+                try{
+                    move(onlineMoves[1], onlineMoves[0], onlineMoves[3], onlineMoves[2]);
+                    ArtificialMove();
+                }catch (Exception e){
+                    Log.e("ONLINE CONNECTION",e.getMessage());
+                }
             } else {
-                split(onlineMoves[1], onlineMoves[0], onlineMoves[3], onlineMoves[2]);
+                try{
+                    split(onlineMoves[1], onlineMoves[0], onlineMoves[3], onlineMoves[2]);
+                    ArtificialMove();
+                }catch (Exception e){
+                    Log.e("ONLINE CONNECTION",e.getMessage());
+                }
             }
             isMyTurn = true;
         } else {
@@ -267,7 +281,6 @@ public class GameManager {
                     split(AIMoves[0], AIMoves[1], AIMoves[2], AIMoves[3]);
                 }
 
-
             } catch (Exception e) {
                 Log.e("AI", e.getMessage());
                 //catch exception: when game ends IA try to move causing an error.
@@ -275,13 +288,12 @@ public class GameManager {
             }
         }
     }
-    private void sendMoves(int initialY, int initialX, int deltaY, int deltaX, int splitIdentifier){
-        //TODO: generalize variables
+    private void sendMoves(int initialY, int initialX, int finalY, int finalX, int splitIdentifier){
         if (!onlineMove && GameId != 0) {
             try {
                 String jsonData = createJson( "METHODTYPE","MOVE","XINIT", Integer.toString(initialX),
-                        "YINIT", Integer.toString(initialY),"XLAST", Integer.toString(deltaX), "YLAST",
-                        Integer.toString(deltaY),"SPLIT", Integer.toString(splitIdentifier),"GAMEID",
+                        "YINIT", Integer.toString(initialY),"XLAST", Integer.toString(finalX), "YLAST",
+                        Integer.toString(finalY),"SPLIT", Integer.toString(splitIdentifier),"GAMEID",
                         Integer.toString(GameId),"TURN", Integer.toString(onlineTurn));
                 new HTTPSocket().execute("http://spitball.000webhostapp.com/gameMove.php","POST",jsonData).get();
             } catch (InterruptedException|ExecutionException e) {
@@ -290,7 +302,7 @@ public class GameManager {
         }
     }
 
-    private void split(int initialY, int initialX, int deltaY, int deltaX){
+    private void split(int initialY, int initialX, int finalY, int finalX) throws Exception{
     /*
     * Receive a start coordinate of the original ball, and spit a smaller ball (33% size) into
     * the delta direction and reduce spitter ball size.
@@ -311,18 +323,19 @@ public class GameManager {
 
                 try {
                     tiles[initialY][initialX].getBall().setSize(tiles[initialY][initialX].getBall().getSize() - splittedBallSize);
-                    tiles[initialY + deltaY][initialX + deltaX].battle(splittedBall);
+                    tiles[finalY][finalX].battle(splittedBall);
 
                     if (GameId == 0) {
                         playerTurn++;
                     }
-                    sendMoves(initialY, initialX, deltaY, deltaX, 1);
+                    sendMoves(initialY, initialX, finalY, finalX, 1);
                 } catch (Exception e) {
                     Log.i("GAME","Some of you mass pour down the board");
                 }
             }else{
                 //TODO: have to cancel AI movement if enters to else.
                 Log.e("GAME","Try to spit with a really small ball");
+                throw new Exception("Invalid move");
             }
             clicks = 0;
         }
