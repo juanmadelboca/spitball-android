@@ -1,7 +1,7 @@
 package com.kalantos.spitball.engine;
 
 import android.util.Log;
-import com.kalantos.spitball.utils.SendMoveTask;
+import com.kalantos.spitball.utils.HTTPSocket;
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.util.concurrent.ExecutionException;
@@ -19,8 +19,8 @@ public class GameManager {
     public int clicks = 0;
     private int playerTurn = 0;
     private int GameId, onlineTurn;
-    private int ax, ay, difficulty;
-    private boolean ArtificialInteligence, onlineMove, isMyTurn, movelock;
+    private int initialX, initialY, difficulty;
+    private boolean ArtificialInteligence, onlineMove, isMyTurn;
     private boolean anyMove;
 
     public GameManager(int GameId, int difficulty, int onlineTurn, boolean ArtificialInteligence) {
@@ -64,7 +64,9 @@ public class GameManager {
     * Setup turns in order to assign one color to each online player, and send a dummy move to avoid a crash while player2 fetches database.
     * */
         try {
-            new SendMoveTask().execute("http://spitball.000webhostapp.com/gameMove.php", "MOVE", "0", "0", "0", "0", "0", Integer.toString(GameId), Integer.toString(1)).get();
+            String jsonData = createJson( "METHODTYPE","MOVE","XINIT", "0","YINIT", "0","XLAST", "0",
+                    "YLAST", "0","SPLIT", "0","GAMEID", Integer.toString(GameId),"TURN", Integer.toString(1));
+            new HTTPSocket().execute("http://spitball.000webhostapp.com/gameMove.php","POST",jsonData).get();
         } catch (InterruptedException|ExecutionException e) {
             e.printStackTrace();
         }
@@ -98,7 +100,6 @@ public class GameManager {
                 while (!gameOver) {
                     onlineMoves=getOnlineMove();
                     updateBoard(onlineMoves);
-                    Log.d("THREAD", "IS MY TURN: " + isMyTurn);
                     try {
                         Thread.sleep(2000);
                     } catch (InterruptedException e) {
@@ -122,148 +123,77 @@ public class GameManager {
         tiles[3][5].setBall(20, BallType.BALLPINK);
     }
 
-    public boolean ClickGestion(int i, int j) {
+    public boolean swipeHandler(int actualX, int actualY) {
     /*
     * Receive a Tile (x and y position) and using turn, clicks and olderX and olderY manage to know
     * when balls must move/split or wait for another coordinate.
     * */
-        if ((tiles[i][j].getBall() instanceof BallGreen) && clicks == 0 && (playerTurn % 2 == 0)) {
-            ax = i;
-            ay = j;
+        if ((tiles[actualX][actualY].getBall() instanceof BallGreen) && clicks == 0 && (playerTurn % 2 == 0)) {
+            initialX = actualX;
+            initialY = actualY;
             clicks++;
             return true;
 
-        } else if ((tiles[i][j].getBall() instanceof BallPink) && clicks == 0 && (playerTurn % 2 == 1)) {
-            ax = i;
-            ay = j;
+        } else if ((tiles[actualX][actualY].getBall() instanceof BallPink) && clicks == 0 && (playerTurn % 2 == 1)) {
+            initialX = actualX;
+            initialY = actualY;
             clicks++;
             return true;
 
         } else if (clicks == 1) {
-            //CANCEL SELECTION
-            if (ax == i && ay == j) {
+            if (initialX == actualX && initialY == actualY) {
+                //CANCEL SELECTION
                 clicks = 0;
                 anyMove=true;
                 return false;
-            } else if (Math.abs(ax - i) > 2 || Math.abs(ay - j) > 2) {
+            } else if (Math.abs(initialX - actualX) > 2 || Math.abs(initialY - actualY) > 2) {
                 //OUTBOUND MOVEMENT
-                clicks = 0;
                 anyMove=true;
+                clicks = 0;
                 return false;
-            } else if ((Math.abs(ax - i) == 1 && Math.abs(ay - j) == 1) || (Math.abs(ax - i) == 0 && Math.abs(ay - j) == 1) || (Math.abs(ax - i) == 1 && Math.abs(ay - j) == 0)) {
+            } else if ((Math.abs(initialX - actualX) == 1 && Math.abs(initialY - actualY) == 1) || (Math.abs(initialX - actualX) == 0 && Math.abs(initialY - actualY) == 1) || (Math.abs(initialX - actualX) == 1 && Math.abs(initialY - actualY) == 0)) {
                 //MOVE
-                move(ax, ay, i, j);
-            } else if (ax - i == -2 && ay == j) {
-                //SPLIT DOWN
-                split(ax, ay, 2, 0);
-            } else if (ax - i == 2 && ay == j) {
-                //SPLIT UP
-                split(ax, ay, -2, 0);
-            } else if (ay - j == -2 && i == ax) {
-                //SPLIT RIGHT
-                split(ax, ay, 0, 2);
-            } else if (ay - j == 2 && i == ax) {
-                //SPLIT LEFT
-                split(ax, ay, 0, -2);
+                try{
+                    move(initialX, initialY, actualX, actualY);
+                    ArtificialMove();
+                }catch (Exception e){
+                    Log.e("GAME",e.getMessage());
+                }
+            }else if ((initialX - actualX == -2 && initialY == actualY) || (initialX - actualX == 2 && initialY == actualY) ||
+                    (initialY - actualY == -2 && actualX == initialX) || (initialY - actualY == 2 && actualX == initialX) ) {
+                //SPLIT
+                try{
+                    split(initialX, initialY, actualX, actualY);
+                    ArtificialMove();
+                }catch (Exception e){
+                    Log.e("GAME",e.getMessage());
+                }
             } else {
                 clicks = 0;
                 anyMove=true;
                 return false;
             }
-            ArtificialMove();
         }
         return false;
     }
 
-    public boolean swipeGestion(int i, int j) {
-    /*
-    * Receive a Tile (x and y position) and using turn, clicks and olderX and olderY manage to know
-    * when balls must move/split or wait for another coordinate.
-    * TODO: DUPLICATED!
-    * TODO: CHANGE GESTION TO HANDLER
-    * */
-        if ((tiles[i][j].getBall() instanceof BallGreen) && clicks == 0 && (playerTurn % 2 == 0)) {
-            ax = i;
-            ay = j;
-            clicks++;
-            return true;
-
-        } else if ((tiles[i][j].getBall() instanceof BallPink) && clicks == 0 && (playerTurn % 2 == 1)) {
-            ax = i;
-            ay = j;
-            clicks++;
-            return true;
-
-        } else if (clicks == 1) {
-            //CANCEL SELECTION
-            if (ax == i && ay == j) {
-                clicks = 0;
-                anyMove=true;
-                return false;
-            } else if (Math.abs(ax - i) > 2 || Math.abs(ay - j) > 2) {
-                //OUTBOUND MOVEMENT
-                anyMove=true;
-                clicks = 0;
-                return false;
-            } else if ((Math.abs(ax - i) == 1 && Math.abs(ay - j) == 1) || (Math.abs(ax - i) == 0 && Math.abs(ay - j) == 1) || (Math.abs(ax - i) == 1 && Math.abs(ay - j) == 0)) {
-                //MOVE
-                move(ax, ay, i, j);
-            } else if (ax - i < 0 && ay == j) {
-                //SWIPE DOWN
-                move(ax, ay, ax + 1, ay);
-            } else if (ax - i > 0 && ay == j) {
-                //SWIPE UP
-                move(ax, ay, ax - 1, ay);
-            } else if (ay - j < 0 && i == ax) {
-                //SWIPE RIGHT
-                move(ax, ay, ax, ay + 1);
-            } else if (ay - j > 0 && i == ax) {
-                //SWIPE LEFT
-                move(ax, ay, ax, ay - 1);
-            } else if (ay - j > 0 && ax - i > 0 && ay - j == (ax - i)) {
-                //SWIPE CORNERS
-                //UP-LEFT CORNER
-                move(ax, ay, ax - 1, ay - 1);
-            } else if (ay - j < 0 && ax - i > 0 && ay - j == -(ax - i)) {
-                //UP-RIGHT CORNER
-                move(ax, ay, ax - 1, ay + 1);
-            } else if (ay - j > 0 && ax - i < 0 && ay - j == -(ax - i)) {
-                //DOWN-LEFT CORNER
-                move(ax, ay, ax + 1, ay - 1);
-            } else if (ay - j > 0 && ax - i > 0 && ay - j == -(ax - i)) {
-                //DOWN-RIGHT CORNER
-                move(ax, ay, ax + 1, ay + 1);
-            } else {
-                clicks = 0;
-                anyMove=true;
-                return false;
-            }
-            ArtificialMove();
-        }
-        return false;
-    }
-
-    private void move(int initialY, int initialX, int finalY, int finalX) {
+    private void move(int initialY, int initialX, int finalY, int finalX) throws Exception{
     /*
     * Move the ball from initial x and y to final x and y.
+    * TODO: Exception should be a custom one
     * */
         anyMove=true;
-        if ((!onlineMove && isMyTurn) || (onlineMove && !movelock) || GameId == 0) {
+        if ((!onlineMove && isMyTurn) || (onlineMove && !isMyTurn)|| GameId == 0) {
 
             tiles[finalY][finalX].battle(tiles[initialY][initialX].getBall());
             tiles[initialY][initialX].removeBall();
             clicks = 0;
-            movelock = true;
-        }
-        if (!onlineMove && GameId != 0) {
-            try {
-                new SendMoveTask().execute("http://spitball.000webhostapp.com/gameMove.php", "MOVE", Integer.toString(initialX), Integer.toString(initialY), Integer.toString(finalX), Integer.toString(finalY), Integer.toString(0), Integer.toString(GameId), Integer.toString(onlineTurn)).get();
-            } catch (InterruptedException|ExecutionException e) {
-                e.printStackTrace();
+            sendMoves(initialY, initialX, finalY, finalX, 0);
+            if (GameId == 0) {
+                playerTurn++;
             }
-        }
-        if (GameId == 0) {
-            playerTurn++;
+        }else{
+            throw new Exception("Invalid move");
         }
     }
 
@@ -274,15 +204,23 @@ public class GameManager {
         onlineMove = true;
         if (onlineMoves[5] != onlineTurn) {
             if (onlineMoves[4] == 0) {
-                move(onlineMoves[1], onlineMoves[0], onlineMoves[3], onlineMoves[2]);
+                try{
+                    move(onlineMoves[1], onlineMoves[0], onlineMoves[3], onlineMoves[2]);
+                    ArtificialMove();
+                }catch (Exception e){
+                    Log.e("ONLINE CONNECTION",e.getMessage());
+                }
             } else {
-                split(onlineMoves[1], onlineMoves[0], onlineMoves[3], onlineMoves[2]);
+                try{
+                    split(onlineMoves[1], onlineMoves[0], onlineMoves[3], onlineMoves[2]);
+                    ArtificialMove();
+                }catch (Exception e){
+                    Log.e("ONLINE CONNECTION",e.getMessage());
+                }
             }
-            movelock = true;
             isMyTurn = true;
         } else {
             isMyTurn = false;
-            movelock = false;
 
         }
         onlineMove = false;
@@ -295,10 +233,10 @@ public class GameManager {
     * Get last move in json format from online database and parse it to array form.
     * */
         try {
-            String st = new SendMoveTask().execute("http://spitball.000webhostapp.com/gameMove.php", "GETMOVE", "5", "1", "5", "1", "1", String.valueOf(GameId), "1").get();
+            String jsonData = createJson( "METHODTYPE","GETMOVE","GAMEID",Integer.toString(GameId));
+            String st = new HTTPSocket().execute("http://spitball.000webhostapp.com/gameMove.php","POST",jsonData).get();
             int[] moves = new int[6];
             JSONObject json;
-            Log.d("JSON-POST",st);
                 json = new JSONObject(st);
                 moves[0] = json.getInt("XINIT");
                 moves[1] = json.getInt("YINIT");
@@ -310,7 +248,7 @@ public class GameManager {
             return moves;
 
         } catch (InterruptedException|ExecutionException|NullPointerException|JSONException e) {
-            e.printStackTrace();
+            Log.e("ONLINE CONNECTION", e.getMessage());
         }
 
         return null;
@@ -343,61 +281,77 @@ public class GameManager {
                     split(AIMoves[0], AIMoves[1], AIMoves[2], AIMoves[3]);
                 }
 
-
             } catch (Exception e) {
+                Log.e("AI", e.getMessage());
                 //catch exception: when game ends IA try to move causing an error.
                 gameOver = true;
             }
         }
     }
+    private void sendMoves(int initialY, int initialX, int finalY, int finalX, int splitIdentifier){
+        if (!onlineMove && GameId != 0) {
+            try {
+                String jsonData = createJson( "METHODTYPE","MOVE","XINIT", Integer.toString(initialX),
+                        "YINIT", Integer.toString(initialY),"XLAST", Integer.toString(finalX), "YLAST",
+                        Integer.toString(finalY),"SPLIT", Integer.toString(splitIdentifier),"GAMEID",
+                        Integer.toString(GameId),"TURN", Integer.toString(onlineTurn));
+                new HTTPSocket().execute("http://spitball.000webhostapp.com/gameMove.php","POST",jsonData).get();
+            } catch (InterruptedException|ExecutionException e) {
+                Log.e("ONLINE CONNECTION", e.getMessage());
+            }
+        }
+    }
 
-    private void split(int i, int j, int y, int x) {
+    private void split(int initialY, int initialX, int finalY, int finalX) throws Exception{
     /*
-    * Spit a smaller ball (33% size) and reduce spitter ball size.
-    * TODO: DUPLICATE CODE, GENERALIZE SPITTING.
+    * Receive a start coordinate of the original ball, and spit a smaller ball (33% size) into
+    * the delta direction and reduce spitter ball size.
     * */
         anyMove=true;
 
-        if (!onlineMove && GameId != 0) {
-            try {
-                new SendMoveTask().execute("http://spitball.000webhostapp.com/gameMove.php", "MOVE", Integer.toString(j), Integer.toString(i), Integer.toString(x), Integer.toString(y), Integer.toString(999), Integer.toString(GameId), Integer.toString(onlineTurn)).get();
-            } catch (InterruptedException|ExecutionException e) {
-                e.printStackTrace();
-            }
-        }
-        if ((!onlineMove && isMyTurn) || (onlineMove && !movelock) || GameId == 0) {
+        if ((!onlineMove && isMyTurn) || (onlineMove && !isMyTurn) || GameId == 0) {
+            Ball splittedBall;
+            int splittedBallSize = tiles[initialY][initialX].getBall().getSize() / 3;
+            if (tiles[initialY][initialX].getBall() instanceof BallPink){
 
-            int splittedBallSize = tiles[i][j].getBall().getSize() / 3;
+                splittedBall = new BallPink((int) (splittedBallSize * 1.2));
+            }else{
 
-            if (tiles[i][j].getBall() instanceof BallGreen) {
-                BallGreen splittedBall = new BallGreen((int) (splittedBallSize * 1.2));
-                if (tiles[i][j].getBall().getSize() >= 10) {
-                    try {
-                        tiles[i][j].getBall().setSize(tiles[i][j].getBall().getSize() - splittedBallSize);
-                        tiles[i + y][j + x].battle(splittedBall);
-                    } catch (Exception e) {
-                        Log.i("GAME","Some of you mass pour down the board");
-                    }
-                }
+                splittedBall = new BallGreen((int) (splittedBallSize * 1.2));
             }
-            if (tiles[i][j].getBall() instanceof BallPink) {
-                BallPink splitttedBall = new BallPink((int) (splittedBallSize * 1.2));
-                if (tiles[i][j].getBall().getSize() >= 10) {
-                    try {
-                        tiles[i][j].getBall().setSize(tiles[i][j].getBall().getSize() - splittedBallSize);
-                        tiles[i + y][j + x].battle(splitttedBall);
-                    } catch (Exception e) {
-                        Log.i("GAME","Some of you mass pour down the board");
+            if (tiles[initialY][initialX].getBall().getSize() >= 10) {
+
+                try {
+                    tiles[initialY][initialX].getBall().setSize(tiles[initialY][initialX].getBall().getSize() - splittedBallSize);
+                    tiles[finalY][finalX].battle(splittedBall);
+
+                    if (GameId == 0) {
+                        playerTurn++;
                     }
+                    sendMoves(initialY, initialX, finalY, finalX, 1);
+                } catch (Exception e) {
+                    Log.i("GAME","Some of you mass pour down the board");
                 }
+            }else{
+                Log.e("GAME","Try to spit with a really small ball");
+                throw new Exception("Invalid move");
             }
             clicks = 0;
-            movelock = true;
         }
+    }
 
-        if (GameId == 0) {
-            playerTurn++;
+    private String createJson(String... strings){
+    /*
+    * Create a Json with all data received and returns the json in string format.
+    * */
+        JSONObject json= new JSONObject();
+        for(int i=0; i<strings.length; i=i+2){
+            try{
+                json.put(strings[i],strings[i+1]);
+            }catch(JSONException e){
+                Log.e("ONLINE CONNECTION", e.getMessage());
+            }
         }
-
+        return json.toString();
     }
 }

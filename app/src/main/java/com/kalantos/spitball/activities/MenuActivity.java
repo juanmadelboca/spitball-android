@@ -14,19 +14,16 @@ import com.kalantos.spitball.engine.Timer;
 import com.kalantos.spitball.fragments.ChooseDifficultyFragment;
 import com.kalantos.spitball.fragments.ChooseTypeOfGameFragment;
 import com.kalantos.spitball.fragments.MenuFragment;
-import com.kalantos.spitball.utils.ConnectionTask;
 import com.kalantos.spitball.utils.HTTPSocket;
-
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.util.concurrent.ExecutionException;
 
 
 public class MenuActivity extends AppCompatActivity {
 
     boolean clicker;
-    int GameId,NumPlayers,turn;
+    int GameId, NumPlayers, turn;
     FragmentTransaction transaction;
     ImageView imageSettings;
 
@@ -34,8 +31,6 @@ public class MenuActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu);
-        Log.d("TEST","ALL SET");
-
         final View decorView = getWindow().getDecorView();
         final int flags = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                 | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
@@ -57,7 +52,7 @@ public class MenuActivity extends AppCompatActivity {
                     try {
                         thread.join();
                     } catch (InterruptedException e) {
-                        e.printStackTrace();
+                        Log.e("AUTO-HIDE BAR", e.getMessage());
                     }
 
                     decorView.setSystemUiVisibility(flags);
@@ -172,17 +167,16 @@ public class MenuActivity extends AppCompatActivity {
     * create a vs IA game in the hardest difficulty.
     * */
         if(connect("CREATE")) {
-            int counter = 0;
-            while (NumPlayers == 1 && counter < 40) {
+            int timeCounter = 0;
+            while (NumPlayers == 1 && timeCounter < 40) {
                 connect("GET");
                 try {
                     Thread.sleep(500);
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    Log.e("ONLINE GAME", e.getMessage());
                 }
-                counter++;
+                timeCounter++;
             }
-            Log.d("TEST", "" + counter);
             if (NumPlayers == 2) {
                 intentGameOnline();
                 Toast.makeText(this,"GameID:"+GameId+" Turn: "+turn,Toast.LENGTH_SHORT).show();
@@ -190,10 +184,11 @@ public class MenuActivity extends AppCompatActivity {
             } else {
                 intentGameVsAI(2);
                 try {
-                    Log.d("TEST", "Attemp to leaveGame");
-                    new ConnectionTask().execute("http://spitball.000webhostapp.com/leaveGame.php", Integer.toString(GameId)).get();
+                    //TODO: Think a way that leave the game even if the player leave the search room with back button
+                    String jsonData = createJson("GAMEID",Integer.toString(GameId));
+                    new HTTPSocket().execute("http://spitball.000webhostapp.com/leaveGame.php","POST",jsonData).get();
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    Log.e("ONLINE GAME", e.getMessage());
                 }
             }
         }
@@ -213,16 +208,17 @@ public class MenuActivity extends AppCompatActivity {
             GameId=JSONobject.getInt("GAMEID");
             NumPlayers=JSONobject.getInt("NUMPLAYERS");
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e("ONLINE GAME", e.getMessage());
             Toast.makeText(this,"No fue posible conectarse al servidor",Toast.LENGTH_SHORT).show();
             return false;
         }
         return true;
     }
+
     private String createJson(String... strings){
-        /*
-        * Create a Json with all data received and returns the json in string format.
-        * */
+    /*
+    * Create a Json with all data received and returns the json in string format.
+    * */
         JSONObject json= new JSONObject();
         for(int i=0; i<strings.length; i=i+2){
             try{

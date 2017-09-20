@@ -5,6 +5,7 @@ import java.util.Random;
 
 /*
 * This class manages all AI movements, use static methods to provide movements when needed.
+* TODO: LEGIBLE VARIABLES.
 * */
 public class ArtificialInteligenceAlgorithm {
 

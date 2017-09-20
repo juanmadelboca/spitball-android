@@ -20,7 +20,6 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 import com.kalantos.spitball.R;
 import com.kalantos.spitball.engine.BallGreen;
-import com.kalantos.spitball.engine.BallPink;
 import com.kalantos.spitball.engine.GameManager;
 import com.kalantos.spitball.engine.Timer;
 import com.kalantos.spitball.utils.TileView;
@@ -31,12 +30,10 @@ public class GameActivity extends AppCompatActivity {
     TileView[][] tiles;
     final int width = 10;
     final int height = 6;
-    boolean gameOver = false;
-    private int green=0, pink=0;
+    private int greenBallsLeft=0, pinkBallsLeft=0;
     private int widthScreen, heightScreen;
     private int bouncingState=1;
     private GameManager game;
-    boolean debug=false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,7 +58,7 @@ public class GameActivity extends AppCompatActivity {
                     try {
                         thread.join();
                     } catch (InterruptedException e) {
-                        e.printStackTrace();
+                        Log.e("AUTO-HIDE BAR", e.getMessage());
                     }
 
                     decorView.setSystemUiVisibility(flags);
@@ -76,7 +73,7 @@ public class GameActivity extends AppCompatActivity {
         heightScreen = size.y;
 
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-        boolean click = settings.getBoolean("clickMode", false);
+        boolean swipe = settings.getBoolean("swipeMode", true);
         boolean bouncing = settings.getBoolean("bouncing", true);
         if(!bouncing){
             bouncingState=-1;
@@ -88,11 +85,7 @@ public class GameActivity extends AppCompatActivity {
         boolean ArtificialInteligence = intent.getBooleanExtra("AI", true);
         //create logic board.
         game = new GameManager(GameId, difficulty, onlineTurn,ArtificialInteligence);
-        if (click) {
-            clickBoard();
-        } else {
-            swipeBoard();
-        }
+        createBoard(swipe);
         //Tell the user with which color plays.
         if(onlineTurn==0) {
             Toast.makeText(this, " JUGADOR VERDE!", Toast.LENGTH_LONG).show();
@@ -136,7 +129,7 @@ public class GameActivity extends AppCompatActivity {
                     try {
                         Thread.sleep(200);
                     } catch (InterruptedException e) {
-                        e.printStackTrace();
+                        Log.e("BOUNCING ANIMATION", e.getMessage());
                     }
                 }
 
@@ -151,81 +144,75 @@ public class GameActivity extends AppCompatActivity {
         final Thread refreshThread1 = new Thread(runnable);refreshThread1.start();
         paint();
     }
-    public void paint() {
-        /*
-        * Update all images in UI board using the data from Logic board, size, color and also animation effects.
-        * CONSTRAINTS: images cant exceed 5k, or app must use thread logic
-        * TODO: DUPLICATE! GENERALIZE BALLS
-        * */
+
+    private void resetFrame(){
+    /*
+    * Reset status of press tiles and ball counters
+    * */
         if(game.detectMoves()){
             unpressTiles();
         }
+        greenBallsLeft = 0;
+        pinkBallsLeft = 0;
+    }
+
+    private void checkGameStatus(){
+        if (greenBallsLeft == 0 || pinkBallsLeft == 0) {
+            finishGame();
+            game.setGameStatus(true);
+        }
+    }
+    public void paint() {
+    /*
+    * Re paint all board images, rescaling and animating with the information provide by game class, also counts
+    * each team balls.
+    * CONSTRAINTS: images cant exceed 5k, or app must use thread logic
+    * */
+        int ballSize;
+        String ballImage;
+        Bitmap bitmapImage,scaled;
+        //debugging time stuff
         long time_start, time_end;
         time_start = System.currentTimeMillis();
-        green = 0;
-        pink = 0;
+
         for (int i = 0; i < height; i++) {
-
             for (int j = 0; j < width; j++) {
-                //TODO: put math inside if to avoid calculate with no ball.
-                double temp = (game.getTiles()[i][j].getBall().getSize()) + heightScreen/14 - ((game.getTiles()[i][j].getBall().getSize())*(1/7)*((double)widthScreen/heightScreen));
-                int ballSize = (int) temp;
-                //TODO: try speed declaring bitMap outside loop.
-                if (game.getTiles()[i][j].getBall() instanceof BallGreen) {
-                    int idR;
-                    if(tiles[i][j].isPressed()){
-                        //BOUNCING
-                        String resourstring="framel"+bouncingState;
-                        idR= getResources().getIdentifier(resourstring,"drawable",getPackageName());
-                        tiles[i][j].getImageView().setImageResource(idR);
-                        bouncingState++;
-                        if(bouncingState==9){
-                            bouncingState=1;
-                        }
-                    }else {
-                        idR= getResources().getIdentifier("ballgreen_small","drawable",getPackageName());
-                    }
-                    Bitmap bitmapImage = BitmapFactory.decodeResource(getResources(), idR);
-                    Bitmap scaled = Bitmap.createScaledBitmap(bitmapImage, ballSize, ballSize, false);
-                    tiles[i][j].getImageView().setImageBitmap(scaled);
-                    tiles[i][j].getImageView().setScaleType(ImageView.ScaleType.CENTER);
-                    green++;
 
-                } else if (game.getTiles()[i][j].getBall() instanceof BallPink) {
+                if(game.getTiles()[i][j].getBall().getSize() > 0){
+                    //image
+                    if (game.getTiles()[i][j].getBall() instanceof BallGreen) {
+                        ballImage = "ballgreen_small";
+                        greenBallsLeft++;
+                    } else {
+                        ballImage = "ballpink_small";
+                        pinkBallsLeft++;
+                    }
                     int idR;
+                    //animation
                     if(tiles[i][j].isPressed()){
-                        //BOUNCING
-                        String resourstring="frame"+bouncingState;
-                        idR= getResources().getIdentifier(resourstring,"drawable",getPackageName());
-                        tiles[i][j].getImageView().setImageResource(idR);
+                        ballImage = ballImage+bouncingState;
                         bouncingState++;
                         if(bouncingState==9){
                             bouncingState=1;
                         }
-                    }else {
-                        idR= getResources().getIdentifier("ballpink_small","drawable",getPackageName());
                     }
-                    Bitmap bitmapImage = BitmapFactory.decodeResource(getResources(),idR);
-                    Bitmap scaled = Bitmap.createScaledBitmap(bitmapImage, ballSize, ballSize, false);
-                    tiles[i][j].getImageView().setImageBitmap(scaled);
-                    tiles[i][j].getImageView().setScaleType(ImageView.ScaleType.CENTER);
-                    pink++;
+
+                    idR= getResources().getIdentifier(ballImage,"drawable",getPackageName());
+                    //painting
+                    ballSize =(int)((game.getTiles()[i][j].getBall().getSize()) + heightScreen/14 -
+                            ((game.getTiles()[i][j].getBall().getSize())*(1/7)*((double)widthScreen/heightScreen)));
+                    bitmapImage = BitmapFactory.decodeResource(getResources(), idR);
+                    scaled = Bitmap.createScaledBitmap(bitmapImage, ballSize, ballSize, false);
+                    tiles[i][j].getBallImage().setImageBitmap(scaled);
+                    tiles[i][j].getBallImage().setScaleType(ImageView.ScaleType.CENTER);
+
                 } else {
-                    tiles[i][j].getImageView().setImageDrawable(null);
+                    tiles[i][j].getBallImage().setImageDrawable(null);
                 }
             }
         }
-        if (green == 0) {
-            finishGame();
-            game.setGameStatus(true);
-        }
-        if (pink == 0) {
-            finishGame();
-            game.setGameStatus(true);
-        }
         time_end = System.currentTimeMillis();
-        if(debug)
-            System.out.println("the task has taken " + (time_end - time_start) + " milliseconds");
+        Log.d("PAINT","the task has taken " + (time_end - time_start) + " milliseconds");
     }
 
     private void unpressTiles(){
@@ -244,17 +231,16 @@ public class GameActivity extends AppCompatActivity {
     * */
         //se ejecuta cuando termina el juego, finaliza la activad y procede a la acitvidad que muestra al ganador
         Intent intent = new Intent(GameActivity.this, finishGameActivity.class);
-        intent.putExtra("green", green);
-        intent.putExtra("pink", pink);
-        Log.d("DEBUG","ENTRE AL FINISH,gameover: "+gameOver+" - gren: "+green+" -pink: "+pink);
+        intent.putExtra("green", greenBallsLeft);
+        intent.putExtra("pink", pinkBallsLeft);
         startActivity(intent);
         finishAffinity();
 
     }
-    private void clickBoard() {
+
+    private void createBoard(final boolean swipeOn) {
     /*
     * Make a custom UI board with the size of the screen.
-    * TODO:USE LEGIBLE VARIABLES.
     * */
         tiles = new TileView[height][width];
         LinearLayout layout = (LinearLayout) findViewById(R.id.layaout); //Can also be done in xml by android:orientation="vertical"
@@ -265,51 +251,9 @@ public class GameActivity extends AppCompatActivity {
                 row.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
                 for (int j = 0; j < width; j++) {
                     tiles[i][j] = new TileView(this, (heightScreen / 6) * (i + 1), (widthScreen / 10) * (j + 1));
-                    tiles[i][j].getImageView().setLayoutParams(new LinearLayout.LayoutParams(widthScreen / 10, heightScreen / 6));
-                    tiles[i][j].getImageView().setOnClickListener(new View.OnClickListener() {
-                        public void onClick(View v) {
-                            //retun the pressed one
-                            for (int i = 0; i < height; i++) {
-
-                                for (int j = 0; j < width; j++) {
-                                    if (v.getId() == tiles[i][j].getImageView().getId()) {
-                                        if(game.ClickGestion(i, j)){
-                                            tiles[i][j].press();
-                                        }else{
-                                            tiles[i][j].release();
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    });
-                    tiles[i][j].getImageView().setId(j + (i * 10));
-                    row.addView(tiles[i][j].getImageView());
-                }
-
-                layout.addView(row);
-            }
-        }
-    }
-
-    private void swipeBoard() {
-    /*
-    * Make a custom UI board with the size of the screen.
-    * TODO:USE LEGIBLE VARIABLES.
-    * TODO: MAYBE DUPLICATE!.
-    * */
-        tiles = new TileView[height][width];
-        LinearLayout layout = (LinearLayout) findViewById(R.id.layaout); //Can also be done in xml by android:orientation="vertical"
-
-        if (layout != null) {
-            for (int i = 0; i < height; i++) {
-                LinearLayout row = new LinearLayout(this);
-                row.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-                for (int j = 0; j < width; j++) {
-                    tiles[i][j] = new TileView(this, (heightScreen / 6) * (i + 1), (widthScreen / 10) * (j + 1));
-                    tiles[i][j].getImageView().setLayoutParams(new LinearLayout.LayoutParams(widthScreen / 10, heightScreen / 6));
+                    tiles[i][j].getBallImage().setLayoutParams(new LinearLayout.LayoutParams(widthScreen / 10, heightScreen / 6));
                     //config swipe action
-                    tiles[i][j].getImageView().setOnTouchListener(new View.OnTouchListener() {
+                    tiles[i][j].getBallImage().setOnTouchListener(new View.OnTouchListener() {
                         final int MAX_CLICK_DURATION = 200;
                         long startClickTime;
                         PointF startPoint = new PointF();
@@ -332,23 +276,31 @@ public class GameActivity extends AppCompatActivity {
                                     break;
                                 case MotionEvent.ACTION_UP:
                                     //when the finger is raised final coordinates are send to detectMove for processing.
-                                    if ((Calendar.getInstance().getTimeInMillis() - startClickTime) >= MAX_CLICK_DURATION) {
+                                    if (((Calendar.getInstance().getTimeInMillis() - startClickTime) >= MAX_CLICK_DURATION)&& swipeOn) {
                                         //if drag duration is longer than max click is processed as a swipe, and send to the correct gestion.
                                         game.clicks = 0;
-                                        int[] temporalStart = detectMove(startPoint.y, startPoint.x);
-                                        int[] temporalEnd = detectMove(endPoint.y, endPoint.x);
+                                        try{
+                                            int[] temporalStart = detectMove(startPoint.y, startPoint.x);
+                                            int[] temporalEnd = detectMove(endPoint.y, endPoint.x);
 
-                                        if (temporalStart != null && temporalEnd != null) {
-                                            game.swipeGestion(temporalStart[0], temporalStart[1]);
-                                            game.swipeGestion(temporalEnd[0], temporalEnd[1]);
+                                            if (temporalStart != null && temporalEnd != null) {
+                                                game.swipeHandler(temporalStart[0], temporalStart[1]);
+                                                game.swipeHandler(temporalEnd[0], temporalEnd[1]);
+                                            }
+                                        }catch (Exception e){
+                                            Log.e("GAME-ACTIVITY",e.getMessage());
                                         }
                                     } else {
                                         //if drag time is not overcome, is processed as a click and keep waiting for another click.
-                                        int[] temporal = detectMove(startPoint.y, startPoint.x);
-                                        if (temporal != null) {
-                                            if(game.ClickGestion(temporal[0], temporal[1])&&bouncingState>0){
-                                                tiles[temporal[0]][temporal[1]].press();
+                                        try {
+                                            int[] temporal = detectMove(startPoint.y, startPoint.x);
+                                            if (temporal != null) {
+                                                if (game.swipeHandler(temporal[0], temporal[1]) && bouncingState > 0) {
+                                                    tiles[temporal[0]][temporal[1]].press();
+                                                }
                                             }
+                                        }catch (Exception e){
+                                            Log.e("GAME-ACTIVITY",e.getMessage());
                                         }
                                     }
 
@@ -361,8 +313,8 @@ public class GameActivity extends AppCompatActivity {
                             return true;
                         }
                     });
-                    tiles[i][j].getImageView().setId(j + (i * 10));
-                    row.addView(tiles[i][j].getImageView());
+                    tiles[i][j].getBallImage().setId(j + (i * 10));
+                    row.addView(tiles[i][j].getBallImage());
                 }
 
                 layout.addView(row);
@@ -370,9 +322,10 @@ public class GameActivity extends AppCompatActivity {
         }
     }
 
-    private int[] detectMove(float y, float x) {
+    private int[] detectMove(float y, float x) throws Exception {
     /*
-    * Check that coordinates are valid ones, inside the board.
+    * Receive 2 float coordinates identifying a click or drag in the screen, and returns
+    * a Tile position from the board.
     * */
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
@@ -385,7 +338,8 @@ public class GameActivity extends AppCompatActivity {
                 }
             }
         }
-        return null;
+        Log.e("GAME-ACTIVITY","Invalid coordinates for move");
+        throw new Exception();
     }
 
 
@@ -393,9 +347,12 @@ public class GameActivity extends AppCompatActivity {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                resetFrame();
                 paint();
+                checkGameStatus();
             }
         });
+
     }
 
 

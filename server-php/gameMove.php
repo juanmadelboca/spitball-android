@@ -4,14 +4,16 @@ $json = file_get_contents('php://input');
 $obj = json_decode($json);
 $method = $obj->{'METHODTYPE'};
 $game_id = $obj->{'GAMEID'};
-$x_init = $obj->{'XINIT'};
-$y_init = $obj->{'YINIT'};
-$x_last = $obj->{'XLAST'};
-$y_last = $obj->{'YLAST'};
-$split = $obj->{'SPLIT'};
-$turn = $obj->{'TURN'};
 
 if($method == 'MOVE'){
+
+    $x_init = $obj->{'XINIT'};
+    $y_init = $obj->{'YINIT'};
+    $x_last = $obj->{'XLAST'};
+    $y_last = $obj->{'YLAST'};
+    $split = $obj->{'SPLIT'};
+    $turn = $obj->{'TURN'};
+    
     $sql="INSERT INTO LOGIC(GAMEID,XINIT,YINIT,XLAST,YLAST,SPLIT,TURN) VALUES('$game_id','$x_init','$y_init','$x_last','$y_last','$split','$turn')";
     //Me fijo si la consulta no da error
     if (!$resultado = $mysqli->query($sql)){

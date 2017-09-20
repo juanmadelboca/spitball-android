@@ -6,6 +6,7 @@ import android.app.Activity;
 * Class used to make the game board, host the balls and manage battles.
 * */
 public class Tile extends Activity{
+
 	private Ball ball;
 
 	public Tile(){
@@ -31,6 +32,7 @@ public class Tile extends Activity{
 	public Ball getBall(){
 		return ball;
 	}
+
 	protected void battle(Ball immigrantBall){
 	/*
 	* Define which ball will survive when 2 balls enter in one Tile, also redefine the winner

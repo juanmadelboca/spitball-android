@@ -3,6 +3,7 @@ package com.kalantos.spitball.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -42,7 +43,7 @@ public class HighScoresActivity extends AppCompatActivity {
                     try {
                         thread.join();
                     } catch (InterruptedException e) {
-                        e.printStackTrace();
+                        Log.e("AUTO-HIDE BAR", e.getMessage());
                     }
 
                     decorView.setSystemUiVisibility(flags);

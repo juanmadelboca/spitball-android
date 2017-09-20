@@ -2,6 +2,8 @@ package com.kalantos.spitball.utils;
 
 import android.os.AsyncTask;
 import android.util.Log;
+
+import org.json.JSONException;
 import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -47,21 +49,11 @@ public class HTTPSocket extends AsyncTask<String,Void,String> {
             InputStream stream = connection.getInputStream();
             reader = new BufferedReader(new InputStreamReader(stream));
             String st=convertStreamToString(reader);
-            Log.d("TEST",st);
             return st;
 
-        }catch (MalformedURLException e){
-            e.printStackTrace();
-            return "MALA URL";
-        }catch (android.os.NetworkOnMainThreadException e){
-            e.printStackTrace();
-            return "LO DE INTERNET";
-        } catch (IOException e){
-            e.printStackTrace();
-            return "IO ERROR";
-        }catch (Exception e) {
-            e.printStackTrace();
-            return "ERROR";
+        }catch (android.os.NetworkOnMainThreadException | IOException | JSONException e){
+            Log.e("ONLINE CONNECTION", e.getMessage());
+            return null;
         }
     }
     private String convertStreamToString(BufferedReader reader) {
@@ -76,12 +68,12 @@ public class HTTPSocket extends AsyncTask<String,Void,String> {
                 sb.append(line).append('\n');
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e("ONLINE CONNECTION", e.getMessage());
         } finally {
             try {
                 reader.close();
             } catch (Exception e) {
-                e.printStackTrace();
+                Log.e("ONLINE CONNECTION", e.getMessage());
             }
         }
         return sb.toString();

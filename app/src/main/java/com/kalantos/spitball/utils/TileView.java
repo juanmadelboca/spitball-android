@@ -9,12 +9,12 @@ import android.widget.ImageView;
 * */
 public class TileView extends Activity {
 
-    private ImageView imageView;
+    private ImageView ballImage;
     private final int boundsX, boundsY;
     private boolean isPressed;
 
     public TileView(Context context, int boundsY, int boundsX) {
-        imageView = new ImageView(context);
+        ballImage = new ImageView(context);
         this.boundsX = boundsX;
         this.boundsY = boundsY;
         this.isPressed = false;
@@ -40,8 +40,8 @@ public class TileView extends Activity {
         isPressed=false;
     }
 
-    public ImageView getImageView(){
-        return imageView;
+    public ImageView getBallImage(){
+        return ballImage;
     }
 
 }
