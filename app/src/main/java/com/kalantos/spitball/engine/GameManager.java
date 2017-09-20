@@ -333,7 +333,6 @@ public class GameManager {
                     Log.i("GAME","Some of you mass pour down the board");
                 }
             }else{
-                //TODO: have to cancel AI movement if enters to else.
                 Log.e("GAME","Try to spit with a really small ball");
                 throw new Exception("Invalid move");
             }
