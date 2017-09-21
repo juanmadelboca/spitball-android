@@ -288,7 +288,8 @@ public class GameActivity extends AppCompatActivity {
                                                 game.swipeHandler(temporalEnd[0], temporalEnd[1]);
                                             }
                                         }catch (Exception e){
-                                            Log.e("GAME-ACTIVITY",e.getMessage());
+                                            //TODO: e.message generate crash
+                                            Log.e("GAME-ACTIVITY","e.getMessage()");
                                         }
                                     } else {
                                         //if drag time is not overcome, is processed as a click and keep waiting for another click.
