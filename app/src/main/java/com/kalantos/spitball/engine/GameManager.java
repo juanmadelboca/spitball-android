@@ -21,7 +21,7 @@ public class GameManager {
     private int GameId, onlineTurn;
     private int initialX, initialY, difficulty;
     private boolean ArtificialInteligence, onlineMove, isMyTurn;
-    private boolean anyMove;
+    private boolean anyMove, limitedMove;
 
     public GameManager(int GameId, int difficulty, int onlineTurn, boolean ArtificialInteligence) {
 
@@ -49,7 +49,6 @@ public class GameManager {
     }
 
     public void setGameStatus(boolean status){
-
         gameOver= status;
     }
     public boolean detectMoves(){
@@ -184,13 +183,13 @@ public class GameManager {
     * */
         anyMove=true;
         if ((!onlineMove && isMyTurn) || (onlineMove && !isMyTurn)|| GameId == 0) {
-
-            tiles[finalY][finalX].battle(tiles[initialY][initialX].getBall());
+            Log.d("GAME","isLimited:"+limitedMove+" playerTurn:"+playerTurn);
+            tiles[finalY][finalX].battle(tiles[initialY][initialX].getBall(),limitedMove);
             tiles[initialY][initialX].removeBall();
             clicks = 0;
             sendMoves(initialY, initialX, finalY, finalX, 0);
             if (GameId == 0) {
-                playerTurn++;
+                playerTurn=(playerTurn+1)%2;
             }
         }else{
             throw new Exception("Invalid move");
@@ -323,10 +322,10 @@ public class GameManager {
 
                 try {
                     tiles[initialY][initialX].getBall().setSize(tiles[initialY][initialX].getBall().getSize() - splittedBallSize);
-                    tiles[finalY][finalX].battle(splittedBall);
+                    tiles[finalY][finalX].battle(splittedBall,false);
 
                     if (GameId == 0) {
-                        playerTurn++;
+                        playerTurn=(playerTurn+1)%2;
                     }
                     sendMoves(initialY, initialX, finalY, finalX, 1);
                 } catch (Exception e) {
