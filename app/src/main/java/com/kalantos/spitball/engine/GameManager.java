@@ -159,6 +159,9 @@ public class GameManager {
                 }catch (Exception e){
                     Log.e("GAME",e.getMessage());
                 }
+                anyMove=true;
+                clicks = 0;
+                return false;
             }else if ((initialX - actualX == -2 && initialY == actualY) || (initialX - actualX == 2 && initialY == actualY) ||
                     (initialY - actualY == -2 && actualX == initialX) || (initialY - actualY == 2 && actualX == initialX) ) {
                 //SPLIT
@@ -168,6 +171,9 @@ public class GameManager {
                 }catch (Exception e){
                     Log.e("GAME",e.getMessage());
                 }
+                anyMove=true;
+                clicks = 0;
+                return false;
             } else {
                 clicks = 0;
                 anyMove=true;
@@ -182,12 +188,10 @@ public class GameManager {
     * Move the ball from initial x and y to final x and y.
     * TODO: Exception should be a custom one
     * */
-        anyMove=true;
         if ((!onlineMove && isMyTurn) || (onlineMove && !isMyTurn)|| GameId == 0) {
 
             tiles[finalY][finalX].battle(tiles[initialY][initialX].getBall());
             tiles[initialY][initialX].removeBall();
-            clicks = 0;
             sendMoves(initialY, initialX, finalY, finalX, 0);
             if (GameId == 0) {
                 playerTurn++;
@@ -307,7 +311,6 @@ public class GameManager {
     * Receive a start coordinate of the original ball, and spit a smaller ball (33% size) into
     * the delta direction and reduce spitter ball size.
     * */
-        anyMove=true;
 
         if ((!onlineMove && isMyTurn) || (onlineMove && !isMyTurn) || GameId == 0) {
             Ball splittedBall;
@@ -336,7 +339,6 @@ public class GameManager {
                 Log.e("GAME","Try to spit with a really small ball");
                 throw new Exception("Invalid move");
             }
-            clicks = 0;
         }
     }
 
