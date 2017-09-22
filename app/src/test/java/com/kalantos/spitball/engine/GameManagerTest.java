@@ -1,8 +1,4 @@
-package com.kalantos.spitball.GameManager;
-
-import com.kalantos.spitball.engine.Ball;
-import com.kalantos.spitball.engine.GameManager;
-import com.kalantos.spitball.engine.Tile;
+package com.kalantos.spitball.engine;
 
 import org.junit.Test;
 
@@ -13,7 +9,7 @@ import static org.junit.Assert.*;
 /**
  * To work on unit tests, switch the Test Artifact in the Build Variants view.
  */
-public class swipeHandler {
+public class GameManagerTest {
 
     @Test
     public void cancelMove() throws Exception {
@@ -158,7 +154,7 @@ public class swipeHandler {
         method.invoke(game, 1,5);
         assertEquals(tiles,game.getTiles());
         assertEquals((ballSize-(ballSize/3)),game.getTiles()[1][3].getBall().getSize());
-        assertEquals((int)((int)(ballSize/3 )*1.2)+20,game.getTiles()[1][5].getBall().getSize());
+        assertEquals((int)((ballSize/3 )*1.2)+20,game.getTiles()[1][5].getBall().getSize());
 
     }
 
@@ -174,7 +170,7 @@ public class swipeHandler {
         method.invoke(game, 0,2);
         assertEquals(tiles,game.getTiles());
         assertEquals((ballSize-(ballSize/3)),game.getTiles()[2][2].getBall().getSize());
-        assertEquals((int)((int)(ballSize/3 )*1.2),game.getTiles()[0][2].getBall().getSize());
+        assertEquals((int)((ballSize/3 )*1.2),game.getTiles()[0][2].getBall().getSize());
 
     }
 
@@ -190,7 +186,7 @@ public class swipeHandler {
         method.invoke(game, 1,1);
         assertEquals(tiles,game.getTiles());
         assertEquals((ballSize-(ballSize/3)),game.getTiles()[1][3].getBall().getSize());
-        assertEquals((int)((int)(ballSize/3 )*1.2),game.getTiles()[1][1].getBall().getSize());
+        assertEquals((int)((ballSize/3 )*1.2),game.getTiles()[1][1].getBall().getSize());
 
     }
 
@@ -206,7 +202,7 @@ public class swipeHandler {
         method.invoke(game, 3,3);
         assertEquals(tiles,game.getTiles());
         assertEquals((ballSize-(ballSize/3)),game.getTiles()[1][3].getBall().getSize());
-        assertEquals((int)((int)(ballSize/3 )*1.2)+20,game.getTiles()[3][3].getBall().getSize());
+        assertEquals((int)((ballSize/3 )*1.2)+20,game.getTiles()[3][3].getBall().getSize());
 
     }
 }

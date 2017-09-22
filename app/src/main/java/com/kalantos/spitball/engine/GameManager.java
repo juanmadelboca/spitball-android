@@ -16,14 +16,12 @@ public class GameManager {
     private final int width = 10;
     private final int height = 6;
     private boolean gameOver = false;
-    private int clicks = 0; //DELETE: sirve para detectar el primer click del segundo click
-    private int playerTurn = 0;//DELETE:turno local, hace un toggle entre 1 y 0
-    private int GameId, onlineTurn; //DELETE: para juegos online, turno de la base y juego para uscar en la base
-    private int initialY, initialX, difficulty; // DELETE:variable donde se guarda el primer click para hacer el movimiento y dificultad de IA
-    private boolean ArtificialInteligence, onlineMove, isMyTurn;//DELETE: boolean para activar inteligencia artificial (podria ser que si es menor
-    // a 0 es false, onlineMove sirve para avisar al juego que esta procesando un movimiento no local (podria tratarse como local tambien),
-    //is my turn booleano que me dice si me toca a mi o al otro jugador
-    private boolean anyMove; //me dice si se realizo un movimiento para activar la animacion de bouncing
+    private int clicks = 0;
+    private int playerTurn = 0;
+    private int GameId, onlineTurn;
+    private int initialY, initialX, difficulty;
+    private boolean ArtificialInteligence, onlineMove, isMyTurn;
+    private boolean anyMove;
 
     public GameManager(int GameId, int difficulty, int onlineTurn, boolean ArtificialInteligence) {
 
