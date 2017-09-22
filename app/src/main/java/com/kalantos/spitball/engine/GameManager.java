@@ -48,7 +48,10 @@ public class GameManager {
         return !gameOver;
     }
 
-    public void setGameStatus(boolean status){
+    public void setGameStatus(boolean status, int greenBall, int pinkBall){
+        if((playerTurn ==1 && pinkBall<=2) || (playerTurn ==0 && greenBall<=2)){
+            limitedMove=true;
+        }
         gameOver= status;
     }
     public boolean detectMoves(){
@@ -184,13 +187,15 @@ public class GameManager {
         anyMove=true;
         if ((!onlineMove && isMyTurn) || (onlineMove && !isMyTurn)|| GameId == 0) {
             Log.d("GAME","isLimited:"+limitedMove+" playerTurn:"+playerTurn);
-            tiles[finalY][finalX].battle(tiles[initialY][initialX].getBall(),limitedMove);
-            tiles[initialY][initialX].removeBall();
-            clicks = 0;
-            sendMoves(initialY, initialX, finalY, finalX, 0);
-            if (GameId == 0) {
-                playerTurn=(playerTurn+1)%2;
+            if(tiles[finalY][finalX].battle(tiles[initialY][initialX].getBall(),limitedMove)){
+                tiles[initialY][initialX].removeBall();
+                clicks = 0;
+                sendMoves(initialY, initialX, finalY, finalX, 0);
+                if (GameId == 0) {
+                    playerTurn=(playerTurn+1)%2;
+                }
             }
+
         }else{
             throw new Exception("Invalid move");
         }

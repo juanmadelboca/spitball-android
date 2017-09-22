@@ -159,7 +159,9 @@ public class GameActivity extends AppCompatActivity {
     private void checkGameStatus(){
         if (greenBallsLeft == 0 || pinkBallsLeft == 0) {
             finishGame();
-            game.setGameStatus(true);
+            game.setGameStatus(true, greenBallsLeft, pinkBallsLeft);
+        }else{
+            game.setGameStatus(false, greenBallsLeft, pinkBallsLeft);
         }
     }
     public void paint() {
@@ -212,7 +214,7 @@ public class GameActivity extends AppCompatActivity {
             }
         }
         time_end = System.currentTimeMillis();
-        Log.d("PAINT","the task has taken " + (time_end - time_start) + " milliseconds");
+        //Log.d("PAINT","the task has taken " + (time_end - time_start) + " milliseconds");
     }
 
     private void unpressTiles(){

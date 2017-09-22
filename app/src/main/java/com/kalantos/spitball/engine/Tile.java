@@ -34,15 +34,15 @@ public class Tile extends Activity{
 		return ball;
 	}
 
-	protected void battle(Ball immigrantBall, boolean limitedMove) {
+	protected boolean battle(Ball immigrantBall, boolean limitedMove) {
 	/*
 	* Define which ball will survive when 2 balls enter in one Tile, also redefine the winner
-	* ball size.
+	* ball size. Returns true if movement can be done.
 	* */
 		if ((immigrantBall instanceof BallGreen && ball instanceof BallGreen && limitedMove)
 				|| (immigrantBall instanceof BallPink && ball instanceof BallPink && limitedMove)) {
 			Log.i("GAME", "You have too little balls to perform that move.");
-			return;
+			return false;
 		} else {
 			if (immigrantBall.getSize() >= ball.getSize()) {
 				int newSize = ball.getSize() + immigrantBall.getSize();
@@ -55,6 +55,7 @@ public class Tile extends Activity{
 			} else {
 				ball.setSize(ball.getSize() + immigrantBall.getSize());
 			}
+			return true;
 		}
 	}
 }
