@@ -16,12 +16,14 @@ public class GameManager {
     private final int width = 10;
     private final int height = 6;
     private boolean gameOver = false;
-    public int clicks = 0;
-    private int playerTurn = 0;
-    private int GameId, onlineTurn;
-    private int initialX, initialY, difficulty;
-    private boolean ArtificialInteligence, onlineMove, isMyTurn;
-    private boolean anyMove;
+    private int clicks = 0; //DELETE: sirve para detectar el primer click del segundo click
+    private int playerTurn = 0;//DELETE:turno local, hace un toggle entre 1 y 0
+    private int GameId, onlineTurn; //DELETE: para juegos online, turno de la base y juego para uscar en la base
+    private int initialY, initialX, difficulty; // DELETE:variable donde se guarda el primer click para hacer el movimiento y dificultad de IA
+    private boolean ArtificialInteligence, onlineMove, isMyTurn;//DELETE: boolean para activar inteligencia artificial (podria ser que si es menor
+    // a 0 es false, onlineMove sirve para avisar al juego que esta procesando un movimiento no local (podria tratarse como local tambien),
+    //is my turn booleano que me dice si me toca a mi o al otro jugador
+    private boolean anyMove; //me dice si se realizo un movimiento para activar la animacion de bouncing
 
     public GameManager(int GameId, int difficulty, int onlineTurn, boolean ArtificialInteligence) {
 
@@ -123,38 +125,38 @@ public class GameManager {
         tiles[3][5].setBall(20, BallType.BALLPINK);
     }
 
-    public boolean swipeHandler(int actualX, int actualY) {
+    public boolean swipeHandler(int actualY, int actualX) {
     /*
     * Receive a Tile (x and y position) and using turn, clicks and olderX and olderY manage to know
     * when balls must move/split or wait for another coordinate.
     * */
-        if ((tiles[actualX][actualY].getBall() instanceof BallGreen) && clicks == 0 && (playerTurn % 2 == 0)) {
-            initialX = actualX;
+        if ((tiles[actualY][actualX].getBall() instanceof BallGreen) && clicks == 0 && (playerTurn % 2 == 0)) {
             initialY = actualY;
+            initialX = actualX;
             clicks++;
             return true;
 
-        } else if ((tiles[actualX][actualY].getBall() instanceof BallPink) && clicks == 0 && (playerTurn % 2 == 1)) {
-            initialX = actualX;
+        } else if ((tiles[actualY][actualX].getBall() instanceof BallPink) && clicks == 0 && (playerTurn % 2 == 1)) {
             initialY = actualY;
+            initialX = actualX;
             clicks++;
             return true;
 
         } else if (clicks == 1) {
-            if (initialX == actualX && initialY == actualY) {
+            if (initialY == actualY && initialX == actualX) {
                 //CANCEL SELECTION
                 clicks = 0;
                 anyMove=true;
                 return false;
-            } else if (Math.abs(initialX - actualX) > 2 || Math.abs(initialY - actualY) > 2) {
+            } else if (Math.abs(initialY - actualY) > 2 || Math.abs(initialX - actualX) > 2) {
                 //OUTBOUND MOVEMENT
                 anyMove=true;
                 clicks = 0;
                 return false;
-            } else if ((Math.abs(initialX - actualX) == 1 && Math.abs(initialY - actualY) == 1) || (Math.abs(initialX - actualX) == 0 && Math.abs(initialY - actualY) == 1) || (Math.abs(initialX - actualX) == 1 && Math.abs(initialY - actualY) == 0)) {
+            } else if ((Math.abs(initialY - actualY) == 1 && Math.abs(initialX - actualX) == 1) || (Math.abs(initialY - actualY) == 0 && Math.abs(initialX - actualX) == 1) || (Math.abs(initialY - actualY) == 1 && Math.abs(initialX - actualX) == 0)) {
                 //MOVE
                 try{
-                    move(initialX, initialY, actualX, actualY);
+                    move(initialY, initialX, actualY, actualX);
                     ArtificialMove();
                 }catch (Exception e){
                     Log.e("GAME",e.getMessage());
@@ -162,11 +164,11 @@ public class GameManager {
                 anyMove=true;
                 clicks = 0;
                 return false;
-            }else if ((initialX - actualX == -2 && initialY == actualY) || (initialX - actualX == 2 && initialY == actualY) ||
-                    (initialY - actualY == -2 && actualX == initialX) || (initialY - actualY == 2 && actualX == initialX) ) {
+            }else if ((initialY - actualY == -2 && initialX == actualX) || (initialY - actualY == 2 && initialX == actualX) ||
+                    (initialX - actualX == -2 && actualY == initialY) || (initialX - actualX == 2 && actualY == initialY) ) {
                 //SPLIT
                 try{
-                    split(initialX, initialY, actualX, actualY);
+                    split(initialY, initialX, actualY, actualX);
                     ArtificialMove();
                 }catch (Exception e){
                     Log.e("GAME",e.getMessage());
@@ -355,5 +357,17 @@ public class GameManager {
             }
         }
         return json.toString();
+    }
+
+    public void debug() {
+        //metodo para crear una matriz con los valores size de las bolas
+        //util para debugear fallas graficas
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
+                System.out.print(tiles[i][j].getBall().getSize() + "    ");
+            }
+            System.out.println("\n");
+        }
+        System.out.println("\n");
     }
 }

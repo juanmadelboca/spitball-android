@@ -278,7 +278,7 @@ public class GameActivity extends AppCompatActivity {
                                     //when the finger is raised final coordinates are send to detectMove for processing.
                                     if (((Calendar.getInstance().getTimeInMillis() - startClickTime) >= MAX_CLICK_DURATION)&& swipeOn) {
                                         //if drag duration is longer than max click is processed as a swipe, and send to the correct gestion.
-                                        game.clicks = 0;
+                                        //game.clicks = 0;
                                         try{
                                             int[] temporalStart = detectMove(startPoint.y, startPoint.x);
                                             int[] temporalEnd = detectMove(endPoint.y, endPoint.x);
