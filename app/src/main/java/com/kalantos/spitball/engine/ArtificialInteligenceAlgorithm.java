@@ -1,5 +1,7 @@
 package com.kalantos.spitball.engine;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -21,6 +23,7 @@ public class ArtificialInteligenceAlgorithm {
         int [] AIvector= ArtificialInteligenceAlgorithm.getBall(tiles);
         Random random = new Random();
         int seed = random.nextInt(2);
+        System.out.println("  randomnum: "+seed);
         int x, y;
         if (seed == 1) {
             x = -1;
@@ -29,6 +32,7 @@ public class ArtificialInteligenceAlgorithm {
         }
 
         seed = random.nextInt(2);
+        System.out.println("  randomnum2: "+seed);
         if (seed == 1) {
             y = -1;
         } else {
@@ -84,6 +88,7 @@ public class ArtificialInteligenceAlgorithm {
         ArrayList<int[]> posibleVectors = ArtificialInteligenceAlgorithm.getAIBalls(tiles);
         Random random = new Random();
         int index = random.nextInt(posibleVectors.size());
+        System.out.println(" getball randomnum: "+index);
         return posibleVectors.get(index);
     }
 
