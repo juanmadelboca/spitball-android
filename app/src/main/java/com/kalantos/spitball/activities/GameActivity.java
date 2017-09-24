@@ -287,7 +287,8 @@ public class GameActivity extends AppCompatActivity {
                                                 }
                                             }
                                         }catch (Exception e){
-                                            Log.e("GAME-ACTIVITY",e.getMessage());
+                                            //TODO: e.message generate crash
+                                            Log.e("GAME-ACTIVITY","e.getMessage()");
                                         }
                                     }
 
