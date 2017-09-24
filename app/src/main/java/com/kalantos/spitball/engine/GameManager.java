@@ -2,6 +2,10 @@ package com.kalantos.spitball.engine;
 
 import android.util.Log;
 import com.kalantos.spitball.utils.HTTPSocket;
+import com.kalantos.spitball.utils.exceptions.InvalidMoveException;
+import com.kalantos.spitball.utils.exceptions.LimitMoveException;
+import com.kalantos.spitball.utils.exceptions.UnderSizedSpitException;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.util.concurrent.ExecutionException;
@@ -138,7 +142,7 @@ public class GameManager {
                     clicks = 0;
                     move(initialX, initialY, actualX, actualY);
                     ArtificialMove();
-                }catch (Exception e){
+                }catch (InvalidMoveException | LimitMoveException e){
                     Log.e("GAME",e.getMessage());
                 }
                 return false;
@@ -149,7 +153,7 @@ public class GameManager {
                     clicks = 0;
                     split(initialX, initialY, actualX, actualY);
                     ArtificialMove();
-                }catch (Exception e){
+                }catch (UnderSizedSpitException e){
                     Log.e("GAME",e.getMessage());
                 }
                 return false;
@@ -162,7 +166,7 @@ public class GameManager {
         return false;
     }
 
-    private void move(int initialY, int initialX, int finalY, int finalX) throws Exception{
+    private void move(int initialY, int initialX, int finalY, int finalX) throws InvalidMoveException, LimitMoveException{
     /*
     * Move the ball from initial x and y to final x and y.
     * TODO: Exception should be a custom one
@@ -176,11 +180,11 @@ public class GameManager {
                     playerTurn=(playerTurn+1)%2;
                 }
             }else{
-                throw new Exception("You have reach the minimum ball limit.");
+                throw new LimitMoveException("You have reach the minimum ball limit.");
             }
 
         }else{
-            throw new Exception("Invalid move");
+            throw new InvalidMoveException("Invalid move");
         }
     }
 
@@ -193,15 +197,15 @@ public class GameManager {
             if (onlineMoves[4] == 0) {
                 try{
                     move(onlineMoves[1], onlineMoves[0], onlineMoves[3], onlineMoves[2]);
-                    ArtificialMove();
-                }catch (Exception e){
+                    //ArtificialMove();
+                }catch (InvalidMoveException | LimitMoveException e){
                     Log.e("ONLINE CONNECTION",e.getMessage());
                 }
             } else {
                 try{
                     split(onlineMoves[1], onlineMoves[0], onlineMoves[3], onlineMoves[2]);
-                    ArtificialMove();
-                }catch (Exception e){
+                    //ArtificialMove();
+                }catch (UnderSizedSpitException e){
                     Log.e("ONLINE CONNECTION",e.getMessage());
                 }
             }
@@ -268,12 +272,14 @@ public class GameManager {
                     split(AIMoves[0], AIMoves[1], AIMoves[2], AIMoves[3]);
                 }
 
-            } catch (Exception e) {
+            } catch (InvalidMoveException | LimitMoveException | UnderSizedSpitException e) {
                 Log.e("AI", e.getMessage());
                 //TODO: sometimes crash leaking memory
                 ArtificialMove();
+            }catch (Exception e){
+                Log.e("AI", "end game");
                 //catch exception: when game ends IA try to move causing an error.
-                //gameOver = true;
+                gameOver = true;
             }
         }
     }
@@ -291,7 +297,7 @@ public class GameManager {
         }
     }
 
-    private void split(int initialY, int initialX, int finalY, int finalX) throws Exception{
+    private void split(int initialY, int initialX, int finalY, int finalX) throws UnderSizedSpitException {
     /*
     * Receive a start coordinate of the original ball, and spit a smaller ball (33% size) into
     * the delta direction and reduce spitter ball size.
@@ -323,7 +329,7 @@ public class GameManager {
                 }
             }else{
                 Log.e("GAME","Try to spit with a really small ball");
-                throw new Exception("Ball too small to split");
+                throw new UnderSizedSpitException("Ball too small to split");
             }
         }
     }
@@ -382,7 +388,6 @@ public class GameManager {
         if(pinkBalls == 0 || greenBalls == 0){
             gameOver = true;
         }
-        Log.e("GAME",playerTurn+"-g"+greenBalls+"p"+pinkBalls+" isLimited: "+limitedMove);
     }
 
     public boolean detectMoves(){

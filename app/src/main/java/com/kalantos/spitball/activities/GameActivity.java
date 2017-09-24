@@ -23,6 +23,8 @@ import com.kalantos.spitball.engine.BallGreen;
 import com.kalantos.spitball.engine.GameManager;
 import com.kalantos.spitball.engine.Timer;
 import com.kalantos.spitball.utils.TileView;
+import com.kalantos.spitball.utils.exceptions.InvalidMoveException;
+
 import java.util.Calendar;
 
 public class GameActivity extends AppCompatActivity {
@@ -273,7 +275,7 @@ public class GameActivity extends AppCompatActivity {
                                                 game.swipeHandler(temporalStart[0], temporalStart[1]);
                                                 game.swipeHandler(temporalEnd[0], temporalEnd[1]);
                                             }
-                                        }catch (Exception e){
+                                        }catch (InvalidMoveException e){
                                             //TODO: e.message generate crash
                                             Log.e("GAME-ACTIVITY","e.getMessage()");
                                         }
@@ -286,7 +288,7 @@ public class GameActivity extends AppCompatActivity {
                                                     tiles[temporal[0]][temporal[1]].press();
                                                 }
                                             }
-                                        }catch (Exception e){
+                                        }catch (InvalidMoveException e){
                                             //TODO: e.message generate crash
                                             Log.e("GAME-ACTIVITY","e.getMessage()");
                                         }
@@ -310,7 +312,7 @@ public class GameActivity extends AppCompatActivity {
         }
     }
 
-    private int[] detectMove(float y, float x) throws Exception {
+    private int[] detectMove(float y, float x) throws InvalidMoveException {
     /*
     * Receive 2 float coordinates identifying a click or drag in the screen, and returns
     * a Tile position from the board.
@@ -327,7 +329,7 @@ public class GameActivity extends AppCompatActivity {
             }
         }
         Log.e("GAME-ACTIVITY","Invalid coordinates for move");
-        throw new Exception();
+        throw new InvalidMoveException("Invalid coordinates for move");
     }
 
 
