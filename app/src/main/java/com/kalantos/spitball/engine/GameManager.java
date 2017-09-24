@@ -270,6 +270,8 @@ public class GameManager {
 
             } catch (Exception e) {
                 Log.e("AI", e.getMessage());
+                //TODO: sometimes crash leaking memory
+                ArtificialMove();
                 //catch exception: when game ends IA try to move causing an error.
                 //gameOver = true;
             }

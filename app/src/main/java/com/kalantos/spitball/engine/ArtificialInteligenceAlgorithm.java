@@ -19,7 +19,7 @@ public class ArtificialInteligenceAlgorithm {
     * */
         int[] coordinates;
         int [] AIvector= ArtificialInteligenceAlgorithm.getBall(tiles);
-        Random random = new Random();
+        Random random = new Random(System.currentTimeMillis());
         int seed = random.nextInt(2);
         int x, y;
         if (seed == 1) {
@@ -82,7 +82,7 @@ public class ArtificialInteligenceAlgorithm {
     * Get one random ball from all AI balls in board.
     * */
         ArrayList<int[]> posibleVectors = ArtificialInteligenceAlgorithm.getAIBalls(tiles);
-        Random random = new Random();
+        Random random = new Random(System.currentTimeMillis());
         int index = random.nextInt(posibleVectors.size());
         return posibleVectors.get(index);
     }
