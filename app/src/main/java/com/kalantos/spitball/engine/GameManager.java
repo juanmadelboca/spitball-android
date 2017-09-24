@@ -22,6 +22,7 @@ public class GameManager {
     private int initialX, initialY, difficulty;
     private boolean ArtificialInteligence, onlineMove, isMyTurn;
     private boolean anyMove, limitedMove;
+    private int greenBalls,pinkBalls;
 
     public GameManager(int GameId, int difficulty, int onlineTurn, boolean ArtificialInteligence) {
 
@@ -35,30 +36,6 @@ public class GameManager {
             startOnlineGame();
             startOnlineThread();
         }
-
-    }
-
-    public Tile[][] getTiles(){
-
-        return tiles;
-    }
-
-    public boolean gameStatus(){
-
-        return !gameOver;
-    }
-
-    public void setGameStatus(boolean status, int greenBall, int pinkBall){
-        if((playerTurn ==1 && pinkBall<=2) || (playerTurn ==0 && greenBall<=2)){
-            limitedMove=true;
-        }
-        gameOver= status;
-    }
-    public boolean detectMoves(){
-
-        boolean temporal=anyMove;
-        anyMove=false;
-        return  temporal;
     }
 
     private void startOnlineGame(){
@@ -91,6 +68,7 @@ public class GameManager {
             }
         }
     }
+
     private void startOnlineThread(){
     /*
     * Start a thread that fetch moves from database periodically.
@@ -103,6 +81,7 @@ public class GameManager {
                     onlineMoves=getOnlineMove();
                     updateBoard(onlineMoves);
                     try {
+                        //TODO: test with a higher refresh rate
                         Thread.sleep(2000);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
@@ -156,20 +135,24 @@ public class GameManager {
             } else if ((Math.abs(initialX - actualX) == 1 && Math.abs(initialY - actualY) == 1) || (Math.abs(initialX - actualX) == 0 && Math.abs(initialY - actualY) == 1) || (Math.abs(initialX - actualX) == 1 && Math.abs(initialY - actualY) == 0)) {
                 //MOVE
                 try{
+                    clicks = 0;
                     move(initialX, initialY, actualX, actualY);
                     ArtificialMove();
                 }catch (Exception e){
                     Log.e("GAME",e.getMessage());
                 }
+                return false;
             }else if ((initialX - actualX == -2 && initialY == actualY) || (initialX - actualX == 2 && initialY == actualY) ||
                     (initialY - actualY == -2 && actualX == initialX) || (initialY - actualY == 2 && actualX == initialX) ) {
                 //SPLIT
                 try{
+                    clicks = 0;
                     split(initialX, initialY, actualX, actualY);
                     ArtificialMove();
                 }catch (Exception e){
                     Log.e("GAME",e.getMessage());
                 }
+                return false;
             } else {
                 clicks = 0;
                 anyMove=true;
@@ -186,14 +169,14 @@ public class GameManager {
     * */
         anyMove=true;
         if ((!onlineMove && isMyTurn) || (onlineMove && !isMyTurn)|| GameId == 0) {
-            Log.d("GAME","isLimited:"+limitedMove+" playerTurn:"+playerTurn);
             if(tiles[finalY][finalX].battle(tiles[initialY][initialX].getBall(),limitedMove)){
                 tiles[initialY][initialX].removeBall();
-                clicks = 0;
                 sendMoves(initialY, initialX, finalY, finalX, 0);
                 if (GameId == 0) {
                     playerTurn=(playerTurn+1)%2;
                 }
+            }else{
+                throw new Exception("You have reach the minimum ball limit.");
             }
 
         }else{
@@ -288,7 +271,7 @@ public class GameManager {
             } catch (Exception e) {
                 Log.e("AI", e.getMessage());
                 //catch exception: when game ends IA try to move causing an error.
-                gameOver = true;
+                //gameOver = true;
             }
         }
     }
@@ -338,9 +321,8 @@ public class GameManager {
                 }
             }else{
                 Log.e("GAME","Try to spit with a really small ball");
-                throw new Exception("Invalid move");
+                throw new Exception("Ball too small to split");
             }
-            clicks = 0;
         }
     }
 
@@ -358,4 +340,54 @@ public class GameManager {
         }
         return json.toString();
     }
+
+    public int getGreenBalls() {
+        return greenBalls;
+    }
+
+    public int getPinkBalls() {
+        return pinkBalls;
+    }
+
+    public Tile[][] getTiles(){
+
+        return tiles;
+    }
+
+    public boolean gameStatus(){
+
+        return !gameOver;
+    }
+
+    public void updateStatus(){
+        greenBalls = 0;
+        pinkBalls = 0;
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
+                //image
+                if (tiles[i][j].getBall() instanceof BallGreen){
+                    greenBalls++;
+                } else if(tiles[i][j].getBall() instanceof BallPink){
+                    pinkBalls++;
+                }
+            }
+        }
+        if((playerTurn ==1 && pinkBalls<=2) || (playerTurn ==0 && greenBalls<=2)){
+            limitedMove=true;
+        }else{
+            limitedMove=false;
+        }
+        if(pinkBalls == 0 || greenBalls == 0){
+            gameOver = true;
+        }
+        Log.e("GAME",playerTurn+"-g"+greenBalls+"p"+pinkBalls+" isLimited: "+limitedMove);
+    }
+
+    public boolean detectMoves(){
+
+        boolean temporal=anyMove;
+        anyMove=false;
+        return  temporal;
+    }
+
 }

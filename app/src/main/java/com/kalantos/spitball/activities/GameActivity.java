@@ -30,10 +30,11 @@ public class GameActivity extends AppCompatActivity {
     TileView[][] tiles;
     final int width = 10;
     final int height = 6;
-    private int greenBallsLeft=0, pinkBallsLeft=0;
     private int widthScreen, heightScreen;
     private int bouncingState=1;
     private GameManager game;
+    //without updateGamePrescaler gameManager can handle updates and work bad.
+    int updateGamePrescaler = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -132,13 +133,8 @@ public class GameActivity extends AppCompatActivity {
                         Log.e("BOUNCING ANIMATION", e.getMessage());
                     }
                 }
-
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        paint();
-                    }
-                });
+                Log.d("GAME","game finished");
+                finishGame();
             }
         };
         final Thread refreshThread1 = new Thread(runnable);refreshThread1.start();
@@ -152,18 +148,8 @@ public class GameActivity extends AppCompatActivity {
         if(game.detectMoves()){
             unpressTiles();
         }
-        greenBallsLeft = 0;
-        pinkBallsLeft = 0;
     }
 
-    private void checkGameStatus(){
-        if (greenBallsLeft == 0 || pinkBallsLeft == 0) {
-            finishGame();
-            game.setGameStatus(true, greenBallsLeft, pinkBallsLeft);
-        }else{
-            game.setGameStatus(false, greenBallsLeft, pinkBallsLeft);
-        }
-    }
     public void paint() {
     /*
     * Re paint all board images, rescaling and animating with the information provide by game class, also counts
@@ -184,10 +170,8 @@ public class GameActivity extends AppCompatActivity {
                     //image
                     if (game.getTiles()[i][j].getBall() instanceof BallGreen) {
                         ballImage = "ballgreen_small";
-                        greenBallsLeft++;
                     } else {
                         ballImage = "ballpink_small";
-                        pinkBallsLeft++;
                     }
                     int idR;
                     //animation
@@ -227,14 +211,14 @@ public class GameActivity extends AppCompatActivity {
             }
         }
     }
+
     private void finishGame() {
     /*
     * Ends the game, and send info to the finish activity to show winner and stats.
     * */
-        //se ejecuta cuando termina el juego, finaliza la activad y procede a la acitvidad que muestra al ganador
         Intent intent = new Intent(GameActivity.this, finishGameActivity.class);
-        intent.putExtra("green", greenBallsLeft);
-        intent.putExtra("pink", pinkBallsLeft);
+        intent.putExtra("green", game.getGreenBalls());
+        intent.putExtra("pink", game.getPinkBalls());
         startActivity(intent);
         finishAffinity();
 
@@ -352,7 +336,12 @@ public class GameActivity extends AppCompatActivity {
             public void run() {
                 resetFrame();
                 paint();
-                checkGameStatus();
+                if(updateGamePrescaler == 0) {
+                    game.updateStatus();
+                    updateGamePrescaler = 2;
+                }else{
+                    updateGamePrescaler--;
+                }
             }
         });
 
