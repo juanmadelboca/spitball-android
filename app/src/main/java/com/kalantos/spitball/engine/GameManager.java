@@ -250,6 +250,7 @@ public class GameManager {
     * Manage AI moves/split depending in the game difficulty.
     * */
         if (ArtificialInteligence) {
+            updateStatus();
             try {
                 int[] AIMoves;
                 switch (difficulty) {
