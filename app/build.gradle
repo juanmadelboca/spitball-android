@@ -27,4 +27,11 @@ dependencies {
     compile 'com.android.support:design:23.4.0'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     testCompile 'junit:junit:4.12'
+    testCompile 'org.mockito:mockito-core:2.7.22'
+}
+android {
+    // ...
+    testOptions {
+        unitTests.returnDefaultValues = true
+    }
 }

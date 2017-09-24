@@ -1,5 +1,6 @@
 package com.kalantos.spitball.utils;
 
+import org.json.JSONObject;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -9,7 +10,11 @@ import static org.junit.Assert.*;
  */
 public class HTTPSocketTest {
     @Test
-    public void addition_isCorrect() throws Exception {
-        assertEquals(4, 2 + 2);
+    public void sendJsonTest() throws Exception {
+        /*
+        JSONObject json= new JSONObject();
+        json.put("DATA","test");
+        String response = new HTTPSocket().execute("https://httpbin.org/post","POST",json.toString()).get();
+        assertEquals(json.toString(),response);*/
     }
 }
