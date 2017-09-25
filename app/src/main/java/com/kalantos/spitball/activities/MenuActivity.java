@@ -71,6 +71,20 @@ public class MenuActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onPause() {
+        if(creatingRoom) {
+            try {
+                createOnlineGameThread.interrupt();
+                leaveRoom();
+            }catch (Exception e){
+                e.printStackTrace();
+                Log.e("CREATE ONLINE GAME","failed to stop");
+            }
+        }
+        super.onPause();
+    }
+
+    @Override
     public void onBackPressed() {
         if(creatingRoom) {
             try {
