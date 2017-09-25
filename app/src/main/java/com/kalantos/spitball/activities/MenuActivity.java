@@ -26,6 +26,8 @@ public class MenuActivity extends AppCompatActivity {
     int GameId, NumPlayers, turn;
     FragmentTransaction transaction;
     ImageView imageSettings;
+    boolean creatingRoom = false;
+    Thread createOnlineGameThread;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,6 +72,15 @@ public class MenuActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
+        if(creatingRoom) {
+            try {
+                createOnlineGameThread.interrupt();
+                leaveRoom();
+            }catch (Exception e){
+                e.printStackTrace();
+                Log.e("CREATE ONLINE GAME","failed to stop");
+            }
+        }
         imageSettings.setVisibility(View.VISIBLE);
         super.onBackPressed();
     }
@@ -161,36 +172,53 @@ public class MenuActivity extends AppCompatActivity {
         finishAffinity();
     }
 
-    public void createOnlineGame(View view) throws ExecutionException, InterruptedException {
+    public void createOnlineGame(View view){
     /*
     * Create a game in database or connect to a game created which need another player, if timeout
     * create a vs IA game in the hardest difficulty.
     * */
-        if(connect("CREATE")) {
-            int timeCounter = 0;
-            while (NumPlayers == 1 && timeCounter < 40) {
-                connect("GET");
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                creatingRoom = true;
                 try {
-                    Thread.sleep(500);
-                } catch (InterruptedException e) {
-                    Log.e("ONLINE GAME", e.getMessage());
-                }
-                timeCounter++;
-            }
-            if (NumPlayers == 2) {
-                intentGameOnline();
-                Toast.makeText(this,"GameID:"+GameId+" Turn: "+turn,Toast.LENGTH_SHORT).show();
+                    if (connect("CREATE")) {
+                        int timeCounter = 0;
+                        while (NumPlayers == 1 && timeCounter < 40) {
 
-            } else {
-                intentGameVsAI(2);
-                try {
-                    //TODO: Think a way that leave the game even if the player leave the search room with back button
-                    String jsonData = createJson("GAMEID",Integer.toString(GameId));
-                    new HTTPSocket().execute("http://spitball.000webhostapp.com/leaveGame.php","POST",jsonData).get();
-                } catch (Exception e) {
-                    Log.e("ONLINE GAME", e.getMessage());
+                                connect("GET");
+                                Thread.sleep(500);
+
+                            timeCounter++;
+                            Log.d("CREATE ONLINE GAME", "timecounter:" + timeCounter + " numplays:" + NumPlayers);
+                        }
+                        if (NumPlayers == 2) {
+                            intentGameOnline();
+
+                        } else {
+                            intentGameVsAI(2);
+                            leaveRoom();
+                        }
+                    }
+                } catch (InterruptedException e) {
+                    Log.e("ONLINE GAME", "CreateOnlineGame was interrupted");
+                    return;
                 }
             }
+        };
+        createOnlineGameThread = new Thread(runnable);
+        createOnlineGameThread.start();
+        Log.d("CREATE ONLINE GAME", "thread created");
+    }
+
+    private void leaveRoom(){
+        Log.d("CREATE ONLINE GAME","leaving room");
+        try {
+            //TODO: Think a way that leave the game even if the player leave the search room with back button
+            String jsonData = createJson("GAMEID",Integer.toString(GameId));
+            new HTTPSocket().execute("http://spitball.000webhostapp.com/leaveGame.php","POST",jsonData).get();
+        } catch (Exception e) {
+            Log.e("ONLINE GAME", "Error leaving Room");
         }
     }
 
@@ -208,7 +236,7 @@ public class MenuActivity extends AppCompatActivity {
             GameId=JSONobject.getInt("GAMEID");
             NumPlayers=JSONobject.getInt("NUMPLAYERS");
         } catch (Exception e) {
-            Log.e("ONLINE GAME", e.getMessage());
+            Log.e("ONLINE GAME", "Connection error");
             Toast.makeText(this,"No fue posible conectarse al servidor",Toast.LENGTH_SHORT).show();
             return false;
         }

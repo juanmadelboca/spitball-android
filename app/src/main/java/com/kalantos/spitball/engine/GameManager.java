@@ -279,7 +279,6 @@ public class GameManager {
             }
         } catch (InvalidMoveException | LimitMoveException | UnderSizedSpitException e) {
             Log.e("AI", e.getMessage());
-            //TODO: sometimes crash leaking memory
             ArtificialMove(true);
         }catch (Exception e){
             Log.e("AI", "end game");
