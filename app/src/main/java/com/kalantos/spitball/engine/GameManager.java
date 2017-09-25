@@ -141,7 +141,9 @@ public class GameManager {
                 try{
                     clicks = 0;
                     move(initialX, initialY, actualX, actualY);
-                    ArtificialMove();
+                    if (ArtificialInteligence) {
+                    ArtificialMove(false);
+                    }
                 }catch (InvalidMoveException | LimitMoveException e){
                     Log.e("GAME",e.getMessage());
                 }
@@ -152,7 +154,9 @@ public class GameManager {
                 try{
                     clicks = 0;
                     split(initialX, initialY, actualX, actualY);
-                    ArtificialMove();
+                    if (ArtificialInteligence) {
+                        ArtificialMove(false);
+                    }
                 }catch (UnderSizedSpitException e){
                     Log.e("GAME",e.getMessage());
                 }
@@ -169,7 +173,6 @@ public class GameManager {
     private void move(int initialY, int initialX, int finalY, int finalX) throws InvalidMoveException, LimitMoveException{
     /*
     * Move the ball from initial x and y to final x and y.
-    * TODO: Exception should be a custom one
     * */
         anyMove=true;
         if ((!onlineMove && isMyTurn) || (onlineMove && !isMyTurn)|| GameId == 0) {
@@ -245,46 +248,50 @@ public class GameManager {
         return null;
     }
 
-    private void ArtificialMove() {
+    private void ArtificialMove(boolean recursive) {
     /*
     * Manage AI moves/split depending in the game difficulty.
     * */
-        if (ArtificialInteligence) {
-            updateStatus();
-            try {
-                int[] AIMoves;
-                switch (difficulty) {
-                    case 0:
-                        AIMoves = ArtificialInteligenceAlgorithm.easyMove(tiles);
-                        break;
-                    case 1:
-                        AIMoves = ArtificialInteligenceAlgorithm.hardMove(tiles, false);
-                        break;
-                    case 2:
-                        AIMoves = ArtificialInteligenceAlgorithm.hardMove(tiles, true);
-                        break;
-                    default:
-                        AIMoves = ArtificialInteligenceAlgorithm.easyMove(tiles);
-                        break;
-                }
-                if (AIMoves[4] != -1) {
-                    move(AIMoves[0], AIMoves[1], AIMoves[2], AIMoves[3]);
-                } else {
-                    split(AIMoves[0], AIMoves[1], AIMoves[2], AIMoves[3]);
-                }
-
-            } catch (InvalidMoveException | LimitMoveException | UnderSizedSpitException e) {
-                Log.e("AI", e.getMessage());
-                //TODO: sometimes crash leaking memory
-                ArtificialMove();
-            }catch (Exception e){
-                Log.e("AI", "end game");
-                //catch exception: when game ends IA try to move causing an error.
-                gameOver = true;
+        int[] AIMoves;
+        if(recursive){
+            AIMoves = ArtificialInteligenceAlgorithm.RandomMove(tiles);
+        }else {
+            switch (difficulty) {
+                case 0:
+                    AIMoves = ArtificialInteligenceAlgorithm.easyMove(tiles);
+                    break;
+                case 1:
+                    AIMoves = ArtificialInteligenceAlgorithm.hardMove(tiles, false);
+                    break;
+                case 2:
+                    AIMoves = ArtificialInteligenceAlgorithm.hardMove(tiles, true);
+                    break;
+                default:
+                    AIMoves = ArtificialInteligenceAlgorithm.easyMove(tiles);
+                    break;
             }
         }
+        try {
+            if (AIMoves[4] != -1) {
+                move(AIMoves[0], AIMoves[1], AIMoves[2], AIMoves[3]);
+            } else {
+                split(AIMoves[0], AIMoves[1], AIMoves[2], AIMoves[3]);
+            }
+        } catch (InvalidMoveException | LimitMoveException | UnderSizedSpitException e) {
+            Log.e("AI", e.getMessage());
+            //TODO: sometimes crash leaking memory
+            ArtificialMove(true);
+        }catch (Exception e){
+            Log.e("AI", "end game");
+            //catch exception: when game ends IA try to move causing an error.
+            gameOver = true;
+        }
+
     }
     private void sendMoves(int initialY, int initialX, int finalY, int finalX, int splitIdentifier){
+    /*
+    * Send move/split to server.
+    * */
         if (!onlineMove && GameId != 0) {
             try {
                 String jsonData = createJson( "METHODTYPE","MOVE","XINIT", Integer.toString(initialX),
@@ -369,6 +376,9 @@ public class GameManager {
     }
 
     public void updateStatus(){
+    /*
+    * Create board made up with Tiles.
+    * */
         greenBalls = 0;
         pinkBalls = 0;
         for (int i = 0; i < height; i++) {
@@ -391,8 +401,11 @@ public class GameManager {
         }
     }
 
-    public boolean detectMoves(){
-
+    public boolean anyMove() {
+    /*
+    * Returns true when player finish the move/split, and restart
+    * the value to false in order to save processing power in gameActivity.
+    * */
         boolean temporal=anyMove;
         anyMove=false;
         return  temporal;

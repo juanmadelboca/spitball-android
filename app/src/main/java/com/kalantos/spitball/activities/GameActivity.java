@@ -147,7 +147,7 @@ public class GameActivity extends AppCompatActivity {
     /*
     * Reset status of press tiles and ball counters
     * */
-        if(game.detectMoves()){
+        if(game.anyMove()){
             unpressTiles();
         }
     }
