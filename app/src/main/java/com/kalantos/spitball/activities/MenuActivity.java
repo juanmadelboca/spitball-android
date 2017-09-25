@@ -27,7 +27,7 @@ public class MenuActivity extends AppCompatActivity {
     FragmentTransaction transaction;
     ImageView imageSettings;
     boolean creatingRoom = false;
-    Thread createOnlineGameThread;
+    boolean connectionError = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,31 +72,15 @@ public class MenuActivity extends AppCompatActivity {
 
     @Override
     protected void onPause() {
-        if(creatingRoom) {
-            try {
-                createOnlineGameThread.interrupt();
-                leaveRoom();
-                creatingRoom = false;
-            }catch (Exception e){
-                e.printStackTrace();
-                Log.e("CREATE ONLINE GAME","failed to stop");
-            }
-        }
+
+        creatingRoom = false;
         super.onPause();
     }
 
     @Override
     public void onBackPressed() {
-        if(creatingRoom) {
-            try {
-                createOnlineGameThread.interrupt();
-                leaveRoom();
-                creatingRoom = false;
-            }catch (Exception e){
-                e.printStackTrace();
-                Log.e("CREATE ONLINE GAME","failed to stop");
-            }
-        }
+
+        creatingRoom = false;
         imageSettings.setVisibility(View.VISIBLE);
         super.onBackPressed();
     }
@@ -200,19 +184,20 @@ public class MenuActivity extends AppCompatActivity {
                 try {
                     if (connect("CREATE")) {
                         int timeCounter = 0;
-                        while (NumPlayers == 1 && timeCounter < 40) {
+                        while (NumPlayers == 1 && timeCounter < 40 && creatingRoom) {
 
                                 connect("GET");
                                 Thread.sleep(500);
 
                             timeCounter++;
-                            Log.d("CREATE ONLINE GAME", "timecounter:" + timeCounter + " numplays:" + NumPlayers);
                         }
-                        if (NumPlayers == 2) {
+                        if (NumPlayers == 2 && creatingRoom) {
                             intentGameOnline();
 
-                        } else {
+                        } else if(creatingRoom){
                             intentGameVsAI(2);
+                            leaveRoom();
+                        }else{
                             leaveRoom();
                         }
                     }
@@ -223,14 +208,16 @@ public class MenuActivity extends AppCompatActivity {
             }
         };
         if(!creatingRoom){
-            createOnlineGameThread = new Thread(runnable);
+            Thread createOnlineGameThread = new Thread(runnable);
             createOnlineGameThread.start();
-            Log.d("CREATE ONLINE GAME", "thread created");
+        }
+        if(connectionError){
+            //TODO: find a better way to display message
+            Toast.makeText(this,"No fue posible conectarse al servidor",Toast.LENGTH_SHORT).show();
         }
     }
 
     private void leaveRoom(){
-        Log.d("CREATE ONLINE GAME","leaving room");
         try {
             String jsonData = createJson("GAMEID",Integer.toString(GameId));
             new HTTPSocket().execute("http://spitball.000webhostapp.com/leaveGame.php","POST",jsonData).get();
@@ -252,13 +239,12 @@ public class MenuActivity extends AppCompatActivity {
             }
             GameId=JSONobject.getInt("GAMEID");
             NumPlayers=JSONobject.getInt("NUMPLAYERS");
+            return true;
         } catch (Exception e) {
-            //TODO: sometimes stop thread here and thread dont stop well.
             Log.e("ONLINE GAME", "Connection error");
-            //Toast.makeText(this,"No fue posible conectarse al servidor",Toast.LENGTH_SHORT).show();
+            connectionError = true;
             return false;
         }
-        return true;
     }
 
     private String createJson(String... strings){
