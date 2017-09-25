@@ -76,6 +76,7 @@ public class MenuActivity extends AppCompatActivity {
             try {
                 createOnlineGameThread.interrupt();
                 leaveRoom();
+                creatingRoom = false;
             }catch (Exception e){
                 e.printStackTrace();
                 Log.e("CREATE ONLINE GAME","failed to stop");
@@ -90,6 +91,7 @@ public class MenuActivity extends AppCompatActivity {
             try {
                 createOnlineGameThread.interrupt();
                 leaveRoom();
+                creatingRoom = false;
             }catch (Exception e){
                 e.printStackTrace();
                 Log.e("CREATE ONLINE GAME","failed to stop");
@@ -220,15 +222,16 @@ public class MenuActivity extends AppCompatActivity {
                 }
             }
         };
-        createOnlineGameThread = new Thread(runnable);
-        createOnlineGameThread.start();
-        Log.d("CREATE ONLINE GAME", "thread created");
+        if(!creatingRoom){
+            createOnlineGameThread = new Thread(runnable);
+            createOnlineGameThread.start();
+            Log.d("CREATE ONLINE GAME", "thread created");
+        }
     }
 
     private void leaveRoom(){
         Log.d("CREATE ONLINE GAME","leaving room");
         try {
-            //TODO: Think a way that leave the game even if the player leave the search room with back button
             String jsonData = createJson("GAMEID",Integer.toString(GameId));
             new HTTPSocket().execute("http://spitball.000webhostapp.com/leaveGame.php","POST",jsonData).get();
         } catch (Exception e) {
@@ -250,8 +253,9 @@ public class MenuActivity extends AppCompatActivity {
             GameId=JSONobject.getInt("GAMEID");
             NumPlayers=JSONobject.getInt("NUMPLAYERS");
         } catch (Exception e) {
+            //TODO: sometimes stop thread here and thread dont stop well.
             Log.e("ONLINE GAME", "Connection error");
-            Toast.makeText(this,"No fue posible conectarse al servidor",Toast.LENGTH_SHORT).show();
+            //Toast.makeText(this,"No fue posible conectarse al servidor",Toast.LENGTH_SHORT).show();
             return false;
         }
         return true;
