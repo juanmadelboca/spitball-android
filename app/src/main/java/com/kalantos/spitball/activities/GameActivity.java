@@ -105,9 +105,10 @@ public class GameActivity extends AppCompatActivity {
 
         builder.setPositiveButton("Si", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                Intent intent=new Intent(GameActivity.this,MenuActivity.class);
+                /*Intent intent=new Intent(GameActivity.this,MenuActivity.class);
                 startActivity(intent);
-                finishAffinity();
+                finishAffinity();*/
+                game.setFinishOnlineGame(true);
             }
         });
 

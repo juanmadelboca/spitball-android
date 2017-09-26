@@ -28,6 +28,12 @@ public class GameManager {
     private boolean anyMove, limitedMove;
     private int greenBalls,pinkBalls;
 
+    public boolean isFinishOnlineGame() {
+        return finishOnlineGame;
+    }
+
+    private boolean finishOnlineGame = false;
+
     public GameManager(int GameId, int difficulty, int onlineTurn, boolean ArtificialInteligence) {
 
         this.GameId = GameId;
@@ -89,6 +95,17 @@ public class GameManager {
                         if(!isMyTurn) {
                             onlineMoves = getOnlineMove();
                             updateBoard(onlineMoves);
+                        }else{
+                            if(finishOnlineGame){
+                                sendMoves(0,0,0,0,0,-1);
+                                gameOver = true;
+                                if(onlineTurn==0){
+                                    greenBalls = 0;
+                                }else{
+                                    pinkBalls =0;
+                                }
+                                break;
+                            }
                         }
                         if(playerHasMoved){
                             playerHasMoved = false;
@@ -196,7 +213,7 @@ public class GameManager {
         if ((!onlineMove && isMyTurn) || (onlineMove && !isMyTurn)|| GameId == 0) {
             if(tiles[finalY][finalX].battle(tiles[initialY][initialX].getBall(),limitedMove)){
                 tiles[initialY][initialX].removeBall();
-                sendMoves(initialY, initialX, finalY, finalX, 0);
+                sendMoves(initialY, initialX, finalY, finalX, 0, onlineTurn);
                 if (GameId == 0) {
                     playerTurn=(playerTurn+1)%2;
                 }
@@ -215,7 +232,7 @@ public class GameManager {
     * Update local board using database received information.
     * */
         onlineMove = true;
-        if (onlineMoves[5] != onlineTurn) {
+        if (onlineMoves[5] != onlineTurn && onlineMoves[5] != -1) {
             if (onlineMoves[4] == 0) {
                 try{
                     move(onlineMoves[1], onlineMoves[0], onlineMoves[3], onlineMoves[2]);
@@ -232,6 +249,13 @@ public class GameManager {
                 }
             }
             playerHasMoved=true;
+        }else if(onlineMoves[5] == -1){
+            gameOver = true;
+            if(onlineTurn==0){
+                pinkBalls =0;
+            }else{
+                greenBalls = 0;
+            }
         }
         onlineMove = false;
 
@@ -302,7 +326,7 @@ public class GameManager {
         }
 
     }
-    private void sendMoves(int initialY, int initialX, int finalY, int finalX, int splitIdentifier){
+    private void sendMoves(int initialY, int initialX, int finalY, int finalX, int splitIdentifier, int onlineTurn){
     /*
     * Send move/split to server.
     * */
@@ -346,7 +370,7 @@ public class GameManager {
                         playerTurn=(playerTurn+1)%2;
                     }
                     playerHasMoved=true;
-                    sendMoves(initialY, initialX, finalY, finalX, 1);
+                    sendMoves(initialY, initialX, finalY, finalX, 1, onlineTurn);
                 } catch (Exception e) {
                     Log.i("GAME","Some of you mass pour down the board");
                 }
@@ -388,6 +412,18 @@ public class GameManager {
     public boolean gameStatus(){
 
         return !gameOver;
+    }
+
+    public void setFinishOnlineGame(boolean finishOnlineGame) {
+        this.finishOnlineGame = finishOnlineGame;
+    }
+
+    public boolean isOnlineGame(){
+        if(GameId !=0){
+            return true;
+        }else{
+            return false;
+        }
     }
 
     public void updateStatus(){
