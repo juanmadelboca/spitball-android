@@ -24,7 +24,7 @@ public class GameManager {
     private int playerTurn = 0;
     private int GameId, onlineTurn;
     private int initialX, initialY, difficulty;
-    private boolean ArtificialInteligence, onlineMove, isMyTurn;
+    private boolean ArtificialInteligence, onlineMove, isMyTurn, playerHasMoved;
     private boolean anyMove, limitedMove;
     private int greenBalls,pinkBalls;
 
@@ -81,14 +81,32 @@ public class GameManager {
             @Override
             public void run() {
                 int[] onlineMoves;
+                int refreshTimeMillis = 2000;
+                int turnTimeMillis = 20000;
                 while (!gameOver) {
-                    onlineMoves=getOnlineMove();
-                    updateBoard(onlineMoves);
-                    try {
-                        //TODO: test with a higher refresh rate
-                        Thread.sleep(2000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
+                    for (int i = 0; i<(turnTimeMillis/refreshTimeMillis); i++) {
+                        Log.d("GG","time: "+i+" isMyTurn: "+isMyTurn+" playerHasMoved: "+playerHasMoved);
+                        if(!isMyTurn) {
+                            onlineMoves = getOnlineMove();
+                            updateBoard(onlineMoves);
+                        }
+                        if(playerHasMoved){
+                            playerHasMoved = false;
+                            isMyTurn=!isMyTurn;
+                            break;
+                        }
+                        if (((turnTimeMillis / refreshTimeMillis) - 1) == i) {
+                            boolean tt=isMyTurn;
+                            isMyTurn=!isMyTurn;
+                            Log.d("GG","intime:"+i+" toggle: "+tt+" ->"+isMyTurn);
+                        }
+                        try {
+                            //TODO: test with a higher refresh rate
+                            Thread.sleep(refreshTimeMillis);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+
                     }
                 }
             }
@@ -182,6 +200,7 @@ public class GameManager {
                 if (GameId == 0) {
                     playerTurn=(playerTurn+1)%2;
                 }
+                playerHasMoved=true;
             }else{
                 throw new LimitMoveException("You have reach the minimum ball limit.");
             }
@@ -212,13 +231,9 @@ public class GameManager {
                     Log.e("ONLINE CONNECTION",e.getMessage());
                 }
             }
-            isMyTurn = true;
-        } else {
-            isMyTurn = false;
-
+            playerHasMoved=true;
         }
         onlineMove = false;
-
 
     }
 
@@ -330,6 +345,7 @@ public class GameManager {
                     if (GameId == 0) {
                         playerTurn=(playerTurn+1)%2;
                     }
+                    playerHasMoved=true;
                     sendMoves(initialY, initialX, finalY, finalX, 1);
                 } catch (Exception e) {
                     Log.i("GAME","Some of you mass pour down the board");
