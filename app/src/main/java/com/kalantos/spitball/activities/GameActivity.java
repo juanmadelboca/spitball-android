@@ -99,6 +99,13 @@ public class GameActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onPause() {
+
+        game.setFinishOnlineGame(true);
+        super.onPause();
+    }
+
+    @Override
     public void onBackPressed() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage("Desea volver al menu?").setTitle("Terminar Juego");
