@@ -105,18 +105,24 @@ public class finishGameActivity extends AppCompatActivity {
         Bundle extras = getIntent().getExtras();
         int green=extras.getInt("green");
         int pink=extras.getInt("pink");
-        if(green>pink){
+        if(pink==0){
             if(winnerBanner!=null){
                 winnerBanner.setText(R.string.winnerGreen);
             }
             Drawable pic=getResources().getDrawable(R.drawable.ballgreen);
             winnerImage.setImageDrawable(pic);
         }
-        else{
+        else if(green==0){
             if(winnerBanner!=null) {
                 winnerBanner.setText(R.string.winnerPink);
             }
             Drawable pic=getResources().getDrawable(R.drawable.ballpink);
+            winnerImage.setImageDrawable(pic);
+        }else{
+            if(winnerBanner!=null) {
+                winnerBanner.setText(R.string.connectionError);
+            }
+            Drawable pic=getResources().getDrawable(R.drawable.connection_error);
             winnerImage.setImageDrawable(pic);
         }
 

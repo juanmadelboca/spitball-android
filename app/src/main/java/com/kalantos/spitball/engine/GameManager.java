@@ -91,24 +91,21 @@ public class GameManager {
                 int turnTimeMillis = 20000;
                 while (!gameOver) {
                     for (int i = 0; i<(turnTimeMillis/refreshTimeMillis); i++) {
-                        Log.d("GG","time: "+i+" isMyTurn: "+isMyTurn+" playerHasMoved: "+playerHasMoved);
                         if(!isMyTurn) {
+                            Log.d("GG","NOT MY TURN - time: "+i+" finishGame: "+finishOnlineGame);
                             onlineMoves = getOnlineMove();
                             updateBoard(onlineMoves);
                         }else{
+                            Log.d("GG","time: "+i+" finishGame: "+finishOnlineGame);
                             if(finishOnlineGame){
-                                Log.d("GG","ATTEMPTING LEFT GAME");
+                                Log.d("GG","FINISH GAME NOOOW");
                                 sendMoves(0,0,0,0,0,-1);
                                 gameOver = true;
-                                if(onlineTurn==0){
-                                    greenBalls = 0;
-                                }else{
-                                    pinkBalls =0;
-                                }
                                 break;
                             }
                         }
                         if(playerHasMoved){
+                            Log.d("GG","Move detected, toggling turn");
                             playerHasMoved = false;
                             isMyTurn=!isMyTurn;
                             break;
@@ -130,6 +127,37 @@ public class GameManager {
             }
         });
         refreshOnlineThread.start();
+    }
+
+    private void updateBoard(int[] onlineMoves) {
+    /*
+    * Update local board using database received information.
+    * */
+        onlineMove = true;
+        if (onlineMoves[5] != onlineTurn && onlineMoves[5] != -1) {
+            if (onlineMoves[4] == 0) {
+                try{
+                    move(onlineMoves[1], onlineMoves[0], onlineMoves[3], onlineMoves[2]);
+                    //ArtificialMove();
+                }catch (InvalidMoveException | LimitMoveException e){
+                    Log.e("ONLINE CONNECTION",e.getMessage());
+                }
+            } else {
+                try{
+                    split(onlineMoves[1], onlineMoves[0], onlineMoves[3], onlineMoves[2]);
+                    //ArtificialMove();
+                }catch (UnderSizedSpitException e){
+                    Log.e("ONLINE CONNECTION",e.getMessage());
+                }
+            }
+            playerHasMoved=true;
+        }else if(onlineMoves[5] == -1){
+            Log.d("GG","DETECTED GAMELEFT");
+            finishOnlineGame = true;
+            playerHasMoved=true;
+        }
+        onlineMove = false;
+
     }
 
     private void inicialize() {
@@ -226,41 +254,6 @@ public class GameManager {
         }else{
             throw new InvalidMoveException("Invalid move");
         }
-    }
-
-    private void updateBoard(int[] onlineMoves) {
-    /*
-    * Update local board using database received information.
-    * */
-        onlineMove = true;
-        if (onlineMoves[5] != onlineTurn && onlineMoves[5] != -1) {
-            if (onlineMoves[4] == 0) {
-                try{
-                    move(onlineMoves[1], onlineMoves[0], onlineMoves[3], onlineMoves[2]);
-                    //ArtificialMove();
-                }catch (InvalidMoveException | LimitMoveException e){
-                    Log.e("ONLINE CONNECTION",e.getMessage());
-                }
-            } else {
-                try{
-                    split(onlineMoves[1], onlineMoves[0], onlineMoves[3], onlineMoves[2]);
-                    //ArtificialMove();
-                }catch (UnderSizedSpitException e){
-                    Log.e("ONLINE CONNECTION",e.getMessage());
-                }
-            }
-            playerHasMoved=true;
-        }else if(onlineMoves[5] == -1){
-            Log.d("GG","DETECTED GAMELEFT");
-            gameOver = true;
-            if(onlineTurn==0){
-                pinkBalls =0;
-            }else{
-                greenBalls = 0;
-            }
-        }
-        onlineMove = false;
-
     }
 
     private int[] getOnlineMove() {
