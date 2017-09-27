@@ -437,7 +437,9 @@ public class GameManager {
                 }
             }
         }
-        if((playerTurn ==1 && pinkBalls<=2) || (playerTurn ==0 && greenBalls<=2)){
+
+        if((playerTurn ==1 && pinkBalls<=2 &&isMyTurn) || (playerTurn ==0 && greenBalls<=2 && isMyTurn)
+            ||(playerTurn ==1 && pinkBalls<=2 && GameId == 0) || (playerTurn ==0 && greenBalls<=2 && GameId == 0)){
             limitedMove=true;
         }else{
             limitedMove=false;
