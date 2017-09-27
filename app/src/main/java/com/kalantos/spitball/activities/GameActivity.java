@@ -37,6 +37,7 @@ public class GameActivity extends AppCompatActivity {
     private GameManager game;
     //without updateGamePrescaler gameManager can handle updates and work bad.
     int updateGamePrescaler = 0;
+    boolean interruptedGame = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,7 +103,19 @@ public class GameActivity extends AppCompatActivity {
     protected void onPause() {
 
         game.setFinishOnlineGame(true);
+        interruptedGame = true;
         super.onPause();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(game.isFinishOnlineGame()){
+            Log.d("GG","Closing game");
+            Intent intent=new Intent(GameActivity.this,MenuActivity.class);
+            startActivity(intent);
+            finishAffinity();
+        }
     }
 
     @Override
@@ -112,10 +125,12 @@ public class GameActivity extends AppCompatActivity {
 
         builder.setPositiveButton("Si", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                /*Intent intent=new Intent(GameActivity.this,MenuActivity.class);
-                startActivity(intent);
-                finishAffinity();*/
+                //TODO: test it
                 game.setFinishOnlineGame(true);
+                interruptedGame = true;
+                Intent intent=new Intent(GameActivity.this,MenuActivity.class);
+                startActivity(intent);
+                finishAffinity();
             }
         });
 
@@ -144,7 +159,9 @@ public class GameActivity extends AppCompatActivity {
                     }
                 }
                 Log.d("GAME","game finished");
-                finishGame();
+                if(!interruptedGame){
+                    finishGame();
+                }
             }
         };
         final Thread refreshThread1 = new Thread(runnable);refreshThread1.start();

@@ -97,6 +97,7 @@ public class GameManager {
                             updateBoard(onlineMoves);
                         }else{
                             if(finishOnlineGame){
+                                Log.d("GG","ATTEMPTING LEFT GAME");
                                 sendMoves(0,0,0,0,0,-1);
                                 gameOver = true;
                                 if(onlineTurn==0){
@@ -250,6 +251,7 @@ public class GameManager {
             }
             playerHasMoved=true;
         }else if(onlineMoves[5] == -1){
+            Log.d("GG","DETECTED GAMELEFT");
             gameOver = true;
             if(onlineTurn==0){
                 pinkBalls =0;
