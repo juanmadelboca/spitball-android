@@ -92,20 +92,16 @@ public class GameManager {
                 while (!gameOver) {
                     for (int i = 0; i<(turnTimeMillis/refreshTimeMillis); i++) {
                         if(!isMyTurn) {
-                            Log.d("GG","NOT MY TURN - time: "+i+" finishGame: "+finishOnlineGame);
                             onlineMoves = getOnlineMove();
                             updateBoard(onlineMoves);
                         }else{
-                            Log.d("GG","time: "+i+" finishGame: "+finishOnlineGame);
                             if(finishOnlineGame){
-                                Log.d("GG","FINISH GAME NOOOW");
                                 sendMoves(0,0,0,0,0,-1);
                                 gameOver = true;
                                 break;
                             }
                         }
                         if(playerHasMoved){
-                            Log.d("GG","Move detected, toggling turn");
                             playerHasMoved = false;
                             isMyTurn=!isMyTurn;
                             break;
@@ -113,7 +109,7 @@ public class GameManager {
                         if (((turnTimeMillis / refreshTimeMillis) - 1) == i) {
                             boolean tt=isMyTurn;
                             isMyTurn=!isMyTurn;
-                            Log.d("GG","intime:"+i+" toggle: "+tt+" ->"+isMyTurn);
+                            sendMoves(0,0,0,0,0,onlineTurn);
                         }
                         try {
                             //TODO: test with a higher refresh rate
@@ -138,6 +134,7 @@ public class GameManager {
             if (onlineMoves[4] == 0) {
                 try{
                     move(onlineMoves[1], onlineMoves[0], onlineMoves[3], onlineMoves[2]);
+                    playerHasMoved=true;
                     //ArtificialMove();
                 }catch (InvalidMoveException | LimitMoveException e){
                     Log.e("ONLINE CONNECTION",e.getMessage());
@@ -145,14 +142,13 @@ public class GameManager {
             } else {
                 try{
                     split(onlineMoves[1], onlineMoves[0], onlineMoves[3], onlineMoves[2]);
+                    playerHasMoved=true;
                     //ArtificialMove();
                 }catch (UnderSizedSpitException e){
                     Log.e("ONLINE CONNECTION",e.getMessage());
                 }
             }
-            playerHasMoved=true;
         }else if(onlineMoves[5] == -1){
-            Log.d("GG","DETECTED GAMELEFT");
             finishOnlineGame = true;
             playerHasMoved=true;
         }
