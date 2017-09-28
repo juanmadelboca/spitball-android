@@ -20,6 +20,11 @@ public class GameManager {
     private final int width = 10;
     private final int height = 6;
     private boolean gameOver = false;
+
+    public void setClicks(int clicks) {
+        this.clicks = clicks;
+    }
+
     public int clicks = 0;
     private int playerTurn = 0;
     private int GameId, onlineTurn;

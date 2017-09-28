@@ -174,6 +174,7 @@ public class GameActivity extends AppCompatActivity {
     * */
         if(game.anyMove()){
             unpressTiles();
+            game.setClicks(0);
         }
     }
 
