@@ -20,11 +20,6 @@ public class GameManager {
     private final int width = 10;
     private final int height = 6;
     private boolean gameOver = false;
-
-    public void setClicks(int clicks) {
-        this.clicks = clicks;
-    }
-
     public int clicks = 0;
     private int playerTurn = 0;
     private int GameId, onlineTurn;
@@ -32,11 +27,6 @@ public class GameManager {
     private boolean ArtificialInteligence, onlineMove, isMyTurn, playerHasMoved;
     private boolean anyMove, limitedMove;
     private int greenBalls,pinkBalls;
-
-    public boolean isFinishOnlineGame() {
-        return finishOnlineGame;
-    }
-
     private boolean finishOnlineGame = false;
 
     public GameManager(int GameId, int difficulty, int onlineTurn, boolean ArtificialInteligence) {
@@ -51,6 +41,30 @@ public class GameManager {
             startOnlineGame();
             startOnlineThread();
         }
+    }
+
+    private void loadTiles(){
+    /*
+    * Create board made up with Tiles.
+    * */
+        tiles = new Tile[height][width];
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
+                tiles[i][j] = new Tile();
+            }
+        }
+    }
+
+    private void inicialize() {
+    /*
+    * Initializes ball positions.
+    * */
+        tiles[1][3].setBall(20, BallType.BALLGREEN);
+        tiles[2][2].setBall(20, BallType.BALLGREEN);
+        tiles[3][3].setBall(20, BallType.BALLGREEN);
+        tiles[1][5].setBall(20, BallType.BALLPINK);
+        tiles[2][6].setBall(20, BallType.BALLPINK);
+        tiles[3][5].setBall(20, BallType.BALLPINK);
     }
 
     private void startOnlineGame(){
@@ -72,18 +86,6 @@ public class GameManager {
         }
     }
 
-    private void loadTiles(){
-    /*
-    * Create board made up with Tiles.
-    * */
-        tiles = new Tile[height][width];
-        for (int i = 0; i < height; i++) {
-            for (int j = 0; j < width; j++) {
-                tiles[i][j] = new Tile();
-            }
-        }
-    }
-
     private void startOnlineThread(){
     /*
     * Start a thread that fetch moves from database periodically.
@@ -92,7 +94,7 @@ public class GameManager {
             @Override
             public void run() {
                 int[] onlineMoves;
-                int refreshTimeMillis = 2000;
+                int refreshTimeMillis = 1000;
                 int turnTimeMillis = 20000;
                 while (!gameOver) {
                     for (int i = 0; i<(turnTimeMillis/refreshTimeMillis); i++) {
@@ -117,7 +119,6 @@ public class GameManager {
                             sendMoves(0,0,0,0,0,onlineTurn);
                         }
                         try {
-                            //TODO: test with a higher refresh rate
                             Thread.sleep(refreshTimeMillis);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
@@ -161,16 +162,62 @@ public class GameManager {
 
     }
 
-    private void inicialize() {
+    private int[] getOnlineMove() {
     /*
-    * Initializes ball positions.
+    * Get last move in json format from online database and parse it to array form.
     * */
-        tiles[1][3].setBall(20, BallType.BALLGREEN);
-        tiles[2][2].setBall(20, BallType.BALLGREEN);
-        tiles[3][3].setBall(20, BallType.BALLGREEN);
-        tiles[1][5].setBall(20, BallType.BALLPINK);
-        tiles[2][6].setBall(20, BallType.BALLPINK);
-        tiles[3][5].setBall(20, BallType.BALLPINK);
+        try {
+            String jsonData = createJson( "METHODTYPE","GETMOVE","GAMEID",Integer.toString(GameId));
+            String st = new HTTPSocket().execute("http://spitball.000webhostapp.com/gameMove.php","POST",jsonData).get();
+            int[] moves = new int[6];
+            JSONObject json;
+            json = new JSONObject(st);
+            moves[0] = json.getInt("XINIT");
+            moves[1] = json.getInt("YINIT");
+            moves[2] = json.getInt("XLAST");
+            moves[3] = json.getInt("YLAST");
+            moves[4] = json.getInt("SPLIT");
+            moves[5] = json.getInt("TURN");
+
+            return moves;
+
+        } catch (InterruptedException|ExecutionException|NullPointerException|JSONException e) {
+            Log.e("ONLINE CONNECTION", e.getMessage());
+        }
+
+        return null;
+    }
+
+    private void sendMoves(int initialY, int initialX, int finalY, int finalX, int splitIdentifier, int onlineTurn){
+    /*
+    * Send move/split to server.
+    * */
+        if (!onlineMove && GameId != 0) {
+            try {
+                String jsonData = createJson( "METHODTYPE","MOVE","XINIT", Integer.toString(initialX),
+                        "YINIT", Integer.toString(initialY),"XLAST", Integer.toString(finalX), "YLAST",
+                        Integer.toString(finalY),"SPLIT", Integer.toString(splitIdentifier),"GAMEID",
+                        Integer.toString(GameId),"TURN", Integer.toString(onlineTurn));
+                new HTTPSocket().execute("http://spitball.000webhostapp.com/gameMove.php","POST",jsonData).get();
+            } catch (InterruptedException|ExecutionException e) {
+                Log.e("ONLINE CONNECTION", e.getMessage());
+            }
+        }
+    }
+
+    private String createJson(String... strings){
+    /*
+    * Create a Json with all data received and returns the json in string format.
+    * */
+        JSONObject json= new JSONObject();
+        for(int i=0; i<strings.length; i=i+2){
+            try{
+                json.put(strings[i],strings[i+1]);
+            }catch(JSONException e){
+                Log.e("ONLINE CONNECTION", e.getMessage());
+            }
+        }
+        return json.toString();
     }
 
     public boolean swipeHandler(int actualX, int actualY) {
@@ -206,8 +253,9 @@ public class GameManager {
                 try{
                     clicks = 0;
                     move(initialX, initialY, actualX, actualY);
+                    updateStatus();
                     if (ArtificialInteligence) {
-                    ArtificialMove(false);
+                        ArtificialMove(false);
                     }
                 }catch (InvalidMoveException | LimitMoveException e){
                     Log.e("GAME",e.getMessage());
@@ -219,6 +267,7 @@ public class GameManager {
                 try{
                     clicks = 0;
                     split(initialX, initialY, actualX, actualY);
+                    updateStatus();
                     if (ArtificialInteligence) {
                         ArtificialMove(false);
                     }
@@ -233,6 +282,43 @@ public class GameManager {
             }
         }
         return false;
+    }
+
+    private void ArtificialMove(boolean recursive) {
+    /*
+    * Manage AI moves/split depending in the game difficulty.
+    * */
+        if(!gameOver) {
+            int[] AIMoves;
+            if (recursive) {
+                AIMoves = ArtificialInteligenceAlgorithm.RandomMove(tiles);
+            } else {
+                switch (difficulty) {
+                    case 0:
+                        AIMoves = ArtificialInteligenceAlgorithm.easyMove(tiles);
+                        break;
+                    case 1:
+                        AIMoves = ArtificialInteligenceAlgorithm.hardMove(tiles, false);
+                        break;
+                    case 2:
+                        AIMoves = ArtificialInteligenceAlgorithm.hardMove(tiles, true);
+                        break;
+                    default:
+                        AIMoves = ArtificialInteligenceAlgorithm.easyMove(tiles);
+                        break;
+                }
+            }
+            try {
+                if (AIMoves[4] != -1) {
+                    move(AIMoves[0], AIMoves[1], AIMoves[2], AIMoves[3]);
+                } else {
+                    split(AIMoves[0], AIMoves[1], AIMoves[2], AIMoves[3]);
+                }
+            } catch (InvalidMoveException | LimitMoveException | UnderSizedSpitException e) {
+                Log.e("AI", e.getMessage());
+                ArtificialMove(true);
+            }
+        }
     }
 
     private void move(int initialY, int initialX, int finalY, int finalX) throws InvalidMoveException, LimitMoveException{
@@ -254,88 +340,6 @@ public class GameManager {
 
         }else{
             throw new InvalidMoveException("Invalid move");
-        }
-    }
-
-    private int[] getOnlineMove() {
-    /*
-    * Get last move in json format from online database and parse it to array form.
-    * */
-        try {
-            String jsonData = createJson( "METHODTYPE","GETMOVE","GAMEID",Integer.toString(GameId));
-            String st = new HTTPSocket().execute("http://spitball.000webhostapp.com/gameMove.php","POST",jsonData).get();
-            int[] moves = new int[6];
-            JSONObject json;
-                json = new JSONObject(st);
-                moves[0] = json.getInt("XINIT");
-                moves[1] = json.getInt("YINIT");
-                moves[2] = json.getInt("XLAST");
-                moves[3] = json.getInt("YLAST");
-                moves[4] = json.getInt("SPLIT");
-                moves[5] = json.getInt("TURN");
-
-            return moves;
-
-        } catch (InterruptedException|ExecutionException|NullPointerException|JSONException e) {
-            Log.e("ONLINE CONNECTION", e.getMessage());
-        }
-
-        return null;
-    }
-
-    private void ArtificialMove(boolean recursive) {
-    /*
-    * Manage AI moves/split depending in the game difficulty.
-    * */
-        int[] AIMoves;
-        if(recursive){
-            AIMoves = ArtificialInteligenceAlgorithm.RandomMove(tiles);
-        }else {
-            switch (difficulty) {
-                case 0:
-                    AIMoves = ArtificialInteligenceAlgorithm.easyMove(tiles);
-                    break;
-                case 1:
-                    AIMoves = ArtificialInteligenceAlgorithm.hardMove(tiles, false);
-                    break;
-                case 2:
-                    AIMoves = ArtificialInteligenceAlgorithm.hardMove(tiles, true);
-                    break;
-                default:
-                    AIMoves = ArtificialInteligenceAlgorithm.easyMove(tiles);
-                    break;
-            }
-        }
-        try {
-            if (AIMoves[4] != -1) {
-                move(AIMoves[0], AIMoves[1], AIMoves[2], AIMoves[3]);
-            } else {
-                split(AIMoves[0], AIMoves[1], AIMoves[2], AIMoves[3]);
-            }
-        } catch (InvalidMoveException | LimitMoveException | UnderSizedSpitException e) {
-            Log.e("AI", e.getMessage());
-            ArtificialMove(true);
-        }catch (Exception e){
-            Log.e("AI", "end game");
-            //catch exception: when game ends IA try to move causing an error.
-            gameOver = true;
-        }
-
-    }
-    private void sendMoves(int initialY, int initialX, int finalY, int finalX, int splitIdentifier, int onlineTurn){
-    /*
-    * Send move/split to server.
-    * */
-        if (!onlineMove && GameId != 0) {
-            try {
-                String jsonData = createJson( "METHODTYPE","MOVE","XINIT", Integer.toString(initialX),
-                        "YINIT", Integer.toString(initialY),"XLAST", Integer.toString(finalX), "YLAST",
-                        Integer.toString(finalY),"SPLIT", Integer.toString(splitIdentifier),"GAMEID",
-                        Integer.toString(GameId),"TURN", Integer.toString(onlineTurn));
-                new HTTPSocket().execute("http://spitball.000webhostapp.com/gameMove.php","POST",jsonData).get();
-            } catch (InterruptedException|ExecutionException e) {
-                Log.e("ONLINE CONNECTION", e.getMessage());
-            }
         }
     }
 
@@ -377,51 +381,6 @@ public class GameManager {
         }
     }
 
-    private String createJson(String... strings){
-    /*
-    * Create a Json with all data received and returns the json in string format.
-    * */
-        JSONObject json= new JSONObject();
-        for(int i=0; i<strings.length; i=i+2){
-            try{
-                json.put(strings[i],strings[i+1]);
-            }catch(JSONException e){
-                Log.e("ONLINE CONNECTION", e.getMessage());
-            }
-        }
-        return json.toString();
-    }
-
-    public int getGreenBalls() {
-        return greenBalls;
-    }
-
-    public int getPinkBalls() {
-        return pinkBalls;
-    }
-
-    public Tile[][] getTiles(){
-
-        return tiles;
-    }
-
-    public boolean gameStatus(){
-
-        return !gameOver;
-    }
-
-    public void setFinishOnlineGame(boolean finishOnlineGame) {
-        this.finishOnlineGame = finishOnlineGame;
-    }
-
-    public boolean isOnlineGame(){
-        if(GameId !=0){
-            return true;
-        }else{
-            return false;
-        }
-    }
-
     public void updateStatus(){
     /*
     * Create board made up with Tiles.
@@ -458,6 +417,44 @@ public class GameManager {
         boolean temporal=anyMove;
         anyMove=false;
         return  temporal;
+    }
+
+    public void setClicks(int clicks) {
+        this.clicks = clicks;
+    }
+
+    public boolean isFinishOnlineGame() {
+        return finishOnlineGame;
+    }
+
+    public int getGreenBalls() {
+        return greenBalls;
+    }
+
+    public int getPinkBalls() {
+        return pinkBalls;
+    }
+
+    public Tile[][] getTiles(){
+
+        return tiles;
+    }
+
+    public boolean gameStatus(){
+
+        return !gameOver;
+    }
+
+    public void setFinishOnlineGame(boolean finishOnlineGame) {
+        this.finishOnlineGame = finishOnlineGame;
+    }
+
+    public boolean isOnlineGame(){
+        if(GameId !=0){
+            return true;
+        }else{
+            return false;
+        }
     }
 
 }

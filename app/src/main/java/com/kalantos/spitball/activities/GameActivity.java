@@ -111,7 +111,6 @@ public class GameActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         if(game.isFinishOnlineGame()){
-            Log.d("GG","Closing game");
             Intent intent=new Intent(GameActivity.this,MenuActivity.class);
             startActivity(intent);
             finishAffinity();
@@ -125,7 +124,6 @@ public class GameActivity extends AppCompatActivity {
 
         builder.setPositiveButton("Si", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                //TODO: test it
                 game.setFinishOnlineGame(true);
                 interruptedGame = true;
                 Intent intent=new Intent(GameActivity.this,MenuActivity.class);
@@ -155,10 +153,9 @@ public class GameActivity extends AppCompatActivity {
                     try {
                         Thread.sleep(200);
                     } catch (InterruptedException e) {
-                        Log.e("BOUNCING ANIMATION", e.getMessage());
+                        Log.e("BOUNCING ANIMATION", "startAnimationThread \n"+e.getMessage());
                     }
                 }
-                Log.d("GAME","game finished");
                 if(!interruptedGame){
                     finishGame();
                 }
@@ -170,7 +167,8 @@ public class GameActivity extends AppCompatActivity {
 
     private void resetFrame(){
     /*
-    * Reset status of press tiles and ball counters
+    * Reset status of press tiles and set clicks to 0, to ensure online
+    * boards are graphically synchronized.
     * */
         if(game.anyMove()){
             unpressTiles();
@@ -180,8 +178,7 @@ public class GameActivity extends AppCompatActivity {
 
     public void paint() {
     /*
-    * Re paint all board images, rescaling and animating with the information provide by game class, also counts
-    * each team balls.
+    * Paint all board images, rescaling and animating with the information provide by game class
     * CONSTRAINTS: images cant exceed 5k, or app must use thread logic
     * */
         int ballSize;
@@ -226,7 +223,7 @@ public class GameActivity extends AppCompatActivity {
             }
         }
         time_end = System.currentTimeMillis();
-        //Log.d("PAINT","the task has taken " + (time_end - time_start) + " milliseconds");
+        Log.d("PAINT","the task has taken " + (time_end - time_start) + " milliseconds");
     }
 
     private void unpressTiles(){
@@ -302,8 +299,7 @@ public class GameActivity extends AppCompatActivity {
                                                 game.swipeHandler(temporalEnd[0], temporalEnd[1]);
                                             }
                                         }catch (InvalidMoveException e){
-                                            //TODO: e.message generate crash
-                                            Log.e("GAME-ACTIVITY","e.getMessage()");
+                                            Log.e("GAME-ACTIVITY","ACTION_UP,if positive condition, exception on detectMove");
                                         }
                                     } else {
                                         //if drag time is not overcome, is processed as a click and keep waiting for another click.
@@ -315,8 +311,7 @@ public class GameActivity extends AppCompatActivity {
                                                 }
                                             }
                                         }catch (InvalidMoveException e){
-                                            //TODO: e.message generate crash
-                                            Log.e("GAME-ACTIVITY","e.getMessage()");
+                                            Log.e("GAME-ACTIVITY","ACTION_UP,else, exception on detectMove");
                                         }
                                     }
 
@@ -343,16 +338,21 @@ public class GameActivity extends AppCompatActivity {
     * Receive 2 float coordinates identifying a click or drag in the screen, and returns
     * a Tile position from the board.
     * */
-        for (int i = 0; i < height; i++) {
-            for (int j = 0; j < width; j++) {
-                if ((tiles[i][j].getBoundsY() - (heightScreen / 6)) < (int) y && (int) y < tiles[i][j].getBoundsY()) {
+        try{
+            for (int i = 0; i < height; i++) {
+                for (int j = 0; j < width; j++) {
+                    if ((tiles[i][j].getBoundsY() - (heightScreen / 6)) < (int) y && (int) y < tiles[i][j].getBoundsY()) {
 
-                    if ((tiles[i][j].getBoundsX() - (widthScreen / 10)) < (int) x && (int) x < tiles[i][j].getBoundsX()) {
-                        return new int[]{i, j};
+                        if ((tiles[i][j].getBoundsX() - (widthScreen / 10)) < (int) x && (int) x < tiles[i][j].getBoundsX()) {
+                            return new int[]{i, j};
 
+                        }
                     }
                 }
             }
+        }catch (Exception e){
+            Log.e("GAME-ACTIVITY","Invalid coordinates for move");
+            throw new InvalidMoveException("Invalid coordinates for move");
         }
         Log.e("GAME-ACTIVITY","Invalid coordinates for move");
         throw new InvalidMoveException("Invalid coordinates for move");
