@@ -2,6 +2,7 @@
     <string name="app_name">SpitBall</string>
     <string name="winnerPink">Gano Rosa</string>
     <string name="winnerGreen">Gano Verde</string>
+    <string name="connectionError">Error de Conexión</string>
     <string name="players2">2 Players</string>
     <string name="forDummies">for dummies</string>
     <string name="player1">1 Player</string>
