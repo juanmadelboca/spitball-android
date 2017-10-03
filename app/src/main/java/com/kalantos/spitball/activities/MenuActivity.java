@@ -119,12 +119,21 @@ public class MenuActivity extends AppCompatActivity {
 
     public void intentHighScores(View view){
     /*
-    * Launches menu activity.
+    * Launches highScores activity.
     * */
         Toast.makeText(this,"En desarrollo",Toast.LENGTH_SHORT).show();
         /*Intent intent= new Intent(MenuActivity.this,HighScoresActivity.class);
         startActivity(intent);
         finish();*/
+    }
+
+    public void howToPlay(View view){
+    /*
+    * Launches how to play activity.
+    * */
+        Intent intent= new Intent(MenuActivity.this,howToPlayActivity.class);
+        startActivity(intent);
+        finish();
     }
 
     public void hardDifficult(View view){
