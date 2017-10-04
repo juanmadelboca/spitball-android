@@ -1,10 +1,9 @@
 package com.kalantos.spitball.engine;
 
 /**
- * Created by kalantos on 30/08/16.
+ * Thread used to count time, used to mantain action bar hide.
  */
 public class Timer implements Runnable {
-    //thread que cuenta el tiempo para mantener las barras ocultas cuando se presionan
     @Override
     public void run() {
         try {

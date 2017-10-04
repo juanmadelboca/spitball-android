@@ -2,6 +2,7 @@
     <string name="app_name">SpitBall</string>
     <string name="winnerPink">Gano Rosa</string>
     <string name="winnerGreen">Gano Verde</string>
+    <string name="connectionError">Error de Conexión</string>
     <string name="players2">2 Players</string>
     <string name="forDummies">for dummies</string>
     <string name="player1">1 Player</string>
@@ -18,9 +19,7 @@
         <item>1</item>
     </string-array>
 
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="title_activity_high_scores">HighScores</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
