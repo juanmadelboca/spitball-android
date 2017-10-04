@@ -25,6 +25,7 @@ import com.kalantos.spitball.engine.Timer;
 import com.kalantos.spitball.utils.TileView;
 import com.kalantos.spitball.utils.exceptions.InvalidMoveException;
 
+import java.sql.Timestamp;
 import java.util.Calendar;
 
 public class GameActivity extends AppCompatActivity {
@@ -87,6 +88,7 @@ public class GameActivity extends AppCompatActivity {
         int onlineTurn = intent.getIntExtra("TURN", 0);
         int GameId = intent.getIntExtra("GAMEID", 0);
         boolean ArtificialInteligence = intent.getBooleanExtra("AI", true);
+
         //create logic board.
         game = new GameManager(GameId, difficulty, onlineTurn,ArtificialInteligence);
         createBoard(swipe);
@@ -115,6 +117,7 @@ public class GameActivity extends AppCompatActivity {
             startActivity(intent);
             finishAffinity();
         }
+
     }
 
     @Override
@@ -149,6 +152,9 @@ public class GameActivity extends AppCompatActivity {
             @Override
             public void run() {
                 while(game.gameStatus()){
+                    /*Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+                    if(debug)
+                        System.out.println("Thread1: "+timestamp);*/
                     refresh();
                     try {
                         Thread.sleep(200);
@@ -162,6 +168,7 @@ public class GameActivity extends AppCompatActivity {
             }
         };
         final Thread refreshThread1 = new Thread(runnable);refreshThread1.start();
+
         paint();
     }
 
@@ -253,6 +260,7 @@ public class GameActivity extends AppCompatActivity {
     /*
     * Make a custom UI board with the size of the screen.
     * */
+
         tiles = new TileView[height][width];
         LinearLayout layout = (LinearLayout) findViewById(R.id.layaout); //Can also be done in xml by android:orientation="vertical"
 

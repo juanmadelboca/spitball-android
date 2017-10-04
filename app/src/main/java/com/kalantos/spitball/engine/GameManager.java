@@ -202,6 +202,7 @@ public class GameManager {
             } catch (InterruptedException|ExecutionException e) {
                 Log.e("ONLINE CONNECTION", e.getMessage());
             }
+
         }
     }
 
@@ -292,6 +293,7 @@ public class GameManager {
             int[] AIMoves;
             if (recursive) {
                 AIMoves = ArtificialInteligenceAlgorithm.RandomMove(tiles);
+
             } else {
                 switch (difficulty) {
                     case 0:
