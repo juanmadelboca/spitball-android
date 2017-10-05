@@ -1,13 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <CheckBoxPreference
-        android:key="clickMode"
-        android:title="Modo Click"
-        android:summary="Deshabilita el modo swipe"/>
+        android:key="swipeMode"
+        android:title="Modo Swipe"
+        android:summary="Habilita el modo swipe"
+        android:defaultValue="true"/>
+
     <CheckBoxPreference
-    android:key="bouncing"
-    android:title="Animacion al clickear"
-    android:summary="Habilita la animacion de rebote de las pelotas"/>
+        android:key="bouncing"
+        android:title="Animacion al clickear"
+        android:summary="Habilita la animacion de rebote de las pelotas"
+        android:defaultValue="true"/>
+
     <ListPreference
         android:key="ballColor"
         android:title="Color de bola"
@@ -18,6 +22,7 @@
     <CheckBoxPreference
         android:key="howTo"
         android:title="How to Play"
-        android:summary="Activa Guia de entrenamiento" />
+        android:summary="Activa Guia de entrenamiento"
+        android:defaultValue="true" />
 
 </PreferenceScreen>

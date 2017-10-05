@@ -12,7 +12,7 @@
         android:text="@string/players2"
         android:layout_width="100dp"
         android:layout_height="50dp"
-        android:id="@+id/button10"
+        android:id="@+id/twoPlayerButton"
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true"
         android:layout_marginTop="112dp"
@@ -28,19 +28,19 @@
         android:text="@string/player1"
         android:layout_width="100dp"
         android:layout_height="50dp"
-        android:id="@+id/button11"
+        android:id="@+id/onePlayerButton"
         android:layout_marginTop="32dp"
         app:layout_constraintTop_toBottomOf="@+id/button10"
         app:layout_constraintLeft_toLeftOf="@+id/button10"
         android:onClick="chooseDifficultyFragment"/>
 
     <Button
-        android:text="@string/highScores"
+        android:text="@string/howToPlayInfo"
         android:layout_width="100dp"
         android:layout_height="50dp"
-        android:id="@+id/button12"
+        android:id="@+id/howToPlayButton"
         android:layout_marginTop="32dp"
         app:layout_constraintTop_toBottomOf="@+id/button11"
         app:layout_constraintLeft_toLeftOf="@+id/button11"
-        android:onClick="intentHighScores"/>
+        android:onClick="howToPlay"/>
 </android.support.constraint.ConstraintLayout>

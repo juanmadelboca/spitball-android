@@ -4,19 +4,21 @@ import android.app.Activity;
 import android.content.Context;
 import android.widget.ImageView;
 
-
+/*
+* Used to create UI board that complements the board made with Tiles
+* */
 public class TileView extends Activity {
-    private ImageView imageView;
+
+    private ImageView ballImage;
     private final int boundsX, boundsY;
     private boolean isPressed;
 
     public TileView(Context context, int boundsY, int boundsX) {
-        imageView = new ImageView(context);
+        ballImage = new ImageView(context);
         this.boundsX = boundsX;
         this.boundsY = boundsY;
         this.isPressed = false;
     }
-
 
     public int getBoundsX() {
         return boundsX;
@@ -25,7 +27,7 @@ public class TileView extends Activity {
     public int getBoundsY() {
         return boundsY;
     }
-    //BOUNCING
+
     public boolean isPressed() {
         return isPressed;
     }
@@ -38,8 +40,8 @@ public class TileView extends Activity {
         isPressed=false;
     }
 
-    public ImageView getImageView(){
-        return imageView;
+    public ImageView getBallImage(){
+        return ballImage;
     }
 
 }
