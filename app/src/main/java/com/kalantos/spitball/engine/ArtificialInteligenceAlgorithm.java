@@ -1,27 +1,21 @@
 package com.kalantos.spitball.engine;
 
-import android.util.Log;
-
 import java.util.ArrayList;
 import java.util.Random;
-
 /*
-* This class manages all AI movements, use static methods to provide movements when needed.
-* TODO: LEGIBLE VARIABLES.
+* La Inteligencia artificial esta hecha para jugar siempre con el jugador de la derecha (rosa)
 * */
 public class ArtificialInteligenceAlgorithm {
-
     public static final int HEIGHT = 6;
     public static final int WIDTH = 10;
 
     public static int[] RandomMove(Tile[][] tiles) {
-    /*
-    * Make a random move, use a vector with all balls in the board, and then choose
-    * a direction and make a totally random move.
-    * */
-        int[] coordinates;
+        //crea movimientos aleatorios a partir de las bolas obtenidas por medio de getBall
+        int[] coordinates;        
+        //obtiene una de las Bolas de AI
         int [] AIvector= ArtificialInteligenceAlgorithm.getBall(tiles);
         Random random = new Random();
+        //genera una
         int seed = random.nextInt(2);
         int x, y;
         if (seed == 1) {
@@ -49,11 +43,8 @@ public class ArtificialInteligenceAlgorithm {
     }
 
     public static int[] easyMove(Tile[][] tiles) {
-    /*
-    * Start a battle against any ball from oposite team, even if the enemy ball has a bigger
-    * size.
-    * If no enemy ball is in range make an automove.
-    * */
+        //come a cualquier bola de otro color dentro del rango (solo moviendose) sin importar si tiene menor o mayor
+        //tamaño
         ArrayList<int[]> posibleVectors = ArtificialInteligenceAlgorithm.getAIBalls(tiles);
         int coordinates[] = {-1, -1, -1, -1};
         for (int k = 0; k < posibleVectors.size(); k++) {
@@ -78,21 +69,15 @@ public class ArtificialInteligenceAlgorithm {
             return coordinates;
         }
     }
-
     public static int[] getBall(Tile[][] tiles){
-    /*
-    * Get one random ball from all AI balls in board.
-    * */
+    //obtiene una bola de un conjunto de bolas de forma aleatoria
         ArrayList<int[]> posibleVectors = ArtificialInteligenceAlgorithm.getAIBalls(tiles);
         Random random = new Random();
         int index = random.nextInt(posibleVectors.size());
         return posibleVectors.get(index);
     }
-
     public static int[] getBiggestBall(Tile[][] tiles){
-    /*
-    * Get the biggest ball from AI balls in board.
-    * */
+    //obtiene la bola de mayor tamaño dentro de un conjunto de bolas
         ArrayList<int[]> posibleVectors = ArtificialInteligenceAlgorithm.getAIBalls(tiles);
         int[]biggestBall= posibleVectors.get(0);
         for(int i=0;i<posibleVectors.size()-1;i++) {
@@ -106,9 +91,7 @@ public class ArtificialInteligenceAlgorithm {
     }
 
     public static ArrayList<int[]> getAIBalls(Tile[][] tiles) {
-    /*
-    * Get the positions of AI balls in board.
-    * */
+        //obtiene las coordenadas de las balls propias de IA
         ArrayList<int[]> posibleVectors = new ArrayList<>();
 
 
@@ -124,9 +107,7 @@ public class ArtificialInteligenceAlgorithm {
         return posibleVectors;
     }
     public static ArrayList<int[]> getPlayerBalls(Tile[][] tiles) {
-    /*
-    * Get the positions of human player balls in board.
-    * */
+        //obtiene las coordenadas de las bolas propias del jugador humano
         ArrayList<int[]> posibleVectors = new ArrayList<>();
 
 
@@ -143,10 +124,9 @@ public class ArtificialInteligenceAlgorithm {
     }
 
     public static int[] hardMove(Tile[][] tiles,boolean chaser) {
-    /*
-    * Start a battle against an smaller enemy ball, if cant find one or all near enemy balls
-    * are bigger, make a random move.
-    * */
+        //come a las bolas en rango que tengan menor tamaño, si no hay ninguna o esta tiene mayor tamaño
+        //hace un movimiento aleatorio
+
         ArrayList<int[]> posibleVectors = ArtificialInteligenceAlgorithm.getAIBalls(tiles);
         for (int k = 0; k < posibleVectors.size(); k++) {
             int[] temp = posibleVectors.get(k);
@@ -185,12 +165,13 @@ public class ArtificialInteligenceAlgorithm {
     }
 
     public static int[] chaserMove(Tile[][] tiles) {
-    /*
-    * Move towards the smallest enemy ball.
-    * */
+
+        //hace un movimiento hacia la bola mas cercana de menor tamaño
+
         int[] ball = ArtificialInteligenceAlgorithm.getBiggestBall(tiles);
 
         ArrayList<int[]> playerBalls = ArtificialInteligenceAlgorithm.getPlayerBalls(tiles);
+        //elige la bola mas cercana siempre y cuando sea de menor tamaño que la de AI
 
         int distance = 1000;
         int index=0;

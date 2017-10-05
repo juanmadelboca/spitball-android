@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <CheckBoxPreference
-        android:key="swipeMode"
-        android:title="Modo Swipe"
-        android:summary="Habilita el modo swipe"
-        android:defaultValue="true"/>
-
+        android:key="clickMode"
+        android:title="Modo Click"
+        android:summary="Deshabilita el modo swipe"
+        android:defaultValue="false"/>
 
     <CheckBoxPreference
         android:key="bouncing"

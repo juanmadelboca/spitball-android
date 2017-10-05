@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.InterstitialAd;
@@ -15,23 +16,19 @@ import com.kalantos.spitball.R;
 import com.kalantos.spitball.engine.Timer;
 
 public class finishGameActivity extends AppCompatActivity {
-
-    ImageView winnerImage;
-    TextView winnerBanner;
+    ImageView imageView;
+    TextView editText;
     InterstitialAd mInterstitialAd;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_finish_game);
-        winnerBanner=(TextView) findViewById(R.id.textView);
+        editText=(TextView) findViewById(R.id.textView);
         //ADS////////////////
         mInterstitialAd = new InterstitialAd(this);
-        /*
-        * test-id:ca-app-pub-3940256099942544/1033173712
-        * admob-id:ca-app-pub-4117912268761040/4576104417
-        * */
-        mInterstitialAd.setAdUnitId("ca-app-pub-4117912268761040/4576104417");
+        //"ca-app-pub-4117912268761040/4576104417" mi addres
+        mInterstitialAd.setAdUnitId("ca-app-pub-3940256099942544/1033173712");
 
         mInterstitialAd.setAdListener(new AdListener() {
             @Override
@@ -42,9 +39,11 @@ public class finishGameActivity extends AppCompatActivity {
         });
 
         requestNewInterstitial();
-        chooseWinner();
+        ////////////////
+       chooseWinner();
 
-	    final View decorView = getWindow().getDecorView();
+
+	final View decorView = getWindow().getDecorView();
         final int flags = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                         | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                         | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
@@ -65,7 +64,7 @@ public class finishGameActivity extends AppCompatActivity {
                             try {
                                 thread.join();
                             } catch (InterruptedException e) {
-                                Log.e("AUTO-HIDE BAR", e.getMessage());
+                                e.printStackTrace();
                             }
 
                             decorView.setSystemUiVisibility(flags);
@@ -78,13 +77,13 @@ public class finishGameActivity extends AppCompatActivity {
                 try {
                     Thread.sleep(4000);
                 } catch (InterruptedException e) {
-                    Log.e("ADS", e.getMessage());
+                    e.printStackTrace();
                 }
                 showAd();
                 try {
                     Thread.sleep(4000);
                 } catch (InterruptedException e) {
-                    Log.e("ADS", e.getMessage());
+                    e.printStackTrace();
                 }
             }
         });
@@ -97,44 +96,38 @@ public class finishGameActivity extends AppCompatActivity {
 
 
     private void chooseWinner(){
-    /*
-    * Choose a winner and show the stats
-    * */
-        winnerImage=(ImageView)findViewById(R.id.imageView);
-        winnerBanner=(TextView) findViewById(R.id.textView);
+        //selecciona un ganador y luego muestra un anuncio publicitario y llama a restart()
+
+
+        imageView=(ImageView)findViewById(R.id.imageView);
+        editText=(TextView) findViewById(R.id.textView);
         Bundle extras = getIntent().getExtras();
         int green=extras.getInt("green");
         int pink=extras.getInt("pink");
-        if(pink==0){
-            if(winnerBanner!=null){
-                winnerBanner.setText(R.string.winnerGreen);
+        if(green>pink){
+            if(editText!=null){
+            editText.setText(R.string.winnerGreen);
             }
             Drawable pic=getResources().getDrawable(R.drawable.ballgreen);
-            winnerImage.setImageDrawable(pic);
+
+                imageView.setImageDrawable(pic);
         }
-        else if(green==0){
-            if(winnerBanner!=null) {
-                winnerBanner.setText(R.string.winnerPink);
+        else{
+            if(editText!=null) {
+                editText.setText(R.string.winnerPink);
             }
             Drawable pic=getResources().getDrawable(R.drawable.ballpink);
-            winnerImage.setImageDrawable(pic);
-        }else{
-            if(winnerBanner!=null) {
-                winnerBanner.setText(R.string.connectionError);
-            }
-            Drawable pic=getResources().getDrawable(R.drawable.connection_error);
-            winnerImage.setImageDrawable(pic);
+
+             imageView.setImageDrawable(pic);
         }
 
     }
-
     private void showAd(){
-    /*
-    * Show Ad.
-    * */
+
         this.runOnUiThread(new Runnable() {
             @Override
             public void run() {
+
                 if (mInterstitialAd.isLoaded()) {
                     mInterstitialAd.show();
                     Log.d("FINISHGAME","CARGO BIEN");
@@ -145,21 +138,16 @@ public class finishGameActivity extends AppCompatActivity {
             }
         });
     }
-
     private void requestNewInterstitial() {
-    /*
-    * Request new Ad.
-    * */
         AdRequest adRequest = new AdRequest.Builder()
                 .addTestDevice("SEE_YOUR_LOGCAT_TO_GET_YOUR_DEVICE_ID")
                 .build();
+
         mInterstitialAd.loadAd(adRequest);
     }
 
     private void restartGame(){
-   /*
-    * Returns to menu.
-    * */
+//vuelve al menu inicial
         Intent intent = new Intent(finishGameActivity.this, MenuActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

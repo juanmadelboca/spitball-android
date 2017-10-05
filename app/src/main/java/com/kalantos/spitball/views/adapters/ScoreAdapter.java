@@ -5,11 +5,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
+
 import com.kalantos.spitball.R;
+
 import java.util.List;
 
 /**
- * Adapter for showing score in highscore activity.
+ * Created by Juanma on 20/3/2017.
  */
 
 public class ScoreAdapter extends BaseAdapter {
@@ -38,9 +40,7 @@ public class ScoreAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent){
-        /*
-        * Adapts the content of a score object to a ListView.
-        * */
+        //adapta el contenido de un objeto score a una listview
         View view=View.inflate(context, R.layout.custom_row,null);
         TextView textViewP=(TextView)view.findViewById(R.id.textView6);
         TextView textViewS=(TextView)view.findViewById(R.id.textView5);

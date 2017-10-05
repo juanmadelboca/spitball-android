@@ -2,8 +2,6 @@ package com.kalantos.spitball.utils;
 
 import android.os.AsyncTask;
 import android.util.Log;
-
-import org.json.JSONException;
 import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -15,65 +13,71 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 /**
- * Async task to conect server php.
- * TODO: REFACTOR APP, NOW ALL MESSAGES ARE POSTS, MAYBE GET WILL IMPROVE THE SPEED
+ * Async task para conectarse a un server php
  */
-public class HTTPSocket extends AsyncTask<String,Void,String> {
 
+public class ConnectionTask extends AsyncTask<String,Void,String> {
+    //conecta con una url y envia los datos que sean escritos dentro del output stream
     @Override
     protected String doInBackground(String... strings) {
-    /*
-    * Receive an URL a Method (post, get..), a Json or Plain text and make the Http request.
-    * */
-        String method, message;
-        HttpURLConnection connection;
-        BufferedReader reader ;
-        method = strings[1];
-        message = strings[2];
+        HttpURLConnection connection = null;
+        BufferedReader reader = null;
 
         try {
             URL url = new URL(strings[0]);
+
             connection = (HttpURLConnection)
                     url.openConnection();
-            connection.setRequestMethod(method);
-            connection.setReadTimeout(10000);
-            connection.setConnectTimeout(15000);
+            connection.setRequestMethod("POST");
+            connection.setReadTimeout(3000);
+            connection.setConnectTimeout(3000);
             connection.setDoOutput(true);
-            //connection.setRequestProperty("Content-Type", "application/json;charset=utf-8");
             connection.connect();
-            JSONObject json= new JSONObject(message);
+            //la linea siguiente manda un Json
+            JSONObject json= new JSONObject();
+            json.put("METHOD", strings[1]);
+            ////////////////////
             OutputStreamWriter wr = new OutputStreamWriter(connection.getOutputStream());
             wr.write(json.toString());
             wr.flush();
-            //next line receive data that server sends
+            //la linea siguiente recibe lo que el server devuelve
+            Log.d("TEST","CONNECTED TO PHP SERVER");
             InputStream stream = connection.getInputStream();
             reader = new BufferedReader(new InputStreamReader(stream));
             String st=convertStreamToString(reader);
+            Log.d("TEST",st);
             return st;
 
-        }catch (android.os.NetworkOnMainThreadException | IOException | JSONException e){
-            Log.e("ONLINE CONNECTION", e.getMessage());
-            return null;
+        }catch (MalformedURLException e){
+            e.printStackTrace();
+            return "MALA URL";
+        }catch (android.os.NetworkOnMainThreadException e){
+            e.printStackTrace();
+            return "LO DE INTERNET";
+        } catch (IOException e){
+            e.printStackTrace();
+            return "IO ERROR";
+        }catch (Exception e) {
+            e.printStackTrace();
+            return "ERROR";
         }
     }
     private String convertStreamToString(BufferedReader reader) {
-    /*
-    * return a string build from a data stream
-    * */
+        //devuelve un string a partir del stream que recibio
         StringBuilder sb = new StringBuilder();
 
-        String line;
+        String line = null;
         try {
             while ((line = reader.readLine()) != null) {
                 sb.append(line).append('\n');
             }
         } catch (Exception e) {
-            Log.e("ONLINE CONNECTION", e.getMessage());
+            e.printStackTrace();
         } finally {
             try {
                 reader.close();
             } catch (Exception e) {
-                Log.e("ONLINE CONNECTION", e.getMessage());
+                e.printStackTrace();
             }
         }
         return sb.toString();
