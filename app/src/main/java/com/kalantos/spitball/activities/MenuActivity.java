@@ -133,7 +133,7 @@ public class MenuActivity extends AppCompatActivity {
     * */
         Intent intent= new Intent(MenuActivity.this,howToPlayActivity.class);
         startActivity(intent);
-        finish();
+        //finish();
     }
 
     public void hardDifficult(View view){
