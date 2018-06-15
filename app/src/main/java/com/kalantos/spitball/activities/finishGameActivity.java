@@ -106,10 +106,10 @@ public class finishGameActivity extends AppCompatActivity {
         int green = extras.getInt("green");
         int pink = extras.getInt("pink");
         if(pink == 0){
-            if(winnerBanner!=null){
+            if(winnerBanner != null){
                 winnerBanner.setText(R.string.winnerGreen);
             }
-            Drawable pic=getResources().getDrawable(R.drawable.ballgreen);
+            Drawable pic = getResources().getDrawable(R.drawable.ballgreen);
             winnerImage.setImageDrawable(pic);
         }
         else if(green == 0){
@@ -137,10 +137,10 @@ public class finishGameActivity extends AppCompatActivity {
             public void run() {
                 if (mInterstitialAd.isLoaded()) {
                     mInterstitialAd.show();
-                    Log.d("FINISHGAME","CARGO BIEN");
+                    Log.d("FINISHGAME", "CARGO BIEN");
                 } else {
                     restartGame();
-                    Log.d("FINISHGAME","Fallo la carga");
+                    Log.d("FINISHGAME", "Fallo la carga");
                 }
             }
         });

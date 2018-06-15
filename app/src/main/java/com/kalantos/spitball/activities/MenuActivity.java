@@ -64,7 +64,7 @@ public class MenuActivity extends AppCompatActivity {
 
         imageSettings = (ImageView)findViewById(R.id.imageSettings);
         FragmentManager fragmentManager= getSupportFragmentManager();
-        transaction= fragmentManager.beginTransaction();
+        transaction = fragmentManager.beginTransaction();
         MenuFragment startFragment= new MenuFragment();
         transaction.add(R.id.fragmentHolderMenu,startFragment);
         transaction.commit();
@@ -90,7 +90,7 @@ public class MenuActivity extends AppCompatActivity {
     * Launches a new menu to choose between online or local.
     * */
         ChooseTypeOfGameFragment newFragment = new ChooseTypeOfGameFragment();
-        transaction =getSupportFragmentManager().beginTransaction();
+        transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.fragmentHolderMenu, newFragment);
         transaction.addToBackStack(null);
         transaction.commit();
@@ -102,7 +102,7 @@ public class MenuActivity extends AppCompatActivity {
     * Launches new menu to choose IA difficult.
     * */
         ChooseDifficultyFragment newFragment = new ChooseDifficultyFragment();
-        transaction =getSupportFragmentManager().beginTransaction();
+        transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.fragmentHolderMenu, newFragment);
         transaction.addToBackStack(null);
         transaction.commit();
@@ -113,7 +113,7 @@ public class MenuActivity extends AppCompatActivity {
     /*
     * Launches settings menu.
     * */
-        Intent intent=new Intent(MenuActivity.this,settingsActivity.class);
+        Intent intent = new Intent(MenuActivity.this, settingsActivity.class);
         startActivity(intent);
     }
 
@@ -121,7 +121,7 @@ public class MenuActivity extends AppCompatActivity {
     /*
     * Launches highScores activity.
     * */
-        Toast.makeText(this,"En desarrollo",Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "En desarrollo", Toast.LENGTH_SHORT).show();
         /*Intent intent= new Intent(MenuActivity.this,HighScoresActivity.class);
         startActivity(intent);
         finish();*/
@@ -131,7 +131,7 @@ public class MenuActivity extends AppCompatActivity {
     /*
     * Launches how to play activity.
     * */
-        Intent intent= new Intent(MenuActivity.this,howToPlayActivity.class);
+        Intent intent = new Intent(MenuActivity.this, howToPlayActivity.class);
         startActivity(intent);
         //finish();
     }
@@ -152,9 +152,9 @@ public class MenuActivity extends AppCompatActivity {
     /*
     * Start a Game vs IA with using parameter received as difficulty.
     * */
-        Intent intent=new Intent(MenuActivity.this,GameActivity.class);
+        Intent intent = new Intent(MenuActivity.this, GameActivity.class);
         intent.putExtra("difficulty", difficulty);
-        intent.putExtra("clicker",clicker);
+        intent.putExtra("clicker", clicker);
         startActivity(intent);
         finishAffinity();
     }
@@ -163,10 +163,10 @@ public class MenuActivity extends AppCompatActivity {
     /*
     * Start Online Game with GameId global variable.
     * */
-        Intent intent=new Intent(MenuActivity.this,GameActivity.class);
-        intent.putExtra("AI",false);
-        intent.putExtra("GAMEID",GameId);
-        intent.putExtra("TURN",turn);
+        Intent intent=new Intent(MenuActivity.this, GameActivity.class);
+        intent.putExtra("AI", false);
+        intent.putExtra("GAMEID", GameId);
+        intent.putExtra("TURN", turn);
         startActivity(intent);
         finishAffinity();
     }
@@ -175,8 +175,8 @@ public class MenuActivity extends AppCompatActivity {
     /*
     * Start a local multiplayer game.
     * */
-        Intent intent=new Intent(MenuActivity.this,GameActivity.class);
-        intent.putExtra("AI",false);
+        Intent intent = new Intent(MenuActivity.this, GameActivity.class);
+        intent.putExtra("AI", false);
         startActivity(intent);
         finishAffinity();
     }
@@ -222,14 +222,14 @@ public class MenuActivity extends AppCompatActivity {
         }
         if(connectionError){
             //TODO: find a better way to display message
-            Toast.makeText(this,"No fue posible conectarse al servidor",Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "No fue posible conectarse al servidor", Toast.LENGTH_SHORT).show();
         }
     }
 
     private void leaveRoom(){
         try {
-            String jsonData = createJson("GAMEID",Integer.toString(GameId));
-            new HTTPSocket().execute("http://spitball.000webhostapp.com/leaveGame.php","POST",jsonData).get();
+            String jsonData = createJson("GAMEID", Integer.toString(GameId));
+            new HTTPSocket().execute("http://spitball.000webhostapp.com/leaveGame.php", "POST",jsonData).get();
         } catch (Exception e) {
             Log.e("ONLINE GAME", "Error leaving Room");
         }
@@ -240,14 +240,14 @@ public class MenuActivity extends AppCompatActivity {
     * connect to database and refresh room stats, as number of players.
     * */
         try {
-            String jsonData = createJson("METHOD",method);
-            String json= new HTTPSocket().execute("http://spitball.000webhostapp.com/createGame.php","POST",jsonData).get();
-            JSONObject JSONobject= new JSONObject(json);
+            String jsonData = createJson("METHOD", method);
+            String json = new HTTPSocket().execute("http://spitball.000webhostapp.com/createGame.php", "POST",jsonData).get();
+            JSONObject JSONobject = new JSONObject(json);
             if(method.equals("CREATE")){
-                turn=JSONobject.getInt("TURN");
+                turn = JSONobject.getInt("TURN");
             }
-            GameId=JSONobject.getInt("GAMEID");
-            NumPlayers=JSONobject.getInt("NUMPLAYERS");
+            GameId = JSONobject.getInt("GAMEID");
+            NumPlayers = JSONobject.getInt("NUMPLAYERS");
             return true;
         } catch (Exception e) {
             Log.e("ONLINE GAME", "Connection error");
@@ -260,10 +260,10 @@ public class MenuActivity extends AppCompatActivity {
     /*
     * Create a Json with all data received and returns the json in string format.
     * */
-        JSONObject json= new JSONObject();
-        for(int i=0; i<strings.length; i=i+2){
+        JSONObject json = new JSONObject();
+        for(int i = 0; i < strings.length; i = i + 2){
             try{
-                json.put(strings[i],strings[i+1]);
+                json.put(strings[i],strings[i + 1]);
             }catch(JSONException e){
                 e.printStackTrace();
             }

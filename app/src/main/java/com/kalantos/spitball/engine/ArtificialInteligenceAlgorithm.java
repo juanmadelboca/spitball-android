@@ -1,7 +1,6 @@
 package com.kalantos.spitball.engine;
 
 import android.util.Log;
-
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -20,7 +19,7 @@ public class ArtificialInteligenceAlgorithm {
     * a direction and make a totally random move.
     * */
         int[] coordinates;
-        int [] AIvector= ArtificialInteligenceAlgorithm.getBall(tiles);
+        int [] AIvector = ArtificialInteligenceAlgorithm.getBall(tiles);
         Random random = new Random();
         int seed = random.nextInt(2);
         int x, y;
@@ -40,7 +39,7 @@ public class ArtificialInteligenceAlgorithm {
 
         int newX = AIvector[1] + x;
         if ((newY < HEIGHT && newY >= 0) && (newX < WIDTH && newX >= 0)) {
-            coordinates = new int[]{AIvector[0], AIvector[1], newY, newX,0};
+            coordinates = new int[]{AIvector[0], AIvector[1], newY, newX, 0};
         } else {
             coordinates = ArtificialInteligenceAlgorithm.RandomMove(tiles);
         }
@@ -94,12 +93,12 @@ public class ArtificialInteligenceAlgorithm {
     * Get the biggest ball from AI balls in board.
     * */
         ArrayList<int[]> posibleVectors = ArtificialInteligenceAlgorithm.getAIBalls(tiles);
-        int[]biggestBall= posibleVectors.get(0);
-        for(int i=0;i<posibleVectors.size()-1;i++) {
+        int[]biggestBall = posibleVectors.get(0);
+        for(int i = 0; i < posibleVectors.size()-1; i++) {
             if (tiles[posibleVectors.get(i)[0]][posibleVectors.get(i)[1]].getBall().getSize() > tiles[posibleVectors.get(i + 1)[0]][posibleVectors.get(i + 1)[1]].getBall().getSize()) {
-                biggestBall=posibleVectors.get(i);
+                biggestBall = posibleVectors.get(i);
             } else {
-                biggestBall=posibleVectors.get(i+1);
+                biggestBall = posibleVectors.get(i + 1);
             }
         }
         return biggestBall;

@@ -35,7 +35,7 @@ public class GameActivity extends AppCompatActivity {
     private int widthScreen, heightScreen;
     private int bouncingState=1;
     private GameManager game;
-    //without updateGamePrescaler gameManager can handle updates and work bad.
+    //without updateGamePrescaler gameManager cant handle updates and work bad.
     int updateGamePrescaler = 0;
     boolean interruptedGame = false;
 
@@ -80,7 +80,7 @@ public class GameActivity extends AppCompatActivity {
         boolean swipe = settings.getBoolean("swipeMode", true);
         boolean bouncing = settings.getBoolean("bouncing", true);
         if(!bouncing){
-            bouncingState=-1;
+            bouncingState = -1;
         }
         Intent intent = getIntent();
         int difficulty = intent.getIntExtra("difficulty", 0);
@@ -88,10 +88,10 @@ public class GameActivity extends AppCompatActivity {
         int GameId = intent.getIntExtra("GAMEID", 0);
         boolean ArtificialInteligence = intent.getBooleanExtra("AI", true);
         //create logic board.
-        game = new GameManager(GameId, difficulty, onlineTurn,ArtificialInteligence);
+        game = new GameManager(GameId, difficulty, onlineTurn, ArtificialInteligence);
         createBoard(swipe);
         //Tell the user with which color plays.
-        if(onlineTurn==0) {
+        if(onlineTurn == 0) {
             Toast.makeText(this, " JUGADOR VERDE!", Toast.LENGTH_LONG).show();
         }else{
             Toast.makeText(this, " JUGADOR ROSA!", Toast.LENGTH_LONG).show();
@@ -111,7 +111,7 @@ public class GameActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         if(game.isFinishOnlineGame()){
-            Intent intent=new Intent(GameActivity.this,MenuActivity.class);
+            Intent intent = new Intent(GameActivity.this, MenuActivity.class);
             startActivity(intent);
             finishAffinity();
         }
@@ -126,7 +126,7 @@ public class GameActivity extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int id) {
                 game.setFinishOnlineGame(true);
                 interruptedGame = true;
-                Intent intent=new Intent(GameActivity.this,MenuActivity.class);
+                Intent intent = new Intent(GameActivity.this, MenuActivity.class);
                 startActivity(intent);
                 finishAffinity();
             }
@@ -145,7 +145,7 @@ public class GameActivity extends AppCompatActivity {
     /*
     * Refresh the UI board periodically.
     * */
-        Runnable runnable= new Runnable() {
+        Runnable runnable = new Runnable() {
             @Override
             public void run() {
                 while(game.gameStatus()){
@@ -153,7 +153,7 @@ public class GameActivity extends AppCompatActivity {
                     try {
                         Thread.sleep(200);
                     } catch (InterruptedException e) {
-                        Log.e("BOUNCING ANIMATION", "startAnimationThread \n"+e.getMessage());
+                        Log.e("BOUNCING ANIMATION", "startAnimationThread \n" + e.getMessage());
                     }
                 }
                 if(!interruptedGame){
@@ -161,7 +161,8 @@ public class GameActivity extends AppCompatActivity {
                 }
             }
         };
-        final Thread refreshThread1 = new Thread(runnable);refreshThread1.start();
+        final Thread refreshThread1 = new Thread(runnable);
+        refreshThread1.start();
         paint();
     }
 
@@ -201,17 +202,17 @@ public class GameActivity extends AppCompatActivity {
                     int idR;
                     //animation
                     if(tiles[i][j].isPressed()){
-                        ballImage = ballImage+bouncingState;
+                        ballImage = ballImage + bouncingState;
                         bouncingState++;
-                        if(bouncingState==9){
-                            bouncingState=1;
+                        if(bouncingState == 9){
+                            bouncingState = 1;
                         }
                     }
 
-                    idR= getResources().getIdentifier(ballImage,"drawable",getPackageName());
+                    idR= getResources().getIdentifier(ballImage,"drawable", getPackageName());
                     //painting
-                    ballSize =(int)((game.getTiles()[i][j].getBall().getSize()) + heightScreen/14 -
-                            ((game.getTiles()[i][j].getBall().getSize())*(1/7)*((double)widthScreen/heightScreen)));
+                    ballSize = (int)((game.getTiles()[i][j].getBall().getSize()) + heightScreen / 14 -
+                            ((game.getTiles()[i][j].getBall().getSize()) * (1 / 7 ) * ((double)widthScreen/heightScreen)));
                     bitmapImage = BitmapFactory.decodeResource(getResources(), idR);
                     scaled = Bitmap.createScaledBitmap(bitmapImage, ballSize, ballSize, false);
                     tiles[i][j].getBallImage().setImageBitmap(scaled);
@@ -299,7 +300,7 @@ public class GameActivity extends AppCompatActivity {
                                                 game.swipeHandler(temporalEnd[0], temporalEnd[1]);
                                             }
                                         }catch (InvalidMoveException e){
-                                            Log.e("GAME-ACTIVITY","ACTION_UP,if positive condition, exception on detectMove");
+                                            Log.e("GAME-ACTIVITY", "ACTION_UP,if positive condition, exception on detectMove");
                                         }
                                     } else {
                                         //if drag time is not overcome, is processed as a click and keep waiting for another click.
@@ -311,7 +312,7 @@ public class GameActivity extends AppCompatActivity {
                                                 }
                                             }
                                         }catch (InvalidMoveException e){
-                                            Log.e("GAME-ACTIVITY","ACTION_UP,else, exception on detectMove");
+                                            Log.e("GAME-ACTIVITY", "ACTION_UP,else, exception on detectMove");
                                         }
                                     }
 
@@ -351,10 +352,10 @@ public class GameActivity extends AppCompatActivity {
                 }
             }
         }catch (Exception e){
-            Log.e("GAME-ACTIVITY","Invalid coordinates for move");
+            Log.e("GAME-ACTIVITY", "Invalid coordinates for move");
             throw new InvalidMoveException("Invalid coordinates for move");
         }
-        Log.e("GAME-ACTIVITY","Invalid coordinates for move");
+        Log.e("GAME-ACTIVITY", "Invalid coordinates for move");
         throw new InvalidMoveException("Invalid coordinates for move");
     }
 
@@ -375,8 +376,6 @@ public class GameActivity extends AppCompatActivity {
         });
 
     }
-
-
 }
 
 

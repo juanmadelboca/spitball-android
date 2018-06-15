@@ -9,11 +9,21 @@
     <string name="easy">Easy</string>
     <string name="highScores">High Scores</string>
     <string name="hard">Hard</string>
-    <string name="howToPlayInfo">El juego consiste en comer todas las bolas del tablero para poder lograr esto cuentas con unos interesantes movimientos que te mostraremos a continuacion..</string>
+    <string name="howToPlayObjective">El juego consiste en comer todas las bolas del tablero, para poder lograr esto cuentas con unos interesantes movimientos que te mostraremos a continuacion..</string>
+    <string name="howToPlaySwipe">Desliza tu dedo para mover la bola</string>
+    <string name="howToPlaySwipeDiagonal">Desliza tu dedo en diagonal para mover la bola</string>
+    <string name="howToPlaySplit">Clickea en la bola y luego un casillero de por medio para dividirte</string>
+    <string name="howToPlayEatEnemy">Para ganar debes comer a las bolas de menor tamaño. Pero cuidado! Si la misma es mayor perderas la pelea!</string>
+    <string name="howToPlay"> Como jugar</string>
     <string-array name="ballColors">
         <item>Color Rosa</item>
         <item>Color Verde</item>
     </string-array>
+    <string-array name="successPhrases">
+        <item>Bien Hecho!</item>
+        <item>Lo has logrado!</item>
+        <item>Excelente!</item>
+</string-array>
     <string-array name="ballColorsNumbers">
         <item>0</item>
         <item>1</item>

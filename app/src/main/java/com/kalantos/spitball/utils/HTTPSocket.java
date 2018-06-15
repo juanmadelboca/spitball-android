@@ -11,7 +11,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 
 /**
@@ -41,14 +40,14 @@ public class HTTPSocket extends AsyncTask<String,Void,String> {
             connection.setDoOutput(true);
             //connection.setRequestProperty("Content-Type", "application/json;charset=utf-8");
             connection.connect();
-            JSONObject json= new JSONObject(message);
+            JSONObject json = new JSONObject(message);
             OutputStreamWriter wr = new OutputStreamWriter(connection.getOutputStream());
             wr.write(json.toString());
             wr.flush();
             //next line receive data that server sends
             InputStream stream = connection.getInputStream();
             reader = new BufferedReader(new InputStreamReader(stream));
-            String st=convertStreamToString(reader);
+            String st = convertStreamToString(reader);
             return st;
 
         }catch (android.os.NetworkOnMainThreadException | IOException | JSONException e){

@@ -11,23 +11,23 @@ public class Tile extends Activity{
 	private Ball ball;
 
 	public Tile(){
-		ball= new Ball(0);
+		ball = new Ball(0);
 	}
 
 	protected void setBall(int size, BallType tipo){
 		switch(tipo){
 		case BALLGREEN:
-			this.ball=new BallGreen(size);
+			this.ball = new BallGreen(size);
 			break;
 		case BALLPINK:
-			this.ball=new BallPink(size);
+			this.ball = new BallPink(size);
 			break;
 			default: break;
 		}
 	}
 
 	protected void removeBall(){
-		ball=new Ball(0);
+		ball = new Ball(0);
 	}
 
 	public Ball getBall(){
