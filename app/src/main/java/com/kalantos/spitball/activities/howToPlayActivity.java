@@ -25,7 +25,7 @@ public class howToPlayActivity extends AppCompatActivity {
     PointF startPoint,endPoint;
     final int MAX_CLICK_DURATION = 200;
     int level = 0;
-    ImageView pointer, greenBall, pinkBall;
+    ImageView pointer, greenBall, pinkBall, spitBall;
     int widthScreen, heightScreen;
     boolean animationFlag, touchBallFlag, instructionFlag;
     TextView instructions;
@@ -37,6 +37,7 @@ public class howToPlayActivity extends AppCompatActivity {
         setContentView(R.layout.activity_how_to_play);
         pointer = (ImageView) findViewById(R.id.pointer);
         greenBall = (ImageView) findViewById(R.id.howToPlayGreenBall);
+        spitBall = (ImageView) findViewById(R.id.howToPlaySpitBall);
         pinkBall = (ImageView) findViewById(R.id.howToPlayPinkBall);
         instructions = (TextView) findViewById(R.id.instructions);
         startPoint = new PointF();
@@ -131,7 +132,18 @@ public class howToPlayActivity extends AppCompatActivity {
                                 (startPoint.y > ((heightScreen / 2) - (heightScreen / 5)))
                                 && (level == 4)) {
                             animationFlag = true;
-                            swipeAnimation(0, 0, 0, ((widthScreen * 10) / 22));
+                            touchBallFlag = false;
+                            spitBall.setVisibility(View.VISIBLE);
+                            level++;
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    instructions.setAlpha(0.0f);
+                                        refreshBall();
+                                }
+                            }, 1700);
+                            //swipeAnimation(0, 0, 0, ((widthScreen * 10) / 22));
+                            //refreshBall();
                         }else {
                             touchBallFlag = false;
                         }
@@ -342,6 +354,7 @@ public class howToPlayActivity extends AppCompatActivity {
         animation.setFillAfter(true); // View will stay in the position where animation finished. Not return back
         greenBall.startAnimation(animation);
         greenBall.setAlpha(1.0f);
+        spitBall.setVisibility(View.INVISIBLE);
         animationFlag = false;
         refreshInstructions();
     }
