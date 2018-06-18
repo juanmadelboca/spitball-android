@@ -44,6 +44,22 @@
             app:srcCompat="@drawable/ballpink" />
 
         <ImageView
+            android:id="@+id/howToPlaySpitBall"
+            android:visibility="invisible"
+            android:layout_width="134dp"
+            android:layout_height="49dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ballgreen" />
+
+        <ImageView
             android:id="@+id/pointer"
             android:layout_width="75dp"
             android:layout_height="109dp"

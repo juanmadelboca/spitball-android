@@ -23,6 +23,10 @@
         <item>Bien Hecho!</item>
         <item>Lo has logrado!</item>
         <item>Excelente!</item>
+        <item>Justo en el clavo!</item>
+        <item>Bien!</item>
+        <item>Muy Bien!</item>
+        <item>Espléndido!</item>
 </string-array>
     <string-array name="ballColorsNumbers">
         <item>0</item>

@@ -13,33 +13,34 @@
         android:theme="@style/Theme.AppCompat.NoActionBar">
         <meta-data
             android:name="com.google.android.gms.version"
-            android:value="@integer/google_play_services_version" />
+            android:value="@integer/google_play_services_version"/>
 
         <activity
             android:name=".activities.MenuActivity"
             android:screenOrientation="landscape">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.MAIN"/>
 
-                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
         <activity
             android:name=".activities.GameActivity"
-            android:screenOrientation="landscape" />
+            android:screenOrientation="landscape"/>
         <activity
             android:name=".activities.finishGameActivity"
-            android:screenOrientation="landscape" />
+            android:screenOrientation="landscape"/>
         <activity
             android:name=".activities.settingsActivity"
-            android:screenOrientation="landscape">
-            >
-        </activity>
+            android:screenOrientation="landscape"/>
         <activity
             android:name=".activities.HighScoresActivity"
             android:label="@string/title_activity_high_scores"
-            android:theme="@style/Theme.AppCompat.NoActionBar" />
-        <activity android:name=".activities.howToPlayActivity"></activity>
+            android:theme="@style/Theme.AppCompat.NoActionBar"/>
+        <activity
+            android:name=".activities.howToPlayActivity"
+            android:screenOrientation="landscape"/>
+        />
     </application>
 
 </manifest>
