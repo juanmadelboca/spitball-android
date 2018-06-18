@@ -209,7 +209,7 @@ public class GameActivity extends AppCompatActivity {
                         }
                     }
 
-                    idR= getResources().getIdentifier(ballImage,"drawable", getPackageName());
+                    idR = getResources().getIdentifier(ballImage,"drawable", getPackageName());
                     //painting
                     ballSize = (int)((game.getTiles()[i][j].getBall().getSize()) + heightScreen / 14 -
                             ((game.getTiles()[i][j].getBall().getSize()) * (1 / 7 ) * ((double)widthScreen/heightScreen)));

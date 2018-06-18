@@ -27,7 +27,7 @@ public class howToPlayActivity extends AppCompatActivity {
     int level = 0;
     ImageView pointer, greenBall, pinkBall, spitBall;
     int widthScreen, heightScreen;
-    boolean animationFlag, touchBallFlag, instructionFlag;
+    boolean animationFlag, touchBallFlag, instructionFlag, howToPlayActive;
     TextView instructions;
     float initialPosition;
 
@@ -46,6 +46,7 @@ public class howToPlayActivity extends AppCompatActivity {
         animationFlag = false;
         touchBallFlag = false;
         instructionFlag = true;
+        howToPlayActive = true;
 
         Display display = getWindowManager().getDefaultDisplay();
         Point size = new Point();
@@ -84,6 +85,19 @@ public class howToPlayActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    @Override
+    public void onStop(){
+        howToPlayActive = false;
+        super.onStop();
+    }
+
+    @Override
+    public void onStart(){
+        howToPlayActive = true;
+        startHowToPlayThread();
+        super.onStart();
     }
 
     @Override
@@ -174,10 +188,10 @@ public class howToPlayActivity extends AppCompatActivity {
     }
 
     private void startHowToPlayThread(){
-        Thread howToPlayThread = new Thread(new Runnable() {
+        final Thread howToPlayThread = new Thread(new Runnable() {
             @Override
             public void run() {
-                while(level < 6){
+                while(level < 6 && howToPlayActive){
                     if (animationFlag || instructionFlag){
                         Log.d("", "WAITING ANIMATION OR INSTRUCTION");
                         try {
@@ -240,7 +254,9 @@ public class howToPlayActivity extends AppCompatActivity {
                         e.printStackTrace();
                     }
                 }
-                fadeOutToMenu();
+                if (level > 5){
+                    fadeOutToMenu();
+                }
             }
         });
         howToPlayThread.start();
