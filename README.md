@@ -7,3 +7,10 @@
   http://nvie.com/posts/a-successful-git-branching-model/
   
     Author: Juan Del Boca
+
+## Flutter port
+
+A minimal Flutter implementation is available in `spitball_flutter/`.
+It uses the [Flame](https://flame-engine.org/) game engine to render
+the board and manage input. This is an experimental port of the core
+Java logic to Dart.

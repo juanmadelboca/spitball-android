@@ -1,0 +1,4 @@
+enum BallType {
+  green,
+  pink,
+}
