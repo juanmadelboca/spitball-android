@@ -38,7 +38,7 @@ public class HighScoresActivity extends AppCompatActivity {
             {
                 if((visibility & View.SYSTEM_UI_FLAG_FULLSCREEN) == 0)
                 {
-                    Thread thread=new Thread(new Timer());
+                    Thread thread = new Thread(new Timer());
                     thread.start();
                     try {
                         thread.join();
@@ -55,7 +55,7 @@ public class HighScoresActivity extends AppCompatActivity {
     /*
     * Returns to menu.
     * */
-        Intent intent= new Intent(HighScoresActivity.this,MenuActivity.class);
+        Intent intent = new Intent(HighScoresActivity.this, MenuActivity.class);
         startActivity(intent);
         finish();
     }

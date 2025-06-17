@@ -33,7 +33,7 @@ public class TileView extends Activity {
     }
 
     public void press(){
-        isPressed=true;
+        isPressed = true;
     }
 
     public void release(){

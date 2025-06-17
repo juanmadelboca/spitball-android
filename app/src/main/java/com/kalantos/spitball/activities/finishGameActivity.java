@@ -24,7 +24,7 @@ public class finishGameActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_finish_game);
-        winnerBanner=(TextView) findViewById(R.id.textView);
+        winnerBanner = (TextView) findViewById(R.id.textView);
         //ADS////////////////
         mInterstitialAd = new InterstitialAd(this);
         /*
@@ -60,7 +60,7 @@ public class finishGameActivity extends AppCompatActivity {
                     {
                         if((visibility & View.SYSTEM_UI_FLAG_FULLSCREEN) == 0)
                         {
-                            Thread thread=new Thread(new Timer());
+                            Thread thread = new Thread(new Timer());
                             thread.start();
                             try {
                                 thread.join();
@@ -72,7 +72,7 @@ public class finishGameActivity extends AppCompatActivity {
                         }
                     }
                 });
-        Thread adThread= new Thread(new Runnable() {
+        Thread adThread = new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
@@ -100,29 +100,29 @@ public class finishGameActivity extends AppCompatActivity {
     /*
     * Choose a winner and show the stats
     * */
-        winnerImage=(ImageView)findViewById(R.id.imageView);
-        winnerBanner=(TextView) findViewById(R.id.textView);
+        winnerImage = (ImageView)findViewById(R.id.imageView);
+        winnerBanner = (TextView) findViewById(R.id.textView);
         Bundle extras = getIntent().getExtras();
-        int green=extras.getInt("green");
-        int pink=extras.getInt("pink");
-        if(pink==0){
-            if(winnerBanner!=null){
+        int green = extras.getInt("green");
+        int pink = extras.getInt("pink");
+        if(pink == 0){
+            if(winnerBanner != null){
                 winnerBanner.setText(R.string.winnerGreen);
             }
-            Drawable pic=getResources().getDrawable(R.drawable.ballgreen);
+            Drawable pic = getResources().getDrawable(R.drawable.ballgreen);
             winnerImage.setImageDrawable(pic);
         }
-        else if(green==0){
+        else if(green == 0){
             if(winnerBanner!=null) {
                 winnerBanner.setText(R.string.winnerPink);
             }
-            Drawable pic=getResources().getDrawable(R.drawable.ballpink);
+            Drawable pic = getResources().getDrawable(R.drawable.ballpink);
             winnerImage.setImageDrawable(pic);
         }else{
-            if(winnerBanner!=null) {
+            if(winnerBanner != null) {
                 winnerBanner.setText(R.string.connectionError);
             }
-            Drawable pic=getResources().getDrawable(R.drawable.connection_error);
+            Drawable pic = getResources().getDrawable(R.drawable.settings);
             winnerImage.setImageDrawable(pic);
         }
 
@@ -137,10 +137,10 @@ public class finishGameActivity extends AppCompatActivity {
             public void run() {
                 if (mInterstitialAd.isLoaded()) {
                     mInterstitialAd.show();
-                    Log.d("FINISHGAME","CARGO BIEN");
+                    Log.d("FINISHGAME", "CARGO BIEN");
                 } else {
                     restartGame();
-                    Log.d("FINISHGAME","Fallo la carga");
+                    Log.d("FINISHGAME", "Fallo la carga");
                 }
             }
         });

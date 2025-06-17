@@ -33,7 +33,7 @@ public class settingsActivity extends PreferenceActivity {
                     {
                         if((visibility & View.SYSTEM_UI_FLAG_FULLSCREEN) == 0)
                         {
-                            Thread thread=new Thread(new Timer());
+                            Thread thread = new Thread(new Timer());
                             thread.start();
                             try {
                                 thread.join();

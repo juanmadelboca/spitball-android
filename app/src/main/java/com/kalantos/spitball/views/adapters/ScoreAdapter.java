@@ -41,11 +41,11 @@ public class ScoreAdapter extends BaseAdapter {
         /*
         * Adapts the content of a score object to a ListView.
         * */
-        View view=View.inflate(context, R.layout.custom_row,null);
-        TextView textViewP=(TextView)view.findViewById(R.id.textView6);
-        TextView textViewS=(TextView)view.findViewById(R.id.textView5);
+        View view = View.inflate(context, R.layout.custom_row, null);
+        TextView textViewP = (TextView)view.findViewById(R.id.textView6);
+        TextView textViewS = (TextView)view.findViewById(R.id.textView5);
         textViewP.setText(scores.get(position).player);
-        textViewS.setText(scores.get(position).score+"");
+        textViewS.setText(scores.get(position).score + "");
         return view ;
     }
 }
