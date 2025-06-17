@@ -1,9 +1,16 @@
-# SpitBall
-  SpitBall is an online deck game made without a framework.
-  This proyect was made as a hobby, feel free to explore all the proyect, use what you need from it
-  and suggest improvements
-# Branch Model
-  This project uses the following branch model:
-  http://nvie.com/posts/a-successful-git-branching-model/
-  
-    Author: Juan Del Boca
+# spitball
+
+A new Flutter project.
+
+## Getting Started
+
+This project is a starting point for a Flutter application.
+
+A few resources to get you started if this is your first Flutter project:
+
+- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
+- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+
+For help getting started with Flutter development, view the
+[online documentation](https://docs.flutter.dev/), which offers tutorials,
+samples, guidance on mobile development, and a full API reference.

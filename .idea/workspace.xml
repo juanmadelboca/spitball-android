@@ -4,7 +4,30 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="37444408-6197-44c6-99da-dd6034b7fed4" name="Changes" comment="Add flutter folder" />
+    <list default="true" id="b46e20e6-fa46-4ef4-b973-cc85aabe4006" name="Changes" comment="Fix base migration">
+      <change beforePath="$PROJECT_DIR$/lib/main.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/main.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/src/core/ai/artificial_intelligence_algorithm.dart" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/src/core/controllers/game_controller.dart" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/src/core/exceptions/.gitkeep" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/src/core/exceptions/game_exceptions.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/common/exceptions/game_exceptions.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/src/core/models/.gitkeep" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/src/core/models/ball.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/models/ball.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/src/core/models/ball_type.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/models/ball_type.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/src/core/models/tile.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/models/tile.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/src/core/providers/.gitkeep" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/src/core/services/.gitkeep" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/src/core/services/networking_service.dart" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/src/core/utils/.gitkeep" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/src/features/.gitkeep" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/src/features/game_play/presentation/screens/game_screen.dart" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/src/features/game_play/presentation/widgets/game_board_widget.dart" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/src/features/high_scores/presentation/screens/high_scores_screen.dart" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/src/features/how_to_play/presentation/screens/how_to_play_screen.dart" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/src/features/main_menu/presentation/screens/main_menu_screen.dart" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/src/features/settings/application/providers/settings_provider.dart" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/src/features/settings/presentation/screens/settings_screen.dart" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/src/widgets/.gitkeep" beforeDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -13,8 +36,21 @@
   <component name="ClangdSettings">
     <option name="formatViaClangd" value="false" />
   </component>
+  <component name="FileEditorManager">
+    <leaf>
+      <file leaf-file-name="main.dart" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/lib/main.dart">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="0">
+              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
+  </component>
   <component name="Git.Settings">
-    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
   <component name="GitHubPullRequestSearchHistory">{
   &quot;lastFilter&quot;: {
@@ -29,38 +65,74 @@
   }
 }</component>
   <component name="ProjectColorInfo">{
-  &quot;associatedIndex&quot;: 1
+  &quot;associatedIndex&quot;: 2
 }</component>
-  <component name="ProjectId" id="2ydMADMy7jL87KrnPdij0tJY42R" />
+  <component name="ProjectId" id="2ydicFLIolUuL4mygZpvu6gKm9C" />
+  <component name="ProjectView">
+    <navigator currentView="ProjectPane" proportions="" version="1" />
+    <panes>
+      <pane id="ProjectPane">
+        <option name="show-excluded-files" value="false" />
+      </pane>
+    </panes>
+  </component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "Flutter.main.dart.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.cidr.known.project.marker": "true",
     "RunOnceActivity.git.unshallow": "true",
     "RunOnceActivity.readMode.enableVisualFormatting": "true",
-    "android.gradle.sync.needed": "true",
     "cf.first.check.clang-format": "false",
     "cidr.known.project.marker": "true",
     "dart.analysis.tool.window.visible": "false",
     "git-widget-placeholder": "jules__wip__8391428618349719628",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "/Users/kalantos/Documents/Personal/repos/spitball-android",
+    "last_opened_file_path": "/Users/kalantos/Documents/Personal/repos/spitball-android/spitball",
     "show.migrate.to.gradle.popup": "false"
   }
 }]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/assets" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/lib/models" />
+      <recent name="$PROJECT_DIR$/assets/images" />
+    </key>
+  </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="37444408-6197-44c6-99da-dd6034b7fed4" name="Changes" comment="" />
-      <created>1750159851913</created>
+      <changelist id="b46e20e6-fa46-4ef4-b973-cc85aabe4006" name="Changes" comment="" />
+      <created>1750170928458</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1750159851913</updated>
+      <updated>1750170928458</updated>
     </task>
+    <task id="LOCAL-00001" summary="Fix base migration">
+      <option name="closed" value="true" />
+      <created>1750172457772</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1750172457772</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
+  </component>
+  <component name="ToolWindowManager">
+    <editor active="true" />
+    <layout>
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+    </layout>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Fix base migration" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fix base migration" />
   </component>
 </project>
