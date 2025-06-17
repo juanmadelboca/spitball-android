@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'src/features/main_menu/presentation/screens/main_menu_screen.dart'; // Import new screen
+import 'package:spitball/screens/menu/main_menu_screen.dart';
 
 void main() {
   runApp(
