@@ -4,7 +4,6 @@ import 'ball_type.dart';
 // Represents a single tile on the game board.
 // It can hold a ball and manages battle logic when a new ball enters.
 class Tile {
-  Ball _ball; // Private field to encapsulate the ball
 
   // A tile is initially empty (represented by a Ball of size 0).
   // Note: In Dart, there's no direct equivalent of an anonymous Ball(0) instance

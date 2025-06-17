@@ -22,14 +22,14 @@ class GameController {
   // Online game related fields
   int gameId;
   int onlinePlayerColor; // 0 for Green, 1 for Pink (player's color in this online session)
-  bool isOnlineGame;
+  late bool isOnlineGame;
 
   // AI related fields
   int difficulty;
   bool isAgainstAI;
 
   // Click tracking for moves
-  int _initialRow = -1, _initialCol = -1;
+  int initialRow = -1, initialCol = -1;
 
   // Flags
   bool _onlineMoveInProgress = false; // To prevent sending moves while processing an online move
@@ -180,8 +180,8 @@ class GameController {
         // Check if the ball belongs to the current player
         bool isGreenPlayer = (_playerTurn == 0);
         if ((isGreenPlayer && selectedBall is BallGreen) || (!isGreenPlayer && selectedBall is BallPink)) {
-          _initialRow = row;
-          _initialCol = col;
+          initialRow = row;
+          initialCol = col;
           clicks = 1;
           _anyMoveFlag = true; // Indicate selection happened, for UI feedback
           print("Selected ball at (\$row, \$col)");
@@ -190,7 +190,7 @@ class GameController {
       }
       return false; // No valid ball for current player or empty tile
     } else if (clicks == 1) {
-      if (_initialRow == row && _initialCol == col) { // Tap same ball to deselect
+      if (initialRow == row && initialCol == col) { // Tap same ball to deselect
         clicks = 0;
         _anyMoveFlag = true;
         print("Deselected ball at (\$row, \$col)");
@@ -198,18 +198,18 @@ class GameController {
       }
 
       // Calculate distance for move/split
-      int dy = (row - _initialRow).abs();
-      int dx = (col - _initialCol).abs();
+      int dy = (row - initialRow).abs();
+      int dx = (col - initialCol).abs();
 
       bool success = false;
       try {
         if ((dx == 1 && dy == 0) || (dx == 0 && dy == 1) || (dx == 1 && dy == 1)) { // Adjacent or diagonal by 1
           print("Attempting move from (\$_initialRow, \$_initialCol) to (\$row, \$col)");
-          _performMove(_initialRow, _initialCol, row, col);
+          _performMove(initialRow, initialCol, row, col);
           success = true;
         } else if ((dx == 2 && dy == 0) || (dx == 0 && dy == 2)) { // Straight line 2 steps away
           print("Attempting split from (\$_initialRow, \$_initialCol) to (\$row, \$col)");
-          _performSplit(_initialRow, _initialCol, row, col);
+          _performSplit(initialRow, initialCol, row, col);
           success = true;
         } else {
            print("Invalid move/split distance from (\$_initialRow, \$_initialCol) to (\$row, \$col). dx: \$dx, dy: \$dy");
