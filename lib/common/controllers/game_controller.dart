@@ -12,8 +12,8 @@ import '../services/networking_service.dart'; // Will be created later
 // Equivalent to GameManager.java
 class GameController {
   late List<List<Tile>> tiles;
-  static const int boardWidth = 10;
-  static const int boardHeight = 6;
+  static const int boardWidth = 9;
+  static const int boardHeight = 5;
 
   bool gameOver = false;
   int clicks = 0; // For tracking swipe/move selection steps
@@ -95,7 +95,7 @@ class GameController {
       // Turn is 1 for this dummy move as per original Java code, seems like a specific server handshake.
       await _networkingService.sendMove(gameId, 0, 0, 0, 0, 0, 1);
     } catch (e) {
-      print("Error during online game setup send: \$e");
+      print("Error during online game setup send: $e");
     }
     // Original Java code adjusted playerTurn and isMyTurn based on onlineTurn.
     // Here, onlinePlayerColor defines this client's color.
@@ -129,7 +129,7 @@ class GameController {
             }
           }
         } catch (e) {
-          print("Error polling for online move: \$e");
+          print("Error polling for online move: $e");
         }
       }
       // Turn timeout logic (Java GameManager had this)
@@ -155,7 +155,7 @@ class GameController {
       playerHasMadeMoveThisTurn = true; // Opponent made their move
       _switchTurn();
     } catch (e) {
-      print("Error processing opponent's move: \$e");
+      print("Error processing opponent's move: $e");
       if (e is InvalidMoveException || e is LimitMoveException || e is UnderSizedSpitException) {
         // Log and continue, opponent made an invalid move based on our current state.
         // This might indicate a desync or a bug.
@@ -184,7 +184,7 @@ class GameController {
           initialCol = col;
           clicks = 1;
           _anyMoveFlag = true; // Indicate selection happened, for UI feedback
-          print("Selected ball at (\$row, \$col)");
+          print("Selected ball at ($row, $col)");
           return true; // Ball selected
         }
       }
@@ -193,7 +193,7 @@ class GameController {
       if (initialRow == row && initialCol == col) { // Tap same ball to deselect
         clicks = 0;
         _anyMoveFlag = true;
-        print("Deselected ball at (\$row, \$col)");
+        print("Deselected ball at ($row, $col)");
         return false;
       }
 
@@ -204,19 +204,19 @@ class GameController {
       bool success = false;
       try {
         if ((dx == 1 && dy == 0) || (dx == 0 && dy == 1) || (dx == 1 && dy == 1)) { // Adjacent or diagonal by 1
-          print("Attempting move from (\$_initialRow, \$_initialCol) to (\$row, \$col)");
+          print("Attempting move from ($initialRow, $initialCol) to ($row, $col)");
           _performMove(initialRow, initialCol, row, col);
           success = true;
         } else if ((dx == 2 && dy == 0) || (dx == 0 && dy == 2)) { // Straight line 2 steps away
-          print("Attempting split from (\$_initialRow, \$_initialCol) to (\$row, \$col)");
+          print("Attempting split from ($initialRow, $initialCol) to ($row, $col)");
           _performSplit(initialRow, initialCol, row, col);
           success = true;
         } else {
-           print("Invalid move/split distance from (\$_initialRow, \$_initialCol) to (\$row, \$col). dx: \$dx, dy: \$dy");
+           print("Invalid move/split distance from ($initialRow, $initialCol) to ($row, $col). dx: $dx, dy: $dy");
           _anyMoveFlag = true; // To reset UI if it was highlighting something
         }
       } catch (e) {
-        print("Error during move/split: \$e");
+        print("Error during move/split: $e");
         // UI should show error based on exception type
         _anyMoveFlag = true; // Reset selection
         success = false; // Explicitly false on error
@@ -248,7 +248,7 @@ class GameController {
 
     Ball? movingBall = tiles[rInit][cInit].ball;
     if (movingBall == null || movingBall.size == 0) {
-      throw InvalidMoveException("No ball to move from (\$rInit, \$cInit).");
+      throw InvalidMoveException("No ball to move from ($rInit, $cInit).");
     }
 
     // Check current player's turn for local moves
@@ -266,7 +266,7 @@ class GameController {
       updateStatus();
       if (isOnlineGame && !isOpponentMove) {
         _networkingService.sendMove(gameId, rInit, cInit, rFinal, cFinal, 0, onlinePlayerColor)
-            .catchError((e) => print("Error sending move: \$e"));
+            .catchError((e) => print("Error sending move: $e"));
       }
     } else {
       // Battle failed (e.g., due to limitedMoveActive)
@@ -281,7 +281,7 @@ class GameController {
 
     Ball? originalBall = tiles[rInit][cInit].ball;
     if (originalBall == null || originalBall.size < 10) { // Min size from Java
-      throw UnderSizedSpitException("Ball at (\$rInit, \$cInit) is too small to split (size: \${originalBall?.size ?? 0}).");
+      throw UnderSizedSpitException("Ball at ($rInit, $cInit) is too small to split (size: ${originalBall?.size ?? 0}).");
     }
 
     // Check current player's turn for local moves
@@ -316,19 +316,19 @@ class GameController {
       updateStatus();
       if (isOnlineGame && !isOpponentMove) {
         _networkingService.sendMove(gameId, rInit, cInit, rFinal, cFinal, 1, onlinePlayerColor)
-            .catchError((e) => print("Error sending split: \$e"));
+            .catchError((e) => print("Error sending split: $e"));
       }
     } else {
       // This case should be rare if battle logic is sound, means split part couldn't be placed.
       // Restore original ball size as split effectively failed.
       originalBall.size += splitBallSize;
-      throw InvalidMoveException("Split part could not be placed at (\$rFinal, \$cFinal).");
+      throw InvalidMoveException("Split part could not be placed at ($rFinal, $cFinal).");
     }
   }
 
   void _triggerAIMove() {
     if (gameOver) return;
-    print("AI's turn (Difficulty: \$difficulty)");
+    print("AI's turn (Difficulty: $difficulty)");
 
     List<int> aiMoveCoords;
     // The AI algorithm expects List<List<Tile>>
@@ -360,21 +360,21 @@ class GameController {
       if (rInit == -1) { // AI algorithm indicated no move found
           print("AI found no valid move, passing turn.");
       } else if (moveType == 0 || moveType == 1) { // Standard move or chaser move
-        print("AI performing move: (\$rInit, \$cInit) -> (\$rFinal, \$cFinal)");
+        print("AI performing move: ($rInit, $cInit) -> ($rFinal, $cFinal)");
         _performMove(rInit, cInit, rFinal, cFinal, isOpponentMove: true); // AI is effectively an opponent
       } else if (moveType == -1) { // Split
         // AI's hardMove for split returns target coordinates directly.
-        print("AI performing split: (\$rInit, \$cInit) -> (\$rFinal, \$cFinal)");
+        print("AI performing split: ($rInit, $cInit) -> ($rFinal, $cFinal)");
         _performSplit(rInit, cInit, rFinal, cFinal, isOpponentMove: true); // AI is effectively an opponent
       }
     } catch (e) {
-      print("AI Error: \$e. AI attempting random fallback move.");
+      print("AI Error: $e. AI attempting random fallback move.");
       // Fallback to a random move if AI logic fails catastrophically
       try {
         aiMoveCoords = ArtificialIntelligenceAlgorithm.randomMove(tiles);
         _performMove(aiMoveCoords[0], aiMoveCoords[1], aiMoveCoords[2], aiMoveCoords[3], isOpponentMove: true);
       } catch (e2) {
-        print("AI Random Fallback Error: \$e2. AI forfeits turn.");
+        print("AI Random Fallback Error: $e2. AI forfeits turn.");
       }
     } finally {
       playerHasMadeMoveThisTurn = true; // AI made its move
@@ -393,9 +393,9 @@ class GameController {
     }
     playerHasMadeMoveThisTurn = false;
     updateStatus(); // Recalculate ball counts and game over status
-    print("Turn switched. Current player: \$_playerTurn. Is my turn (online): \$_isMyTurn");
+    print("Turn switched. Current player: $_playerTurn. Is my turn (online): $_isMyTurn");
     if (gameOver) {
-        print("Game Over! Green: \$greenBallCount, Pink: \$pinkBallCount");
+        print("Game Over! Green: $greenBallCount, Pink: $pinkBallCount");
         if (isOnlineGame) _onlinePollingTimer?.cancel();
     }
   }
@@ -454,7 +454,7 @@ class GameController {
           // Send a special move to server to indicate leaving/conceding
           _networkingService.sendMove(gameId, 0,0,0,0,0, -1) // -1 turn signals leaving
               .then((_) => print("Sent finish game signal to server."))
-              .catchError((e) => print("Error sending finish game signal: \$e"));
+              .catchError((e) => print("Error sending finish game signal: $e"));
           gameOver = true; // Assume game ends locally too
           _onlinePollingTimer?.cancel();
           // Notify UI or trigger navigation

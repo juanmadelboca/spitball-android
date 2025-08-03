@@ -4,29 +4,32 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b46e20e6-fa46-4ef4-b973-cc85aabe4006" name="Changes" comment="Fix base migration">
+    <list default="true" id="b46e20e6-fa46-4ef4-b973-cc85aabe4006" name="Changes" comment="Upload changes to branch">
+      <change afterPath="$PROJECT_DIR$/assets/images/b2.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/images/background.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/images/ballgreen.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/images/ballgreen_small.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/images/ballpink.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/lib/common/wood_texture.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/lib/screens/menu/wooden_button.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.dart_tool/package_config.json" beforeDir="false" afterPath="$PROJECT_DIR$/.dart_tool/package_config.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.dart_tool/package_config_subset" beforeDir="false" afterPath="$PROJECT_DIR$/.dart_tool/package_config_subset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.dart_tool/package_graph.json" beforeDir="false" afterPath="$PROJECT_DIR$/.dart_tool/package_graph.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.dart_tool/version" beforeDir="false" afterPath="$PROJECT_DIR$/.dart_tool/version" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.flutter-plugins-dependencies" beforeDir="false" afterPath="$PROJECT_DIR$/.flutter-plugins-dependencies" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/caches/deviceStreaming.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/caches/deviceStreaming.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/common/ai/artificial_intelligence_algorithm.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/common/ai/artificial_intelligence_algorithm.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/common/controllers/game_controller.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/common/controllers/game_controller.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/main.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/main.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/src/core/ai/artificial_intelligence_algorithm.dart" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/src/core/controllers/game_controller.dart" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/src/core/exceptions/.gitkeep" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/src/core/exceptions/game_exceptions.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/common/exceptions/game_exceptions.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/src/core/models/.gitkeep" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/src/core/models/ball.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/models/ball.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/src/core/models/ball_type.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/models/ball_type.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/src/core/models/tile.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/models/tile.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/src/core/providers/.gitkeep" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/src/core/services/.gitkeep" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/src/core/services/networking_service.dart" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/src/core/utils/.gitkeep" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/src/features/.gitkeep" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/src/features/game_play/presentation/screens/game_screen.dart" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/src/features/game_play/presentation/widgets/game_board_widget.dart" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/src/features/high_scores/presentation/screens/high_scores_screen.dart" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/src/features/how_to_play/presentation/screens/how_to_play_screen.dart" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/src/features/main_menu/presentation/screens/main_menu_screen.dart" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/src/features/settings/application/providers/settings_provider.dart" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/src/features/settings/presentation/screens/settings_screen.dart" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/src/widgets/.gitkeep" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/screens/game/game_board_widget.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/screens/game/board.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/screens/game/game_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/screens/game/index.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/screens/high_scores/high_scores_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/screens/high_scores/index.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/screens/menu/main_menu_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/screens/menu/index.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/screens/settings/settings_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/screens/settings/index.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/screens/tutorial/how_to_play_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/screens/tutorial/index.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pubspec.lock" beforeDir="false" afterPath="$PROJECT_DIR$/pubspec.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/pubspec.yaml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -50,7 +53,7 @@
     </leaf>
   </component>
   <component name="Git.Settings">
-    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="GitHubPullRequestSearchHistory">{
   &quot;lastFilter&quot;: {
@@ -80,29 +83,30 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Flutter.main.dart.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.cidr.known.project.marker": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "RunOnceActivity.readMode.enableVisualFormatting": "true",
-    "cf.first.check.clang-format": "false",
-    "cidr.known.project.marker": "true",
-    "dart.analysis.tool.window.visible": "false",
-    "git-widget-placeholder": "jules__wip__8391428618349719628",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "/Users/kalantos/Documents/Personal/repos/spitball-android/spitball",
-    "show.migrate.to.gradle.popup": "false"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Flutter.main.dart.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.readMode.enableVisualFormatting&quot;: &quot;true&quot;,
+    &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
+    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;dart.analysis.tool.window.visible&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;jules__wip__8391428618349719628&quot;,
+    &quot;io.flutter.reload.alreadyRun&quot;: &quot;true&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/kalantos/Documents/Personal/repos/spitball-android/assets&quot;,
+    &quot;show.migrate.to.gradle.popup&quot;: &quot;false&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/assets" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/lib/models" />
       <recent name="$PROJECT_DIR$/assets/images" />
+      <recent name="$PROJECT_DIR$/lib/models" />
     </key>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
@@ -122,7 +126,23 @@
       <option name="project" value="LOCAL" />
       <updated>1750172457772</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="Remove old project">
+      <option name="closed" value="true" />
+      <created>1750173596433</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1750173596433</updated>
+    </task>
+    <task id="LOCAL-00003" summary="add missing files">
+      <option name="closed" value="true" />
+      <created>1750173753939</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1750173753939</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -133,6 +153,60 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Fix base migration" />
-    <option name="LAST_COMMIT_MESSAGE" value="Fix base migration" />
+    <MESSAGE value="Remove old project" />
+    <MESSAGE value="add missing files" />
+    <MESSAGE value="Upload changes to branch" />
+    <option name="LAST_COMMIT_MESSAGE" value="Upload changes to branch" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="Dart">
+          <url>file://$PROJECT_DIR$/lib/common/controllers/game_controller.dart</url>
+          <line>353</line>
+          <option name="timeStamp" value="7" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="Dart">
+          <url>file://$PROJECT_DIR$/lib/common/controllers/game_controller.dart</url>
+          <line>359</line>
+          <option name="timeStamp" value="8" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="Dart">
+          <url>file://$PROJECT_DIR$/lib/common/controllers/game_controller.dart</url>
+          <line>341</line>
+          <option name="timeStamp" value="12" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="Dart">
+          <url>file://$PROJECT_DIR$/lib/common/ai/artificial_intelligence_algorithm.dart</url>
+          <line>66</line>
+          <option name="timeStamp" value="13" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="Dart">
+          <url>file://$PROJECT_DIR$/lib/common/ai/artificial_intelligence_algorithm.dart</url>
+          <line>71</line>
+          <option name="timeStamp" value="14" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="Dart">
+          <url>file://$PROJECT_DIR$/lib/common/ai/artificial_intelligence_algorithm.dart</url>
+          <line>44</line>
+          <option name="timeStamp" value="15" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="Dart">
+          <url>file://$PROJECT_DIR$/lib/common/ai/artificial_intelligence_algorithm.dart</url>
+          <line>38</line>
+          <option name="timeStamp" value="16" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="Dart">
+          <url>file://$PROJECT_DIR$/lib/common/ai/artificial_intelligence_algorithm.dart</url>
+          <line>112</line>
+          <option name="timeStamp" value="17" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="Dart">
+          <url>file://$PROJECT_DIR$/lib/common/ai/artificial_intelligence_algorithm.dart</url>
+          <line>120</line>
+          <option name="timeStamp" value="18" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>

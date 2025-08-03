@@ -5,8 +5,8 @@ import '../../../models/ball_type.dart';
 
 // Manages AI movements and strategies.
 class ArtificialIntelligenceAlgorithm {
-  static const int height = 6;
-  static const int width = 10;
+  static const int height = 5;
+  static const int width = 9;
 
   // Returns a list: [yInitial, xInitial, yFinal, xFinal, moveType]
   // moveType: 0 for move, -1 for split (in hardMove), 1 for chaserMove's specific move.
