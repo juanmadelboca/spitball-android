@@ -4,33 +4,7 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b46e20e6-fa46-4ef4-b973-cc85aabe4006" name="Changes" comment="Upload changes to branch">
-      <change afterPath="$PROJECT_DIR$/assets/images/b2.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/images/background.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/images/ballgreen.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/images/ballgreen_small.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/images/ballpink.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/common/wood_texture.dart" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/screens/menu/wooden_button.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.dart_tool/package_config.json" beforeDir="false" afterPath="$PROJECT_DIR$/.dart_tool/package_config.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.dart_tool/package_config_subset" beforeDir="false" afterPath="$PROJECT_DIR$/.dart_tool/package_config_subset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.dart_tool/package_graph.json" beforeDir="false" afterPath="$PROJECT_DIR$/.dart_tool/package_graph.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.dart_tool/version" beforeDir="false" afterPath="$PROJECT_DIR$/.dart_tool/version" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.flutter-plugins-dependencies" beforeDir="false" afterPath="$PROJECT_DIR$/.flutter-plugins-dependencies" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/caches/deviceStreaming.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/caches/deviceStreaming.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/common/ai/artificial_intelligence_algorithm.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/common/ai/artificial_intelligence_algorithm.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/common/controllers/game_controller.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/common/controllers/game_controller.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/main.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/main.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/screens/game/game_board_widget.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/screens/game/board.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/screens/game/game_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/screens/game/index.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/screens/high_scores/high_scores_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/screens/high_scores/index.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/screens/menu/main_menu_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/screens/menu/index.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/screens/settings/settings_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/screens/settings/index.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/screens/tutorial/how_to_play_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/screens/tutorial/index.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pubspec.lock" beforeDir="false" afterPath="$PROJECT_DIR$/pubspec.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/pubspec.yaml" afterDir="false" />
-    </list>
+    <list default="true" id="b46e20e6-fa46-4ef4-b973-cc85aabe4006" name="Changes" comment="Upload changes to branch" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -142,7 +116,15 @@
       <option name="project" value="LOCAL" />
       <updated>1750173753939</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="Upload changes to branch">
+      <option name="closed" value="true" />
+      <created>1754243287923</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1754243287923</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="ToolWindowManager">
